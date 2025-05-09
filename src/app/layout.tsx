@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { url } from "inspector";
+import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: "InteractiveWorkers",
@@ -15,24 +16,18 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-const homeStyle: React.CSSProperties = {
-  backgroundImage: `url(/main-banner.png)`,
-  backgroundSize: "cover",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center top",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={montserrat.className}>
-      <body>
-        <main className="flex h-lvh items-center" style={homeStyle}>
-          {children}
-        </main>
+    <html lang="en" className={`${montserrat.className} bg-[#181621]`}>
+      <body
+        className={`bg-[url(/main-banner.png)] bg-cover bg-no-repeat md:bg-top-right bg-top-left`}
+      >
+        <Navbar />
+        <main className="flex items-center h-lvh">{children}</main>
       </body>
     </html>
   );

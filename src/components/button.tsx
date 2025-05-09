@@ -2,14 +2,14 @@ import Image from "next/image";
 
 export const Button = ({
   src,
-  children,
+  children = "",
 }: {
   src: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) => {
   return (
     <div className="flex items-center gap-2 cursor-pointer">
-      <Image src={src} width={50} height={50} alt={"play"} />
+      <Image src={src} width={50} height={50} alt={""} />
       {children}
     </div>
   );
