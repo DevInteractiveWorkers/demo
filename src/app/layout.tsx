@@ -26,8 +26,10 @@ export default function RootLayout({
       <body
         className={`bg-[url(/main-banner.png)] bg-cover bg-no-repeat md:bg-top-right bg-top-left`}
       >
-        <Navbar />
-        <main className="flex items-center h-lvh">{children}</main>
+        <main className="flex flex-col justify-center h-lvh">
+          <Navbar />
+          {children}
+        </main>
       </body>
     </html>
   );

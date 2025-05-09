@@ -1,4 +1,4 @@
-import { Button } from "@/components/button";
+import { IconButton } from "@/components/icon-button";
 import Image from "next/image";
 
 export default function Home() {
@@ -6,17 +6,27 @@ export default function Home() {
     <>
       <div className="lg:max-w-3xl md:w-1/2 max-w-full flex flex-col gap-5">
         <h1 className="text-4xl pb-4 font-medium  md:px-25 px-12">
-          DEMO <span className="font-bold">PORTFOLIO</span>
+          DEMO <br />
+          <span className="font-bold">PORTFOLIO</span>
         </h1>
-        <p className="text-lg bg-[#C1272D] md:px-25 px-12 py-5 rounded-r-full">
-          If you are looking for alternatives to delegate regular assignments
-          with the best options for your budget and with a satisfactory degree
-          of results guaranteed, a VA is your best choice. Take a look at what
-          you would get from your potential virtual team member.
-        </p>
+        <div className="text-lg bg-[#C1272D] md:px-25 px-12 py-5 rounded-r-full">
+          {/* <p>
+            If you are looking for alternatives to delegate regular assignments
+            with the best options for your budget and with a satisfactory degree
+            of results guaranteed, a VA is your best choice. Take a look at what
+            you would get from your potential virtual team member.
+          </p> */}
+          <li>Create rough and final cuts. </li>
+          <li>Input music. </li>
+          <li>Input dialogues. </li>
+          <li>Assembly of image or video sequences. </li>
+          <li>Color grading. </li>
+          <li>Clean background noises. </li>
+          <li>And so much more... </li>
+        </div>
         <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col  md:px-25 px-12">
-          <Button src={"/play.png"}>WATCH VIDEO</Button>
-          <Button src={"/pdf.png"}>RESUME</Button>
+          <IconButton icon={"play"}>WATCH VIDEO</IconButton>
+          <IconButton icon={"watch"}>RESUME</IconButton>
         </div>
       </div>
       <Image
