@@ -3,7 +3,7 @@ import iconsJSON from "@/icons.json";
 type IconValue = string | string[];
 const icons = iconsJSON as Record<string, IconValue>;
 
-interface IconProps {
+export interface IconProps {
   icon: string;
   filled?: boolean;
   stroke?: number;
