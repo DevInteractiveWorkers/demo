@@ -2,9 +2,13 @@
 
 import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
-import PDFReader from "@/components/pdf-reader-wrapper";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
+
+const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
