@@ -2,7 +2,7 @@
 
 import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
-import PDFReader from "@/components/pdf-reader";
+import PDFReader from "@/components/pdf-reader-wrapper";
 import Image from "next/image";
 import { useState } from "react";
 

@@ -5,7 +5,7 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { IconButton } from "./icon-button";
 
-interface ReaderProps {
+export interface ReaderProps {
   isOpen: boolean;
   pdf: string;
   toggle?: () => void;
