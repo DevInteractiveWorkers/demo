@@ -4,12 +4,12 @@ import Image from "next/image";
 export default function Home() {
   return (
     <>
-      <div className="lg:max-w-3xl md:w-1/2 max-w-full flex flex-col gap-5">
+      <div className="lg:max-w-3xl md:w-1/2 max-w-full flex flex-col gap-5 z-10">
         <h1 className="text-4xl pb-4 font-medium  md:px-25 px-12">
           DEMO <br />
           <span className="font-bold">PORTFOLIO</span>
         </h1>
-        <div className="text-lg bg-[#C1272D] md:px-25 px-12 py-5 rounded-r-full">
+        <div className="text-lg bg-[#C1272D] md:px-25 px-6 py-5 rounded-r-full">
           {/* <p>
             If you are looking for alternatives to delegate regular assignments
             with the best options for your budget and with a satisfactory degree
@@ -33,7 +33,7 @@ export default function Home() {
         src={"/hero.png"}
         width={1080}
         height={1080}
-        className="absolute right-0 bottom-0 w-1/2 xl:w-6/12 max-lg:hidden"
+        className="absolute right-0 bottom-0 h-full w-min max-lg:hidden -z-0"
         alt="InteractiveWorkers"
       />
     </>
