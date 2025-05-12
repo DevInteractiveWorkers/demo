@@ -23,7 +23,6 @@ export const Icon = ({ icon, filled, stroke = 0.6 }: IconProps) => {
       width="24"
       height="24"
       fill={filled ? "white" : "none"}
-      aria-hidde="true"
       viewBox="0 0 24 24"
     >
       <path
