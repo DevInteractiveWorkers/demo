@@ -11,7 +11,7 @@ export interface ReaderProps {
   toggle?: () => void;
 }
 
-const PDFReaderClient = ({ isOpen, pdf, toggle }: ReaderProps) => {
+const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
   return (
     <div
       className={`absolute top-0 left-0 w-full h-full flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
@@ -36,4 +36,4 @@ const PDFReaderClient = ({ isOpen, pdf, toggle }: ReaderProps) => {
   );
 };
 
-export default PDFReaderClient;
+export default PDFReader;
