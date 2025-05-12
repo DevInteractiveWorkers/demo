@@ -1,8 +1,5 @@
 "use client";
 
-import { Viewer, Worker } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { IconButton } from "./icon-button";
 
 export interface ReaderProps {
@@ -12,6 +9,11 @@ export interface ReaderProps {
 }
 
 const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
+  // Move imports inside the component
+  const { Viewer, Worker } = require("@react-pdf-viewer/core");
+  require("@react-pdf-viewer/core/lib/styles/index.css");
+  require("@react-pdf-viewer/default-layout/lib/styles/index.css");
+
   return (
     <div
       className={`absolute top-0 left-0 w-full h-full flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
