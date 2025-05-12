@@ -2,9 +2,9 @@
 
 import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
