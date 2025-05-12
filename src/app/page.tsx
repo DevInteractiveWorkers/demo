@@ -1,7 +1,13 @@
+"use client";
+
+import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
     <>
       <div className="lg:max-w-3xl md:w-1/2 max-w-full flex flex-col gap-5 z-10">
@@ -25,8 +31,17 @@ export default function Home() {
           <li>And so much more... </li>
         </div>
         <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col  md:px-25 px-12">
-          <IconButton icon={"play"}>WATCH VIDEO</IconButton>
-          <IconButton icon={"watch"}>RESUME</IconButton>
+          <IconButton
+            filled
+            icon={"play"}
+            stroke={0.6}
+            onClick={() => setIsVideoOpen(true)}
+          >
+            WATCH VIDEO
+          </IconButton>
+          <IconButton filled icon={"watch"} stroke={0.6}>
+            RESUME
+          </IconButton>
         </div>
       </div>
       <Image
@@ -35,6 +50,11 @@ export default function Home() {
         height={1080}
         className="absolute right-0 bottom-0 h-full w-min max-lg:hidden -z-0"
         alt="InteractiveWorkers"
+      />
+      <DemoVideo
+        videoUrl="/portfolios/Mauro/MauroLeal.mp4"
+        isOpen={isVideoOpen}
+        toggle={() => setIsVideoOpen(!isVideoOpen)}
       />
     </>
   );

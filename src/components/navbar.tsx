@@ -15,7 +15,13 @@ export const Navbar = ({ fixed = false }: { fixed?: boolean }) => {
         alt="InteractiveWorkers"
       />
       <div className="cursor-pointer">
-        <Image src="/toggle.png" width={50} height={50} alt="toggle" />
+        <Image
+          src="/toggle.png"
+          width={50}
+          height={50}
+          alt="toggle"
+          className="h-auto"
+        />
       </div>
     </div>
   );

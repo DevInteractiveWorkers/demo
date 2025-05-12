@@ -14,7 +14,8 @@ export const IconButton = ({
   children = "",
   className = "",
   onClick,
-  stroke = 1,
+  stroke = 0.6,
+  filled,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
 
@@ -25,7 +26,7 @@ export const IconButton = ({
       onMouseLeave={() => setHover(false)}
       onClick={onClick}
     >
-      <Icon icon={icon} filled={hover} stroke={stroke} />
+      <Icon icon={icon} filled={filled && hover} stroke={stroke} />
       {children}
     </div>
   );

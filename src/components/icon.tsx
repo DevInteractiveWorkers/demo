@@ -9,7 +9,7 @@ export interface IconProps {
   stroke?: number;
 }
 
-export const Icon = ({ icon, filled, stroke = 0.6 }: IconProps) => {
+export const Icon = ({ icon, filled = false, stroke = 0.6 }: IconProps) => {
   const pathData = icons[icon];
 
   if (!pathData) return null;
