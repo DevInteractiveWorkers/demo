@@ -2,11 +2,13 @@
 
 import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
+import PDFReader from "@/components/pdf-reader";
 import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isPDFOpen, setIsPDFOpen] = useState(false);
 
   return (
     <>
@@ -39,7 +41,12 @@ export default function Home() {
           >
             WATCH VIDEO
           </IconButton>
-          <IconButton filled icon={"watch"} stroke={0.6}>
+          <IconButton
+            filled
+            icon={"watch"}
+            stroke={0.6}
+            onClick={() => setIsPDFOpen(true)}
+          >
             RESUME
           </IconButton>
         </div>
@@ -55,6 +62,11 @@ export default function Home() {
         videoUrl="/portfolios/Mauro/MauroLeal.mp4"
         isOpen={isVideoOpen}
         toggle={() => setIsVideoOpen(!isVideoOpen)}
+      />
+      <PDFReader
+        pdf={"/portfolios/Mauro/MauroLealResumeDEMO.pdf"}
+        isOpen={isPDFOpen}
+        toggle={() => setIsPDFOpen(!isPDFOpen)}
       />
     </>
   );
