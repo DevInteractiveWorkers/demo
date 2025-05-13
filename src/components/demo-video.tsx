@@ -125,10 +125,17 @@ const DemoVideo: React.FC<DemoVideoProps> = ({
             }
             onClick={handleVideoControls}
           />
-          <div className="flex absolute bottom-2 w-full justify-around items-center gap-2">
+          <div className="flex absolute bottom-0 w-full justify-evenly items-center gap-2">
+            {/* Expand */}
+            <IconButton
+              icon="expand"
+              className="text-white w-7"
+              stroke={1}
+              onClick={() => videoRef.current?.requestFullscreen()}
+            />
             {/* Progress Bar */}
             <div
-              className="md:w-10/12 w-9/12 h-1 hover:h-2 transition-all bg-gray-400 rounded-full cursor-pointer relative"
+              className="md:w-9/12 w-8/12 h-1 hover:h-2 transition-all bg-gray-400 rounded-full cursor-pointer relative"
               onClick={handleProgressClick}
               onMouseMove={handleProgressHover}
               onMouseLeave={() => setProgressHover(0)}
