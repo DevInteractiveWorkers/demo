@@ -20,14 +20,19 @@ export const IconButton = ({
   reversed,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
+  const [isPortrait, setIsPortait] = useState(
+    window.screen.orientation.type.includes("portrait")
+  );
 
   return (
     <div
       className={`flex items-center gap-2 cursor-pointer select-none ${className} ${
         reversed && "flex-row-reverse"
       }`}
-      onTouchStart={() => setHover(true)}
-      onTouchEnd={() => setHover(false)}
+      onMouseOver={() => !isPortrait && setHover(true)}
+      onMouseOut={() => !isPortrait && setHover(false)}
+      onTouchStart={() => isPortrait && setHover(true)}
+      onTouchEnd={() => isPortrait && setHover(false)}
       onClick={onClick}
     >
       <Icon icon={icon} filled={filled && hover} stroke={stroke} />

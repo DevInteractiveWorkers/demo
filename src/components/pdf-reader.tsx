@@ -60,7 +60,7 @@ const PDFComponent = ({ file }: { file: string }) => {
 const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
   return (
     <div
-      className={`absolute top-0 left-0 w-full h-full flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
+      className={`absolute top-0 left-0 w-full h-screen flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
         isOpen ? "opacity-100 z-50" : "opacity-0 -z-50"
       }`}
     >
