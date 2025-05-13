@@ -1,6 +1,6 @@
 "use client";
 import { Icon, IconProps } from "./icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IconButtonProps extends IconProps {
   icon: string;
@@ -20,9 +20,13 @@ export const IconButton = ({
   reversed,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
-  const [isPortrait, setIsPortait] = useState(
-    window.screen.orientation.type.includes("portrait")
-  );
+  const [isPortrait, setIsPortait] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsPortait(window.screen.orientation.type.includes("portrait"));
+    }
+  }, []);
 
   return (
     <div

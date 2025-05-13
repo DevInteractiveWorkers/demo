@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton } from "../components/icon-button";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
@@ -27,14 +27,23 @@ const PDFComponent = ({ file }: { file: string }) => {
   };
 
   console.log();
+  const [screenWidth, setScreenWidth] = useState<number | null>(null);
 
-  const screen = window.screen;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setScreenWidth(window.screen.width);
+    }
+  }, []);
 
   return (
     <div className="relative flex items-center h-screen">
       <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
         <Page
-          width={screen.width < screen.height ? screen.width : undefined}
+          width={
+            screenWidth && screenWidth < window.screen.height
+              ? screenWidth
+              : undefined
+          }
           pageNumber={currentPage}
           renderAnnotationLayer={false}
           renderTextLayer={false}
