@@ -7,9 +7,17 @@ export interface IconProps {
   icon: string;
   filled?: boolean;
   stroke?: number;
+  width?: string;
+  height?: string;
 }
 
-export const Icon = ({ icon, filled = false, stroke = 0.6 }: IconProps) => {
+export const Icon = ({
+  icon,
+  filled = false,
+  stroke = 0.6,
+  width = "72px",
+  height = "72px",
+}: IconProps) => {
   const pathData = icons[icon];
 
   if (!pathData) return null;
@@ -17,7 +25,9 @@ export const Icon = ({ icon, filled = false, stroke = 0.6 }: IconProps) => {
 
   return (
     <svg
-      className="w-[72px] h-[72px]"
+      className={`${width === "auto" ? "w-auto" : `w-[${width}]`} ${
+        height === "auto" ? "h-auto" : `h-[${width}]`
+      }`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"

@@ -18,6 +18,8 @@ export const IconButton = ({
   stroke = 0.6,
   filled,
   reversed,
+  height,
+  width,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
   const [isPortrait, setIsPortait] = useState(false);
@@ -29,8 +31,8 @@ export const IconButton = ({
   }, []);
 
   return (
-    <div
-      className={`flex items-center gap-2 cursor-pointer select-none ${className} ${
+    <button
+      className={`flex items-center gap-2 cursor-pointer h-min select-none ${className} ${
         reversed && "flex-row-reverse"
       }`}
       onMouseOver={() => !isPortrait && setHover(true)}
@@ -39,8 +41,14 @@ export const IconButton = ({
       onTouchEnd={() => isPortrait && setHover(false)}
       onClick={onClick}
     >
-      <Icon icon={icon} filled={filled && hover} stroke={stroke} />
+      <Icon
+        icon={icon}
+        filled={filled && hover}
+        stroke={stroke}
+        width={width}
+        height={height}
+      />
       {children}
-    </div>
+    </button>
   );
 };
