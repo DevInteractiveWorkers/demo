@@ -1,15 +1,61 @@
 "use client";
 
-import { Viewer, Worker } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import React, { useState } from "react";
 import { IconButton } from "../components/icon-button";
+import { Document, Page } from "react-pdf";
+import { pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export interface ReaderProps {
   isOpen: boolean;
   pdf: string;
   toggle?: () => void;
 }
+
+const PDFComponent = ({ file }: { file: string }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [numPages, setNumPages] = useState<number>(1);
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages);
+  }
+  const changePage = (num: number) => {
+    console.log(num, currentPage);
+    if ((num < 0 && currentPage === 1) || currentPage + num > numPages) return;
+    else setCurrentPage(currentPage + num);
+  };
+
+  console.log();
+
+  const screen = window.screen;
+
+  return (
+    <div className="relative flex items-center h-screen">
+      <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+        <Page
+          width={screen.width < screen.height ? screen.width : undefined}
+          pageNumber={currentPage}
+          renderAnnotationLayer={false}
+          renderTextLayer={false}
+        />
+      </Document>
+      <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
+        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
+          <IconButton icon="prev" onClick={() => changePage(-1)} filled>
+            Prev
+          </IconButton>
+          <span>
+            {currentPage} / {numPages}
+          </span>
+          <IconButton icon="next" onClick={() => changePage(1)} filled reversed>
+            Next
+          </IconButton>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
   return (
@@ -24,13 +70,11 @@ const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
         onClick={toggle}
       />
       <div
-        className={`absolute top-0 md:w-5xl w-full h-screen transition-all duration-500 ${
+        className={`absolute top-0 h-screen transition-all duration-500 flex max-md:content-between ${
           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
         }`}
       >
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-          <Viewer fileUrl={pdf} />
-        </Worker>
+        <PDFComponent file={"/portfolios/Mauro/MauroLealResumeDEMO.pdf"} />
       </div>
     </div>
   );

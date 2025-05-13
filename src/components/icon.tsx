@@ -17,7 +17,7 @@ export const Icon = ({ icon, filled = false, stroke = 0.6 }: IconProps) => {
 
   return (
     <svg
-      className="w-[72px] h-[72px] text-gray-800 dark:text-white"
+      className="w-[72px] h-[72px]"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
