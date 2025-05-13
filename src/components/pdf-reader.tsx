@@ -40,11 +40,7 @@ const PDFComponent = ({ file }: { file: string }) => {
           renderTextLayer={false}
         />
       </Document>
-<<<<<<< HEAD
-      <div className="absolute h-1/3 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all duration-500">
-=======
       <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
->>>>>>> f11f41cb6b961f81b1cf6bd8d000424330c059de
         <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
           <IconButton icon="prev" onClick={() => changePage(-1)} filled>
             Prev
