@@ -159,7 +159,7 @@ const DemoVideo: React.FC<DemoVideoProps> = ({
 
             {/* Time Display */}
             <div className="text-white md:text-sm text-xs flex">
-              {videoCurrentTime > 0 ? formatTime(videoCurrentTime) : "--:--"} /
+              {videoCurrentTime > 0 ? formatTime(videoCurrentTime) : "--:--"} /{" "}
               {videoDuration > 0 ? formatTime(videoDuration) : "--:--"}
             </div>
           </div>
