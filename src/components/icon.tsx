@@ -23,6 +23,8 @@ export const Icon = ({
   if (!pathData) return null;
   const paths = Array.isArray(pathData) ? pathData : [pathData];
 
+  console.log(height.slice(0, height.length));
+
   return (
     <svg
       className={`${width === "auto" ? "w-auto" : `w-[${width}]`} ${
@@ -30,8 +32,8 @@ export const Icon = ({
       }`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width={width.includes("px") ? width.slice(0, width.length - 2) : "24"}
+      height={height.includes("px") ? height.slice(0, height.length - 2) : "24"}
       fill={filled ? "white" : "none"}
       viewBox="0 0 24 24"
     >

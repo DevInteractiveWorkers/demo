@@ -18,8 +18,8 @@ export const IconButton = ({
   stroke = 0.6,
   filled,
   reversed,
-  height,
-  width,
+  height = "72px",
+  width = "72px",
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
   const [isPortrait, setIsPortait] = useState(false);
