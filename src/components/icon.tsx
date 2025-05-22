@@ -23,8 +23,6 @@ export const Icon = ({
   if (!pathData) return null;
   const paths = Array.isArray(pathData) ? pathData : [pathData];
 
-  console.log(height.slice(0, height.length));
-
   return (
     <svg
       className={`${width === "auto" ? "w-auto" : `w-[${width}]`} ${

@@ -21,12 +21,10 @@ const PDFComponent = ({ file }: { file: string }) => {
     setNumPages(numPages);
   }
   const changePage = (num: number) => {
-    console.log(num, currentPage);
     if ((num < 0 && currentPage === 1) || currentPage + num > numPages) return;
     else setCurrentPage(currentPage + num);
   };
 
-  console.log();
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
 
   useEffect(() => {
@@ -36,7 +34,7 @@ const PDFComponent = ({ file }: { file: string }) => {
   }, []);
 
   return (
-    <div className="relative flex items-center h-screen">
+    <div className="relative flex items-center h-dvh">
       <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
         <Page
           width={
@@ -69,7 +67,7 @@ const PDFComponent = ({ file }: { file: string }) => {
 const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
   return (
     <div
-      className={`absolute top-0 left-0 w-full h-screen flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
+      className={`absolute top-0 left-0 w-full h-dvh flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
         isOpen ? "opacity-100 z-50" : "opacity-0 -z-50"
       }`}
     >
@@ -79,7 +77,7 @@ const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
         onClick={toggle}
       />
       <div
-        className={`absolute top-0 h-screen transition-all duration-500 flex max-md:content-between ${
+        className={`absolute top-0 h-dvh transition-all duration-500 flex max-md:content-between ${
           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
         }`}
       >
