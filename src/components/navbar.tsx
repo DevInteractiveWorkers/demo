@@ -5,7 +5,7 @@ export const Navbar = ({ fixed = false }: { fixed?: boolean }) => {
   return (
     <div
       className={`md:pt-10 pt-6 w-full flex justify-between items-center z-50 md:px-25 px-12 pb-20 ${
-        fixed && "fixed top-0 "
+        fixed && "fixed top-0"
       }`}
     >
       <Link href={"https://interactiveworkers.com/"} target="blank">
