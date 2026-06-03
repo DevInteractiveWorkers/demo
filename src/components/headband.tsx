@@ -14,7 +14,7 @@ export default function Headband({ name, position, visible }: HeadbandProps) {
     >
       <div className="bg-[#AE232D] p-4 rounded-full z-10 headband-logo">
         <Image
-          src={"/03_Logo_Mark-02.png"}
+          src={"/logo/03_Logo_Mark/03_Logo_Mark-02.png"}
           alt={"logo"}
           width={1080}
           height={1080}

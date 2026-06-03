@@ -8,6 +8,7 @@ interface IconButtonProps extends IconProps {
   className?: string;
   onClick?: () => void;
   reversed?: boolean;
+  filledOnHover?: boolean;
 }
 
 export const IconButton = ({
@@ -17,6 +18,7 @@ export const IconButton = ({
   onClick,
   stroke = 0.6,
   filled,
+  filledOnHover,
   reversed,
   height = "72px",
   width = "72px",
@@ -43,7 +45,7 @@ export const IconButton = ({
     >
       <Icon
         icon={icon}
-        filled={filled && hover}
+        filled={filled || (filledOnHover && hover)}
         stroke={stroke}
         width={width}
         height={height}

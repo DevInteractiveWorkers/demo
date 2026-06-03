@@ -10,7 +10,7 @@ export const Navbar = ({ fixed = false }: { fixed?: boolean }) => {
     >
       <Link href={"https://interactiveworkers.com/"} target="blank">
         <Image
-          src={"/InteractiveWorkers logo color-03.webp"}
+          src={"/logo/01_Primary_Logo/Primary_Logo-04.png"}
           width={1080}
           height={1080}
           className="w-[200px] cursor-pointer"
