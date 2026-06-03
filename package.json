@@ -15,7 +15,7 @@
     "@react-pdf/renderer": "^4.3.0",
     "canvas": "^3.1.0",
     "iw-particles": "^1.0.1",
-    "next": "15.3.2",
+    "next": "^16.2.7",
     "pdfjs-dist": "^3.11.174",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
