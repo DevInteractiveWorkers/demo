@@ -5,6 +5,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import Candidate from "@/components/candidate";
 import { ParticlesComponent } from "iw-particles";
+import { Navbar } from "@/components/navbar";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -32,7 +33,8 @@ export default function Home() {
   };
 
   return (
-    <>
+    <main className="flex flex-col h-dvh overflow-y-hidden justify-center">
+      <Navbar fixed hide={isVideoPlaying} />
       <div
         className={`
           absolute
@@ -99,6 +101,6 @@ export default function Home() {
       >
         <ParticlesComponent id="gradient" color="#191919" />
       </div>
-    </>
+    </main>
   );
 }

@@ -24,10 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.className} bg-[#191919]`}>
       <body className={`bg-cover bg-no-repeat md:bg-top-right bg-top-left`}>
-        <main className="flex flex-col h-dvh overflow-y-hidden justify-center">
-          <Navbar fixed />
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );

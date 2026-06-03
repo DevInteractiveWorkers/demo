@@ -57,13 +57,24 @@ const PDFComponent = ({ file }: { file: string }) => {
       </Document>
       <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
         <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
-          <IconButton icon="prev" onClick={() => changePage(-1)} filled>
+          <IconButton
+            icon="prev"
+            filledOnHover
+            onClick={() => changePage(-1)}
+            className="active:scale-95 transition-all duration-200"
+          >
             Prev
           </IconButton>
           <span>
             {currentPage} / {numPages}
           </span>
-          <IconButton icon="next" onClick={() => changePage(1)} filled reversed>
+          <IconButton
+            icon="next"
+            filledOnHover
+            onClick={() => changePage(1)}
+            className="active:scale-95 transition-all duration-200"
+            reversed
+          >
             Next
           </IconButton>
         </div>

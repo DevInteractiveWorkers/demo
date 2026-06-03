@@ -76,9 +76,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     if (!video) return;
 
-    const handleLoadedMetadata = () => {
-      setVideoDuration(video.duration);
+    const updateDuration = () => {
+      if (Number.isFinite(video.duration)) {
+        setVideoDuration(video.duration);
+      }
     };
+
+    if (video.readyState >= 1) {
+      updateDuration();
+    }
+
+    video.addEventListener("loadedmetadata", updateDuration);
+    video.addEventListener("durationchange", updateDuration);
 
     const handlePlay = () => {
       setHasPlayed(true);
@@ -88,13 +97,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const handlePause = () => updatePlayingState(false);
     const handleEnded = () => updatePlayingState(false);
 
-    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+    video.addEventListener("loadedmetadata", updateDuration);
     video.addEventListener("play", handlePlay);
     video.addEventListener("pause", handlePause);
     video.addEventListener("ended", handleEnded);
 
     return () => {
-      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      video.removeEventListener("loadedmetadata", updateDuration);
       video.removeEventListener("play", handlePlay);
       video.removeEventListener("pause", handlePause);
       video.removeEventListener("ended", handleEnded);
@@ -188,10 +197,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         width={width}
         height={height}
         src={videoUrl}
+        preload="metadata"
         playsInline
-        className={`w-full h-full object-cover faded-video ${videoAnimationClass} transition-all duration-2000
-          ${isVideoPlaying ? "translate-x-0" : "translate-x-1/4"}`}
         onTimeUpdate={(e) => setVideoCurrentTime(e.currentTarget.currentTime)}
+        className={`w-full h-full object-cover faded-video ${videoAnimationClass} transition-all duration-2000
+        ${isVideoPlaying ? "translate-x-0" : "translate-x-1/4"}`}
       >
         Your browser does not support the video tag.
       </video>
@@ -210,13 +220,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         `}
       >
         <IconButton
-          filled
+          filledOnHover
           icon={
             videoCurrentTime >= videoDuration && videoDuration > 0
               ? "replay"
               : isVideoPlaying
                 ? "pause"
-                : "play"
+                : "play-circle"
           }
           onClick={handleVideoControls}
         />
@@ -241,7 +251,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           >
             {progressHover !== null && (
               <div
-                className="absolute h-full rounded-full bg-white/30"
+                className="absolute h-full rounded-full bg-white/30 transition-all"
                 style={{
                   width: `${progressHover}%`,
                 }}

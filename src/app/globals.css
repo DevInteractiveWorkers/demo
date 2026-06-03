@@ -34,13 +34,13 @@ body {
 @property --linear-mask-stop1 {
   syntax: "<percentage>";
   inherits: false;
-  initial-value: 60%;
+  initial-value: 0%;
 }
 
 @property --linear-mask-stop2 {
   syntax: "<percentage>";
   inherits: false;
-  initial-value: 80%;
+  initial-value: 0%;
 }
 
 /* 2. Register Radial Mask Properties */
@@ -59,30 +59,28 @@ body {
 .faded-video {
   /* Webkit configuration */
   -webkit-mask-image:
-    radial-gradient(
+    /* radial-gradient(
       circle,
       black var(--radial-mask-stop1),
       transparent var(--radial-mask-stop2)
-    ),
-    linear-gradient(
-      to left,
-      black var(--linear-mask-stop1),
-      transparent var(--linear-mask-stop2)
-    );
+    ), */ linear-gradient(
+    to left,
+    black var(--linear-mask-stop1),
+    transparent var(--linear-mask-stop2)
+  );
   -webkit-mask-composite: source-in;
 
   /* Standard configuration */
   mask-image:
-    radial-gradient(
+    /* radial-gradient(
       circle,
       black var(--radial-mask-stop1),
       transparent var(--radial-mask-stop2)
-    ),
-    linear-gradient(
-      to left,
-      black var(--linear-mask-stop1),
-      transparent var(--linear-mask-stop2)
-    );
+    ), */ linear-gradient(
+    to left,
+    black var(--linear-mask-stop1),
+    transparent var(--linear-mask-stop2)
+  );
   mask-composite: intersect;
 
   /* Animation Setup */
@@ -104,7 +102,7 @@ body {
 @keyframes dissolveIn {
   0% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 60%;
+    --linear-mask-stop1: 40%; /*used to be 60%*/
     --linear-mask-stop2: 80%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
@@ -134,7 +132,7 @@ body {
   }
   100% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 60%;
+    --linear-mask-stop1: 40%; /*used to be 60%*/
     --linear-mask-stop2: 80%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
