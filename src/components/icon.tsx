@@ -32,8 +32,8 @@ export const Icon = ({
       xmlns="http://www.w3.org/2000/svg"
       width={width.includes("px") ? width.slice(0, width.length - 2) : "24"}
       height={height.includes("px") ? height.slice(0, height.length - 2) : "24"}
-      fill={filled ? "white" : "none"}
-      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      viewBox="0 0 25.65 25.65"
     >
       <path
         fillRule="evenodd"

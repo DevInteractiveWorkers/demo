@@ -1,10 +1,11 @@
 "use client";
 
-import DemoVideo from "@/components/demo-video";
 import { IconButton } from "@/components/icon-button";
-import Image from "next/image";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import Candidate from "@/components/candidate";
+import { ParticlesComponent } from "iw-particles";
+import { Navbar } from "@/components/navbar";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -14,61 +15,92 @@ export default function Home() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isPDFOpen, setIsPDFOpen] = useState(false);
 
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
+  const [videoControls, setVideoControls] = useState<{
+    toggle: () => void;
+  } | null>(null);
+
+  const showIntroControls = !isVideoPlaying;
+
+  const handleWatchVideo = () => {
+    if (!isVideoOpen) {
+      setIsVideoOpen(true);
+      return;
+    }
+
+    videoControls?.toggle();
+  };
+
   return (
-    <>
-      <div className="lg:max-w-3xl md:w-1/2 max-w-full flex flex-col gap-5 z-10">
-        <h1 className="text-4xl pb-4 font-medium md:px-25 px-12">
-          DEMO <br />
-          <span className="font-bold">PORTFOLIO</span>
+    <main className="flex flex-col h-dvh overflow-y-hidden justify-center">
+      <Navbar fixed hide={isVideoPlaying} />
+      <div
+        className={`
+          absolute
+          max-w-full
+          flex
+          flex-col
+          gap-5
+          z-10
+          transition-all
+          duration-3000
+          ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
+        `}
+      >
+        <h1 className="text-6xl pb-4 font-medium md:px-25 px-12">
+          Axel Gonzalez <br />
+          CCTV Monitoring Agent
         </h1>
-        <div className="text-lg bg-[#C1272D] md:px-25 px-6 py-5 rounded-r-full">
-          <p>
-            If you are looking for alternatives to delegate regular assignments
-            with the best options for your budget and with a satisfactory degree
-            of results guaranteed, a VA is your best choice. Take a look at what
-            you would get from your potential virtual team member.
-          </p>
-        </div>
+
         <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 px-12">
           <IconButton
             filled
             icon={"play"}
-            stroke={0.6}
-            onClick={() => setIsVideoOpen(true)}
+            className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+            width="25px"
+            height="25px"
+            onClick={handleWatchVideo}
           >
-            WATCH VIDEO
+            Play
           </IconButton>
+
           <IconButton
             filled
-            icon={"watch"}
-            stroke={0.6}
+            icon="info"
+            className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+            width="25.26px"
+            height="25.26px"
             onClick={() => setIsPDFOpen(true)}
           >
-            RESUME
+            More info
           </IconButton>
         </div>
       </div>
 
-      <Image
-        src={"/hero.png"}
-        width={1080}
-        height={1080}
-        className="absolute right-0 bottom-0 h-full w-min max-lg:hidden -z-0"
-        alt="InteractiveWorkers"
-      />
-
-      <DemoVideo
-        videoUrl="/portfolios/Mauro/MauroLeal.mp4"
+      <Candidate
+        name="Axel Gonzalez"
+        position="CCTV Monitoring Agent"
         isOpen={isVideoOpen}
-        toggle={() => setIsVideoOpen(!isVideoOpen)}
+        videoUrl="/portfolios/Axel/Axel.webm"
+        toggle={() => {
+          setIsVideoOpen(false);
+          setIsVideoPlaying(false);
+        }}
+        onPlayingChange={setIsVideoPlaying}
+        onReady={setVideoControls}
       />
 
-      {/* this is now dynamically loaded client-only */}
       <PDFReader
-        pdf={"/portfolios/Mauro/MauroLealResumeDEMO.pdf"}
+        pdf="/portfolios/Mauro/MauroLealResumeDEMO.pdf"
         isOpen={isPDFOpen}
-        toggle={() => setIsPDFOpen(!isPDFOpen)}
+        toggle={() => setIsPDFOpen(false)}
       />
-    </>
+      <div
+        className={`fixed bg-[#C2272D] w-full h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-full -translate-x-1/2 -translate-y-1/3 overflow-hidden ${isVideoPlaying ? "opacity-0 -translate-x-full" : ""} transition-all duration-2000`}
+      >
+        <ParticlesComponent id="gradient" color="#191919" />
+      </div>
+    </main>
   );
 }

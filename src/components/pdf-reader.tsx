@@ -25,23 +25,31 @@ const PDFComponent = ({ file }: { file: string }) => {
     else setCurrentPage(currentPage + num);
   };
 
-  const [screenWidth, setScreenWidth] = useState<number | null>(null);
+  const [pageWidth, setPageWidth] = useState<number>();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setScreenWidth(window.screen.width);
-    }
+    const updateSize = () => {
+      setPageWidth(
+        window.innerWidth < window.innerHeight ? window.innerWidth : undefined,
+      );
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   return (
     <div className="relative flex items-center h-dvh">
-      <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+      <Document
+        file={file}
+        onLoadSuccess={onDocumentLoadSuccess}
+        onLoadError={(error) => console.error("PDF Load Error:", error)}
+        onSourceError={(error) => console.error("Source Error:", error)}
+      >
         <Page
-          width={
-            screenWidth && screenWidth < window.screen.height
-              ? screenWidth
-              : undefined
-          }
+          width={pageWidth}
           pageNumber={currentPage}
           renderAnnotationLayer={false}
           renderTextLayer={false}
@@ -49,13 +57,24 @@ const PDFComponent = ({ file }: { file: string }) => {
       </Document>
       <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
         <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
-          <IconButton icon="prev" onClick={() => changePage(-1)} filled>
+          <IconButton
+            icon="prev"
+            filledOnHover
+            onClick={() => changePage(-1)}
+            className="active:scale-95 transition-all duration-200"
+          >
             Prev
           </IconButton>
           <span>
             {currentPage} / {numPages}
           </span>
-          <IconButton icon="next" onClick={() => changePage(1)} filled reversed>
+          <IconButton
+            icon="next"
+            filledOnHover
+            onClick={() => changePage(1)}
+            className="active:scale-95 transition-all duration-200"
+            reversed
+          >
             Next
           </IconButton>
         </div>
@@ -76,13 +95,11 @@ const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
         className="absolute top-0 right-0 p-5 z-50"
         onClick={toggle}
       />
-      <div
-        className={`absolute top-0 h-dvh transition-all duration-500 flex max-md:content-between ${
-          isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
-        }`}
-      >
-        <PDFComponent file={"/portfolios/Mauro/MauroLealResumeDEMO.pdf"} />
-      </div>
+      {isOpen && (
+        <div className="absolute top-0 h-dvh flex">
+          <PDFComponent file="/portfolios/Mauro/MauroLealResumeDEMO.pdf" />
+        </div>
+      )}
     </div>
   );
 };

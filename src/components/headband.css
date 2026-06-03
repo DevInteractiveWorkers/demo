@@ -1,0 +1,91 @@
+:root {
+  --total-duration: 10s;
+}
+
+/* ---------- LOGO ---------- */
+
+.headband-logo {
+  transform-origin: center center;
+  transform: scale(0) rotate(0deg);
+
+  animation:
+    reveal-logo 0.5s ease-out forwards,
+    hide-logo 0.5s ease-in-out forwards 9.5s;
+}
+
+/* ---------- BAND ---------- */
+
+.reveal-band {
+  transform-origin: left center;
+  transform: scaleX(0);
+
+  animation:
+    reveal-element 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards
+      var(--delay, 0.3s),
+    hide-element 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards 8.8s;
+}
+
+/* ---------- TEXT ---------- */
+
+.reveal-band > .name {
+  clip-path: inset(0 100% 0 0);
+
+  animation:
+    reveal-text 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards
+      calc(var(--delay, 0.3s) + 0.2s),
+    hide-text 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards 8.4s;
+}
+
+@keyframes reveal-logo {
+  from {
+    transform: scale(0) rotate(0deg);
+  }
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes hide-logo {
+  from {
+    transform: scale(1) rotate(360deg);
+  }
+  to {
+    transform: scale(0) rotate(0deg);
+  }
+}
+
+@keyframes reveal-element {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes hide-element {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes reveal-text {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes hide-text {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 100% 0 0);
+  }
+}

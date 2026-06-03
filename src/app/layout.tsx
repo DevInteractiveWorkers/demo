@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google"; // Import from the built-in module
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
@@ -9,9 +9,10 @@ export const metadata: Metadata = {
     "We are a group of remote workers that fill positions for companies all over the world, we cover any requirement, anywhere.",
 };
 
-const montserrat = Montserrat({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-montserrat",
+  weight: ["400", "500", "600", "700"], // Choose the weights you need
+  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -21,14 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${montserrat.className} bg-[#181621]`}>
-      <body
-        className={`bg-[url(/main-banner.png)] bg-cover bg-no-repeat md:bg-top-right bg-top-left`}
-      >
-        <main className="flex flex-col h-dvh overflow-y-hidden">
-          <Navbar />
-          {children}
-        </main>
+    <html lang="en" className={`${poppins.className} bg-[#191919]`}>
+      <body className={`bg-cover bg-no-repeat md:bg-top-right bg-top-left`}>
+        {children}
       </body>
     </html>
   );
