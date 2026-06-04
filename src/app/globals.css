@@ -40,7 +40,7 @@ body {
 @property --linear-mask-stop2 {
   syntax: "<percentage>";
   inherits: false;
-  initial-value: 0%;
+  initial-value: 40%;
 }
 
 /* 2. Register Radial Mask Properties */
@@ -102,8 +102,8 @@ body {
 @keyframes dissolveIn {
   0% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 40%; /*used to be 60%*/
-    --linear-mask-stop2: 80%;
+    --linear-mask-stop1: 0%; /*used to be 60%*/
+    --linear-mask-stop2: 100%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
   }
@@ -132,8 +132,8 @@ body {
   }
   100% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 40%; /*used to be 60%*/
-    --linear-mask-stop2: 80%;
+    --linear-mask-stop1: 0%; /*used to be 60%*/
+    --linear-mask-stop2: 100%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
   }
