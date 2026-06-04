@@ -30,6 +30,24 @@ body {
   left: 0;
 }
 
+@layer base {
+  /* Change 'input' to 'input, select, textarea' if you want to target all form fields */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    /* Forces the background to be transparent using an inset shadow */
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+
+    /* Delays the browser's attempt to flash the default color */
+    transition: background-color 50000s ease-in-out 0s;
+  }
+}
+
+input {
+  -webkit-text-fill-color: #ffffff !important;
+}
+
 /* 1. Register Linear Mask Properties */
 @property --linear-mask-stop1 {
   syntax: "<percentage>";

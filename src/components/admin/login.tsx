@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { login } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Input from "./input";
+import Button from "./button";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -52,35 +54,25 @@ export default function LoginForm() {
         <br />
         Registration is not available.
       </p>
-      <label className="w-full">
-        Email <span className="text-[#C2272D]">*</span>
-      </label>
-      <input
-        placeholder="username@interactiveworkers.com"
+      <Input
         onChange={(e) => setEmail(e.target.value)}
+        type="email"
+        placeholder={"Email"}
         required
-        className="border rounded border-[#292929] w-full px-4 py-2"
+        example={"username@interactiveworkers.com"}
       />
-      <label className="w-full">
-        Password <span className="text-[#C2272D]">*</span>
-      </label>
-      <input
-        placeholder="*******"
+      <Input
         onChange={(e) => setPassword(e.target.value)}
+        placeholder={"Password"}
+        type="password"
+        secret
         required
-        className="border rounded border-[#292929] w-full px-4 py-2"
+        example={"********"}
       />
       {error && (
         <p className="text-[#C2272D] text-sm cursor-default">{error}</p>
       )}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200 cursor-pointer disabled:opacity-50"
-      >
-        {loading ? "Signing In..." : "Sign In"}
-      </button>
+      <Button>{loading ? "Signing In..." : "Sign In"}</Button>
       <p className="text-center cursor-default">
         Don't have an account or having trouble logging in?
         <br />
