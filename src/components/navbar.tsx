@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "./icon";
 
 export const Navbar = ({
   fixed = false,
@@ -15,7 +16,7 @@ export const Navbar = ({
       <div
         className={`w-full flex justify-between items-center md:px-25 px-12 pb-20 md:pt-10 pt-6 transition-transform duration-300 ${
           fixed
-            ? `fixed top-0 left-0 z-50 ${hide && "-translate-y-full group-hover:translate-y-0"}`
+            ? `fixed top-0 left-0 z-50 ${hide && "-translate-y-full group-hover:translate-y-0 bg-linear-0 from-0% to-[#191919]"}`
             : ""
         }`}
       >
@@ -30,13 +31,7 @@ export const Navbar = ({
         </Link>
 
         <div className="cursor-pointer">
-          <Image
-            src="/toggle.png"
-            width={50}
-            height={50}
-            alt="toggle"
-            className="h-auto"
-          />
+          <Icon icon={"toggle"} stroke={1.5} />
         </div>
       </div>
     </nav>
