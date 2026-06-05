@@ -9,6 +9,7 @@ export interface IconProps {
   stroke?: number;
   width?: string;
   height?: string;
+  viewBox?: string;
 }
 
 export const Icon = ({
@@ -17,6 +18,7 @@ export const Icon = ({
   stroke = 0.6,
   width = "72px",
   height = "72px",
+  viewBox,
 }: IconProps) => {
   const pathData = icons[icon];
 
@@ -33,7 +35,7 @@ export const Icon = ({
       width={width.includes("px") ? width.slice(0, width.length - 2) : "24"}
       height={height.includes("px") ? height.slice(0, height.length - 2) : "24"}
       fill={filled ? "currentColor" : "none"}
-      viewBox="0 0 25.65 25.65"
+      viewBox={viewBox ?? "0 0 25.65 25.65"}
     >
       <path
         fillRule="evenodd"

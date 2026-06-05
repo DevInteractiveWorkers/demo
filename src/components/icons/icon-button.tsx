@@ -24,6 +24,7 @@ export const IconButton = ({
   height = "72px",
   width = "72px",
   type = "button",
+  viewBox,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
   const [isPortrait, setIsPortait] = useState(false);
@@ -52,6 +53,7 @@ export const IconButton = ({
         stroke={stroke}
         width={width}
         height={height}
+        viewBox={viewBox}
       />
       {children}
     </button>
