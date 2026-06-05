@@ -273,7 +273,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             />
           </div>
 
-          <div className="text-white md:text-sm text-xs min-w-[90px] text-right">
+          <div className="text-white md:text-sm text-xs min-w-22.5 text-right">
             {formatTime(videoCurrentTime)} / {formatTime(videoDuration)}
           </div>
         </div>

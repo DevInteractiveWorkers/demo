@@ -56,7 +56,7 @@ const PDFComponent = ({ file }: { file: string }) => {
         />
       </Document>
       <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
-        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
+        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-linear-to-b from-transparent to-[#181621]">
           <IconButton
             icon="prev"
             filledOnHover

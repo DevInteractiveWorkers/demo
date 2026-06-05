@@ -25,7 +25,7 @@ export const Navbar = ({
             src="/logo/01_Primary_Logo/Primary_Logo-04.png"
             width={1080}
             height={1080}
-            className="w-[200px] cursor-pointer"
+            className="w-50 cursor-pointer"
             alt="InteractiveWorkers"
           />
         </Link>

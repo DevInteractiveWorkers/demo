@@ -31,7 +31,7 @@ export default function DashboardPage() {
         <Link href={"/"}>
           <Image
             src="/logo/01_Primary_Logo/Primary_Logo-05.png"
-            className="w-[200px] cursor-pointer"
+            className="w-50 cursor-pointer"
             width={1080}
             height={1080}
             alt="logo"
@@ -54,7 +54,7 @@ export default function DashboardPage() {
         </ul>
       </aside>
       <main>
-        <p className="cursor-default">Welcome back, {user.email}</p>
+        <p className="cursor-default text-2xl">Welcome back, {user.email}</p>
         <div className="mt-8">
           {selected === "positions" && <CreatePosition />}
           {selected === "candidates" && <CreateCandidate />}
