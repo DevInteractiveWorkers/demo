@@ -68,6 +68,7 @@ export default function Home() {
           <IconButton
             filled
             icon="info"
+            stroke={0}
             className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
             width="25.26px"
             height="25.26px"
