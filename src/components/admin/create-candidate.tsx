@@ -5,18 +5,20 @@ import { createCandidate, getPositions } from "@/lib/firestore";
 import { useEffect, useState } from "react";
 import Input from "./input";
 import Button from "./button";
+import { uploadToGHL } from "@/lib/gohighlevel";
 
 export default function CreateCandidate() {
   const [positions, setPositions] = useState<any[]>([]);
 
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-
   const [positionId, setPositionId] = useState("");
-
   const [resumeUrl, setResumeUrl] = useState("");
-
   const [videoUrl, setVideoUrl] = useState("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     getPositions().then((data) => {
@@ -32,18 +34,55 @@ export default function CreateCandidate() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    await createCandidate(name, lastName, positionId, resumeUrl, videoUrl);
+    try {
+      setSubmitting(true);
 
-    alert("Candidate created");
+      let finalResumeUrl = resumeUrl;
+      let finalVideoUrl = videoUrl;
 
-    setName("");
-    setLastName("");
-    setResumeUrl("");
-    setVideoUrl("");
+      // Upload resume if a file was selected
+      if (resumeFile) {
+        const uploaded = await uploadToGHL(resumeFile);
+
+        finalResumeUrl = uploaded.url || uploaded.fileUrl || uploaded.mediaUrl;
+      }
+
+      // Upload video if a file was selected
+      if (videoFile) {
+        const uploaded = await uploadToGHL(videoFile);
+
+        finalVideoUrl = uploaded.url || uploaded.fileUrl || uploaded.mediaUrl;
+      }
+
+      await createCandidate(
+        name,
+        lastName,
+        positionId,
+        finalResumeUrl,
+        finalVideoUrl,
+      );
+
+      alert("Candidate created");
+
+      setName("");
+      setLastName("");
+      setPositionId("");
+
+      setResumeUrl("");
+      setVideoUrl("");
+
+      setResumeFile(null);
+      setVideoFile(null);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create candidate");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
+    <form onSubmit={handleSubmit} className="grid gap-4 max-w-3xl">
       <h2 className="text-xl font-semibold">Create Candidate</h2>
 
       <Input
@@ -69,19 +108,53 @@ export default function CreateCandidate() {
         }}
       />
 
-      <Input
-        value={resumeUrl}
-        onChange={(e) => setResumeUrl(e.target.value)}
-        placeholder="Resume URL"
-      />
+      <div
+        className={`grid gap-4 ${resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+      >
+        {!resumeFile && (
+          <Input
+            value={resumeUrl}
+            onChange={(e) => setResumeUrl(e.target.value)}
+            placeholder="Resume URL"
+          />
+        )}
+        {!resumeUrl && (
+          <Input
+            type="file"
+            placeholder="Upload Resume"
+            accept=".pdf,.doc,.docx"
+            onFileSelect={(file) => {
+              setResumeFile(file);
+            }}
+          />
+        )}
+      </div>
 
-      <Input
-        value={videoUrl}
-        onChange={(e) => setVideoUrl(e.target.value)}
-        placeholder="Video URL"
-      />
+      <div
+        className={`grid gap-4 ${videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+      >
+        {!videoFile && (
+          <Input
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="Video URL"
+          />
+        )}
+        {!videoUrl && (
+          <Input
+            type="file"
+            placeholder="Upload Video"
+            accept="video/*"
+            onFileSelect={(file) => {
+              setVideoFile(file);
+            }}
+          />
+        )}
+      </div>
 
-      <Button>Create Candidate</Button>
+      <Button disabled={submitting}>
+        {submitting ? "Creating Candidate..." : "Create Candidate"}
+      </Button>
     </form>
   );
 }

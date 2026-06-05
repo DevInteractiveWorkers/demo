@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Icon } from "../icon";
 import { IconButton } from "../icon-button";
 
@@ -38,6 +38,12 @@ type InputProps = (
       example?: string;
       options: { name: string; value: any }[];
       onSelect?: (option: { name: string; value: any }) => void;
+    }
+  | {
+      type: "file";
+      placeholder?: string;
+      accept?: string;
+      onFileSelect?: (file: File | null) => void;
     }
   | {
       type: "switch";
@@ -211,6 +217,49 @@ export default function Input(props: InputProps) {
               )}
             </ul>
           )}
+        </div>
+      );
+    }
+    case "file": {
+      const { id, placeholder, accept, onFileSelect } = props;
+
+      const generatedId = useId();
+      const inputId = id ?? generatedId;
+
+      const [fileName, setFileName] = useState("");
+
+      return (
+        <div className="w-full">
+          <label className="w-full">
+            {placeholder} <Required />
+          </label>
+
+          <div className="relative">
+            <input
+              id={inputId}
+              type="file"
+              accept={accept}
+              required={required}
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+
+                setFileName(file?.name ?? "");
+                onFileSelect?.(file);
+              }}
+            />
+
+            <label
+              htmlFor={inputId}
+              className="border rounded border-[#292929] w-full px-4 py-2 flex items-center justify-between cursor-pointer"
+            >
+              <span className={fileName ? "" : "text-white/50"}>
+                {fileName || "Choose file"}
+              </span>
+
+              <Icon icon="upload" filled stroke={0} width="24" height="24" />
+            </label>
+          </div>
         </div>
       );
     }
