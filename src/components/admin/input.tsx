@@ -1,7 +1,7 @@
 "use client";
 import { useId, useState } from "react";
-import { Icon } from "../icon";
-import { IconButton } from "../icon-button";
+import { Icon } from "../icons/icon";
+import { IconButton } from "../icons/icon-button";
 
 type BasicInputProps = {
   id?: string;

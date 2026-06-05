@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { IconButton } from "./icon-button";
+import { IconButton } from "../icons/icon-button";
 
 export interface VideoPlayerProps {
   videoUrl: string;

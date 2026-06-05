@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { IconButton } from "../components/icon-button";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
+import { IconButton } from "./icons/icon-button";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 

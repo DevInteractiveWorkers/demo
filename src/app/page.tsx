@@ -1,9 +1,9 @@
 "use client";
 
-import { IconButton } from "@/components/icon-button";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Candidate from "@/components/candidate";
+import Candidate from "@/components/video/candidate";
+import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/navbar";
 

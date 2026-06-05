@@ -1,6 +1,6 @@
 "use client";
-import { Icon, IconProps } from "./icon";
 import { useEffect, useState } from "react";
+import { Icon, IconProps } from "./icon";
 
 interface IconButtonProps extends IconProps {
   icon: string;
