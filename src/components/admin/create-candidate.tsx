@@ -63,21 +63,18 @@ export default function CreateCandidate() {
       );
 
       alert("Candidate created");
-
-      setName("");
-      setLastName("");
-      setPositionId("");
-
-      setResumeUrl("");
-      setVideoUrl("");
-
-      setResumeFile(null);
-      setVideoFile(null);
     } catch (error) {
       console.error(error);
       alert("Failed to create candidate");
     } finally {
       setSubmitting(false);
+      setName("");
+      setLastName("");
+      setPositionId("");
+      setResumeUrl("");
+      setVideoUrl("");
+      setResumeFile(null);
+      setVideoFile(null);
     }
   }
 
