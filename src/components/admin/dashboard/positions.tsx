@@ -184,7 +184,10 @@ function PositionCard({
       </div>
 
       <div className="aspect-video bg-[#202020] flex flex-col justify-center items-center opacity-50">
-        <Icon icon="briefcase" filled stroke={0} width="48" height="48" />
+        <div className="flex flex-col justify-center items-center w-full h-full opacity-25">
+          <Icon icon="briefcase" filled stroke={0} />
+          No Icon
+        </div>
       </div>
 
       <div className="p-4">

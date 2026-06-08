@@ -16,29 +16,43 @@ export default function EditCandidate(
   const { candidate, onUpdated } = props;
 
   const [positions, setPositions] = useState<any[]>([]);
+  const [saving, setSaving] = useState(false);
 
-  const [name, setName] = useState(candidate.name);
-  const [lastName, setLastName] = useState(candidate.lastName);
-  const [resumeUrl, setResumeUrl] = useState(candidate.resumeUrl);
-  const [videoUrl, setVideoUrl] = useState(candidate.videoUrl);
-
-  const [positionId, setPositionId] = useState(candidate.position?.id ?? "");
+  const [name, setName] = useState(candidate?.name ?? "");
+  const [lastName, setLastName] = useState(candidate?.lastName ?? "");
+  const [resumeUrl, setResumeUrl] = useState(candidate?.resumeUrl ?? "");
+  const [videoUrl, setVideoUrl] = useState(candidate?.videoUrl ?? "");
+  const [positionId, setPositionId] = useState(candidate?.position?.id ?? "");
 
   useEffect(() => {
-    getPositions().then(setPositions);
+    getPositions().then((data) => {
+      setPositions(data);
+    });
   }, []);
 
-  async function handleUpdate() {
-    await updateCandidate(candidate.id, {
-      name,
-      lastName,
-      positionId,
-      resumeUrl,
-      videoUrl,
-    });
+  async function handleUpdate(e?: React.FormEvent) {
+    e?.preventDefault();
 
-    onUpdated?.();
-    props.toggleClose?.();
+    try {
+      setSaving(true);
+
+      console.log("Updating candidate:", candidate.id);
+
+      await updateCandidate(candidate.id, {
+        name,
+        lastName,
+        positionId,
+        resumeUrl,
+        videoUrl,
+      });
+
+      onUpdated?.();
+      props.toggleClose?.();
+    } catch (error) {
+      console.error("Failed to update candidate:", error);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -59,10 +73,15 @@ export default function EditCandidate(
 
       <Input
         type="select"
-        selected={positions.find((p) => p.id === positionId)?.name}
-        options={positions}
         placeholder="Position"
-        onSelect={(option) => setPositionId(option.value)}
+        selected={positions.find((p) => p.id === positionId)?.name ?? ""}
+        options={positions.map((p) => ({
+          name: p.name,
+          value: p.id,
+        }))}
+        onSelect={(option) => {
+          setPositionId(option.value);
+        }}
       />
 
       <Input
@@ -77,7 +96,7 @@ export default function EditCandidate(
         placeholder="Video URL"
       />
 
-      <Button>Update</Button>
+      <Button disabled={saving}>{saving ? "Updating..." : "Update"}</Button>
     </Form>
   );
 }

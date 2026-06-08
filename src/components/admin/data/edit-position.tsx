@@ -4,6 +4,7 @@ import { useState } from "react";
 import Form, { FormProps } from "@/components/form";
 import Input from "../input";
 import Button from "../button";
+
 import { updatePosition } from "@/lib/firestore";
 
 export default function EditPosition(
@@ -14,19 +15,33 @@ export default function EditPosition(
 ) {
   const { position, onUpdated } = props;
 
-  const [name, setName] = useState(position.name);
-  const [description, setDescription] = useState(position.description);
-  const [active, setActive] = useState(position.active);
+  const [saving, setSaving] = useState(false);
 
-  async function handleUpdate() {
-    await updatePosition(position.id, {
-      name,
-      description,
-      active,
-    });
+  const [name, setName] = useState(position?.name ?? "");
+  const [description, setDescription] = useState(position?.description ?? "");
+  const [active, setActive] = useState(position?.active ?? true);
 
-    onUpdated?.();
-    props.toggleClose?.();
+  async function handleUpdate(e?: React.FormEvent) {
+    e?.preventDefault();
+
+    try {
+      setSaving(true);
+
+      console.log("Updating position:", position.id);
+
+      await updatePosition(position.id, {
+        name,
+        description,
+        active,
+      });
+
+      onUpdated?.();
+      props.toggleClose?.();
+    } catch (error) {
+      console.error("Failed to update position:", error);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -53,7 +68,7 @@ export default function EditPosition(
         label="Active"
       />
 
-      <Button>Update</Button>
+      <Button disabled={saving}>{saving ? "Updating..." : "Update"}</Button>
     </Form>
   );
 }
