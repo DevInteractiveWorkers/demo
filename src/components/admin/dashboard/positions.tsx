@@ -8,6 +8,8 @@ import { IconButton } from "@/components/icons/icon-button";
 import { Icon } from "@/components/icons/icon";
 
 import CreatePosition from "../create-position";
+import DataTable from "../data-table";
+import { useFormatDate } from "@/lib/useFormatDate";
 
 export default function Positions() {
   const [positions, setPositions] = useState<any[]>([]);
@@ -83,11 +85,35 @@ export default function Positions() {
           ))}
         </div>
       ) : (
-        <div className="border border-[#292929] rounded-xl overflow-hidden">
-          {filteredPositions.map((position) => (
-            <PositionRow key={position.id} position={position} />
-          ))}
-        </div>
+        <DataTable
+          data={filteredPositions}
+          columns={[
+            {
+              key: "name",
+              label: "Position",
+            },
+            {
+              key: "description",
+              label: "Description",
+            },
+            {
+              key: "active",
+              label: "Status",
+              render: (p) => (p.active ? "Active" : "Inactive"),
+            },
+            {
+              key: "createdAt",
+              label: "Created",
+              render: (p) => useFormatDate(p.createdAt, "long"),
+            },
+          ]}
+          footer={
+            <>
+              <span className="opacity-50">Total Positions:</span>{" "}
+              {filteredPositions.length}
+            </>
+          }
+        />
       )}
 
       <CreatePosition isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
@@ -120,24 +146,6 @@ function PositionCard({ position }: { position: any }) {
         <p className="text-sm opacity-60 mt-2 line-clamp-3">
           {position.description}
         </p>
-      </div>
-    </div>
-  );
-}
-
-function PositionRow({ position }: { position: any }) {
-  return (
-    <div className="grid grid-cols-[1fr_3fr_auto] gap-4 p-4 border-b border-[#292929]">
-      <div>{position.name}</div>
-
-      <div className="opacity-60 truncate">{position.description}</div>
-
-      <div
-        className={`text-sm ${
-          position.active ? "text-green-500" : "text-red-500"
-        }`}
-      >
-        {position.active ? "Active" : "Inactive"}
       </div>
     </div>
   );

@@ -5,8 +5,9 @@ import { getCandidates } from "@/lib/firestore";
 import { IconButton } from "@/components/icons/icon-button";
 import SearchInput from "../search";
 import { Icon } from "@/components/icons/icon";
-import Button from "../button";
 import CreateCandidate from "../create-candidate";
+import { useFormatDate } from "@/lib/useFormatDate";
+import DataTable from "../data-table";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -16,6 +17,8 @@ export default function Candidates() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [monthFilter, setMonthFilter] = useState<string>("all");
+
   useEffect(() => {
     getCandidates()
       .then(setCandidates)
@@ -23,9 +26,12 @@ export default function Candidates() {
   }, []);
 
   const filteredCandidates = candidates.filter((candidate) => {
+    if (monthFilter === "all") return true;
+
     const query = search.toLowerCase();
 
     return (
+      useFormatDate(candidate.createdAt, "month") === monthFilter ||
       candidate.name?.toLowerCase().includes(query) ||
       candidate.lastName?.toLowerCase().includes(query) ||
       candidate.position?.name?.toLowerCase().includes(query)
@@ -85,11 +91,53 @@ export default function Candidates() {
           ))}
         </div>
       ) : (
-        <div className="border border-[#292929] rounded-xl overflow-hidden">
-          {filteredCandidates.map((candidate) => (
-            <CandidateRow key={candidate.id} candidate={candidate} />
-          ))}
-        </div>
+        <DataTable
+          data={filteredCandidates}
+          columns={[
+            {
+              key: "name",
+              label: "Name",
+              render: (c) => `${c.name} ${c.lastName}`,
+            },
+            {
+              key: "position",
+              label: "Position",
+              render: (c) => c.position?.name,
+            },
+            {
+              key: "resume",
+              label: "Resume",
+              render: (c) =>
+                c.resumeUrl ? (
+                  <a href={c.resumeUrl}>Resume</a>
+                ) : (
+                  <i>No Resume</i>
+                ),
+            },
+            {
+              key: "video",
+              label: "Video",
+              render: (c) =>
+                c.videoUrl ? <a href={c.videoUrl}>Video</a> : <i>No Video</i>,
+            },
+            {
+              key: "createdAt",
+              label: "Created",
+              render: (c) => useFormatDate(c.createdAt, "long"),
+            },
+            {
+              key: "updatedAt",
+              label: "Updated",
+              render: (c) => useFormatDate(c.lastUpdatedAt, "month-year"),
+            },
+          ]}
+          footer={
+            <>
+              <span className="opacity-50">Total Candidates:</span>{" "}
+              {filteredCandidates.length}
+            </>
+          }
+        />
       )}
       <CreateCandidate
         isOpen={isOpen}
@@ -124,32 +172,6 @@ function CandidateCard({ candidate }: { candidate: any }) {
         </h3>
 
         <p className="text-sm opacity-60">{candidate.position?.name}</p>
-      </div>
-    </div>
-  );
-}
-
-function CandidateRow({ candidate }: { candidate: any }) {
-  return (
-    <div className="grid grid-cols-[1fr_1fr_auto] gap-4 p-4 border-b border-[#292929]">
-      <div>
-        {candidate.name} {candidate.lastName}
-      </div>
-
-      <div className="opacity-60">{candidate.position?.name}</div>
-
-      <div className="flex gap-4">
-        {candidate.resumeUrl && (
-          <a href={candidate.resumeUrl} target="_blank" rel="noreferrer">
-            Resume
-          </a>
-        )}
-
-        {candidate.videoUrl && (
-          <a href={candidate.videoUrl} target="_blank" rel="noreferrer">
-            Video
-          </a>
-        )}
       </div>
     </div>
   );
