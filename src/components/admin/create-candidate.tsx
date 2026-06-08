@@ -2,12 +2,13 @@
 
 import { createCandidate, getPositions } from "@/lib/firestore";
 
-import { useEffect, useState } from "react";
 import Input from "./input";
 import Button from "./button";
+import { useState, useEffect } from "react";
 import { uploadToGHL } from "@/lib/gohighlevel";
+import Form, { FormProps } from "../form";
 
-export default function CreateCandidate() {
+export default function CreateCandidate(props: FormProps) {
   const [positions, setPositions] = useState<any[]>([]);
 
   const [name, setName] = useState("");
@@ -78,8 +79,10 @@ export default function CreateCandidate() {
     }
   }
 
+  const { isOpen, toggleClose } = props;
+
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4 max-w-3xl">
+    <Form isOpen={isOpen} onSubmit={handleSubmit} toggleClose={toggleClose}>
       <h2 className="text-xl font-semibold">Create Candidate</h2>
 
       <Input
@@ -152,6 +155,6 @@ export default function CreateCandidate() {
       <Button disabled={submitting}>
         {submitting ? "Creating Candidate..." : "Create Candidate"}
       </Button>
-    </form>
+    </Form>
   );
 }

@@ -7,6 +7,8 @@ import {
   getDocs,
   query,
   serverTimestamp,
+  getDoc,
+  DocumentReference,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
@@ -52,4 +54,35 @@ export async function getPositions() {
       ...data,
     };
   });
+}
+
+export async function getCandidates() {
+  const snapshot = await getDocs(collection(db, "candidates"));
+
+  const candidates = await Promise.all(
+    snapshot.docs.map(async (candidateDoc) => {
+      const data = candidateDoc.data();
+
+      let position = null;
+
+      if (data.position) {
+        const positionSnap = await getDoc(data.position as DocumentReference);
+
+        if (positionSnap.exists()) {
+          position = {
+            id: positionSnap.id,
+            ...positionSnap.data(),
+          };
+        }
+      }
+
+      return {
+        id: candidateDoc.id,
+        ...data,
+        position,
+      };
+    }),
+  );
+
+  return candidates;
 }

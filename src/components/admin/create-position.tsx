@@ -4,8 +4,9 @@ import { useState } from "react";
 import { createPosition } from "@/lib/firestore";
 import Input from "./input";
 import Button from "./button";
+import Form, { FormProps } from "../form";
 
-export default function CreatePosition() {
+export default function CreatePosition(props: FormProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -24,8 +25,10 @@ export default function CreatePosition() {
     }
   }
 
+  const { isOpen, toggleClose } = props;
+
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
+    <Form isOpen={isOpen} onSubmit={handleSubmit} toggleClose={toggleClose}>
       <h2 className="text-xl font-semibold">Create Position</h2>
 
       <Input
@@ -43,6 +46,6 @@ export default function CreatePosition() {
         example="A remote professional who provides administrative, technical, or creative support to clients from a distance. Acting as digital right-hand partners, VAs handle day-to-day operations so business owners can focus on growth"
       />
       <Button>Create Position</Button>
-    </form>
+    </Form>
   );
 }

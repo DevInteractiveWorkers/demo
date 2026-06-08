@@ -23,6 +23,7 @@ type InputProps = (
       onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
       placeholder?: string;
       example?: string;
+      rows?: number;
     }
   | {
       type: "password";
@@ -133,7 +134,7 @@ export default function Input(props: InputProps) {
       );
     }
     case "textarea": {
-      const { id, value, placeholder, example, onChange } = props;
+      const { id, value, placeholder, example, onChange, rows } = props;
       return (
         <div className="w-full">
           <label className="w-full">
@@ -145,6 +146,7 @@ export default function Input(props: InputProps) {
             onChange={onChange}
             placeholder={example}
             required={props.required}
+            rows={rows ?? 5}
             className="border rounded border-[#292929] w-full px-4 py-2"
           />
         </div>

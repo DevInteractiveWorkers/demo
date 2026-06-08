@@ -58,9 +58,9 @@ export default function Home() {
             filled
             icon={"play"}
             className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+            onClick={handleWatchVideo}
             width="25px"
             height="25px"
-            onClick={handleWatchVideo}
           >
             Play
           </IconButton>
@@ -70,9 +70,9 @@ export default function Home() {
             icon="info"
             stroke={0}
             className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-            width="25.26px"
-            height="25.26px"
             onClick={() => setIsPDFOpen(true)}
+            width="25px"
+            height="25px"
           >
             More info
           </IconButton>
