@@ -7,7 +7,8 @@ import SearchInput from "../search";
 import { Icon } from "@/components/icons/icon";
 import CreateCandidate from "../create-candidate";
 import { useFormatDate } from "@/lib/useFormatDate";
-import DataTable from "../data-table";
+import DataTable from "../data/data-table";
+import EditCandidate from "../data/edit-candidate";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -18,6 +19,22 @@ export default function Candidates() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [monthFilter, setMonthFilter] = useState<string>("all");
+  const [editingCandidate, setEditingCandidate] = useState<any>(null);
+
+  const loadCandidates = async () => {
+    setLoading(true);
+
+    try {
+      const data = await getCandidates();
+      setCandidates(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCandidates();
+  }, []);
 
   useEffect(() => {
     getCandidates()
@@ -87,7 +104,11 @@ export default function Candidates() {
       {view === "grid" ? (
         <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredCandidates.map((candidate) => (
-            <CandidateCard key={candidate.id} candidate={candidate} />
+            <CandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              onEdit={() => setEditingCandidate(candidate)}
+            />
           ))}
         </div>
       ) : (
@@ -137,6 +158,9 @@ export default function Candidates() {
               {filteredCandidates.length}
             </>
           }
+          onRowSelect={(candidate) => {
+            setEditingCandidate(candidate);
+          }}
         />
       )}
       <CreateCandidate
@@ -145,13 +169,39 @@ export default function Candidates() {
           setIsOpen(false);
         }}
       />
+      {editingCandidate && (
+        <EditCandidate
+          candidate={editingCandidate}
+          isOpen
+          toggleClose={() => {
+            setEditingCandidate(null);
+            loadCandidates();
+          }}
+          onUpdated={loadCandidates}
+        />
+      )}
     </section>
   );
 }
-
-function CandidateCard({ candidate }: { candidate: any }) {
+function CandidateCard({
+  candidate,
+  onEdit,
+}: {
+  candidate: any;
+  onEdit: () => void;
+}) {
   return (
-    <div className="border border-[#292929] rounded-xl overflow-hidden">
+    <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card">
+      <div className="absolute top-0 right-0 z-10 pt-4 group-hover/card:opacity-100 opacity-0 transition-all duration-200">
+        <IconButton
+          icon="dots-vertical"
+          width="50px"
+          height="30px"
+          stroke={3}
+          onClick={onEdit}
+        />
+      </div>
+
       <div className="aspect-square bg-[#202020]">
         {candidate.videoUrl ? (
           <video

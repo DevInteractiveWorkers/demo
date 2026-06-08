@@ -8,8 +8,9 @@ import { IconButton } from "@/components/icons/icon-button";
 import { Icon } from "@/components/icons/icon";
 
 import CreatePosition from "../create-position";
-import DataTable from "../data-table";
+import DataTable from "../data/data-table";
 import { useFormatDate } from "@/lib/useFormatDate";
+import EditPosition from "../data/edit-position";
 
 export default function Positions() {
   const [positions, setPositions] = useState<any[]>([]);
@@ -18,6 +19,23 @@ export default function Positions() {
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isOpen, setIsOpen] = useState(false);
+
+  const [editingPosition, setEditingPosition] = useState<any>(null);
+
+  const loadPositions = async () => {
+    setLoading(true);
+
+    try {
+      const data = await getPositions();
+      setPositions(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPositions();
+  }, []);
 
   useEffect(() => {
     getPositions()
@@ -59,7 +77,6 @@ export default function Positions() {
           />
         </div>
       </div>
-
       <div className="flex justify-between items-center">
         <p className="opacity-60">{filteredPositions.length} positions</p>
 
@@ -77,11 +94,14 @@ export default function Positions() {
           Add Position
         </IconButton>
       </div>
-
       {view === "grid" ? (
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredPositions.map((position) => (
-            <PositionCard key={position.id} position={position} />
+            <PositionCard
+              key={position.id}
+              position={position}
+              onEdit={() => setEditingPosition(position)}
+            />
           ))}
         </div>
       ) : (
@@ -95,11 +115,16 @@ export default function Positions() {
             {
               key: "description",
               label: "Description",
+              render: (p) => <p className="line-clamp-2">{p.description}</p>,
             },
             {
               key: "active",
               label: "Status",
-              render: (p) => (p.active ? "Active" : "Inactive"),
+              render: (p) => (
+                <span className={p.active ? "text-green-500" : "text-red-500"}>
+                  {p.active ? "Active" : "Inactive"}
+                </span>
+              ),
             },
             {
               key: "createdAt",
@@ -113,17 +138,51 @@ export default function Positions() {
               {filteredPositions.length}
             </>
           }
+          onRowSelect={(position) => {
+            setEditingPosition(position);
+          }}
         />
       )}
-
-      <CreatePosition isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
+      <CreatePosition
+        isOpen={isOpen}
+        toggleClose={() => {
+          setIsOpen(false);
+          loadPositions();
+        }}
+      />{" "}
+      {editingPosition && (
+        <EditPosition
+          position={editingPosition}
+          isOpen
+          toggleClose={() => {
+            setEditingPosition(null);
+            loadPositions();
+          }}
+          onUpdated={loadPositions}
+        />
+      )}
     </section>
   );
 }
-
-function PositionCard({ position }: { position: any }) {
+function PositionCard({
+  position,
+  onEdit,
+}: {
+  position: any;
+  onEdit: () => void;
+}) {
   return (
-    <div className="border border-[#292929] rounded-xl overflow-hidden">
+    <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card">
+      <div className="absolute top-0 right-0 z-10 pt-4 group-hover/card:opacity-100 opacity-0 transition-all duration-200">
+        <IconButton
+          icon="dots-vertical"
+          width="50px"
+          height="30px"
+          stroke={3}
+          onClick={onEdit}
+        />
+      </div>
+
       <div className="aspect-video bg-[#202020] flex flex-col justify-center items-center opacity-50">
         <Icon icon="briefcase" filled stroke={0} width="48" height="48" />
       </div>

@@ -32,7 +32,7 @@ export default function Form({
       </div>
       <form
         onSubmit={onSubmit}
-        className="md:p-10 px- py-10 w-full md:max-w-xl sm:max-w-9/12 max-w-11/12 mx-2 grid justify-items-center gap-4
+        className="md:p-10 px-4 py-10 w-full md:max-w-xl sm:max-w-9/12 max-w-11/12 mx-2 grid justify-items-center gap-4
         border rounded-2xl border-[#292929] absolute z-10
         bg-linear-0 from-[#191919] to-[#292929] inset-shadow-[0_-10px_10px_5px_#191919] backdrop-blur-2xl"
       >
