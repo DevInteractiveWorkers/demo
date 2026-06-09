@@ -10,17 +10,23 @@ import {
   getDoc,
   DocumentReference,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
+import { Candidate, Position } from "./type";
 
 export async function createPosition(name: string, description: string) {
-  return addDoc(collection(db, "positions"), {
+  const id = name.trim().toLowerCase().replace(/\s+/g, "-");
+
+  await setDoc(doc(db, "positions", id), {
     name,
     description,
     active: true,
     createdAt: serverTimestamp(),
   });
+
+  return id;
 }
 
 export async function createCandidate(
@@ -43,6 +49,17 @@ export async function createCandidate(
   });
 }
 
+export async function getPosition(id: string): Promise<Position | null> {
+  const snap = await getDoc(doc(db, "positions", id));
+
+  if (!snap.exists()) return null;
+
+  return {
+    id: snap.id,
+    ...(snap.data() as Omit<Position, "id">),
+  };
+}
+
 export async function getPositions() {
   const snapshot = await getDocs(query(collection(db, "positions")));
 
@@ -57,14 +74,14 @@ export async function getPositions() {
   });
 }
 
-export async function getCandidates() {
+export async function getCandidates(): Promise<Candidate[]> {
   const snapshot = await getDocs(collection(db, "candidates"));
 
   const candidates = await Promise.all(
     snapshot.docs.map(async (candidateDoc) => {
       const data = candidateDoc.data();
 
-      let position = null;
+      let position: Position | null = null;
 
       if (data.position) {
         const positionSnap = await getDoc(data.position as DocumentReference);
@@ -72,20 +89,57 @@ export async function getCandidates() {
         if (positionSnap.exists()) {
           position = {
             id: positionSnap.id,
-            ...positionSnap.data(),
+            ...(positionSnap.data() as Omit<Position, "id">),
           };
         }
       }
 
       return {
         id: candidateDoc.id,
-        ...data,
+        ...(data as Omit<Candidate, "id" | "position">),
         position,
       };
     }),
   );
 
   return candidates;
+}
+
+export async function getCandidatesByPosition(
+  positionId: string,
+): Promise<Candidate[]> {
+  const candidates = await getCandidates();
+
+  return candidates.filter(
+    (candidate) => candidate.position?.id === positionId,
+  );
+}
+
+export async function getCandidate(id: string): Promise<Candidate | null> {
+  const candidateSnap = await getDoc(doc(db, "candidates", id));
+
+  if (!candidateSnap.exists()) return null;
+
+  const data = candidateSnap.data();
+
+  let position: Position | null = null;
+
+  if (data.position) {
+    const positionSnap = await getDoc(data.position as DocumentReference);
+
+    if (positionSnap.exists()) {
+      position = {
+        id: positionSnap.id,
+        ...(positionSnap.data() as Omit<Position, "id">),
+      };
+    }
+  }
+
+  return {
+    id: candidateSnap.id,
+    ...(data as Omit<Candidate, "id" | "position">),
+    position,
+  };
 }
 
 export async function updatePosition(

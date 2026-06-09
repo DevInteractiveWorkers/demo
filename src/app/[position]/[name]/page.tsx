@@ -1,16 +1,34 @@
-"use client";
+import { getCandidate, getPosition } from "@/lib/firestore";
 
-import { useParams } from "next/navigation";
-import { useEffect } from "react";
-import Home from "../../page";
+import CandidatePageClient from "./CandidatePageClient";
 
-export default function Page() {
-  const { position } = useParams();
-  const positionId = position as string;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{
+    position: string;
+    name: string;
+  }>;
+}) {
+  const { position, name } = await params;
 
-  useEffect(() => {
-    if (positionId) return;
-  });
+  const [positionData, candidateData] = await Promise.all([
+    getPosition(position),
+    getCandidate(name),
+  ]);
 
-  return <Home />;
+  if (!positionData || !candidateData) {
+    return (
+      <main className="flex items-center justify-center h-dvh">
+        <h1 className="text-2xl font-medium">Not found</h1>
+      </main>
+    );
+  }
+
+  return (
+    <CandidatePageClient
+      candidate={JSON.parse(JSON.stringify(candidateData))}
+      position={JSON.parse(JSON.stringify(positionData))}
+    />
+  );
 }

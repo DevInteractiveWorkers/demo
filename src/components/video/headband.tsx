@@ -25,7 +25,11 @@ export default function Headband({ name, position, visible }: HeadbandProps) {
         <HeadbandText index={1} className="text-5xl" background="#AE232D">
           <h2 className="name">{name}</h2>
         </HeadbandText>
-        <HeadbandText index={2} className="text-2xl delay-2000">
+        <HeadbandText
+          index={2}
+          className="text-2xl delay-2000"
+          background="#DD272D"
+        >
           <label className="name">{position}</label>
         </HeadbandText>
       </div>
@@ -52,10 +56,16 @@ const HeadbandText = ({
 }: HeadbandTextProps) => {
   return (
     <span
-      className={`w-max font-semibold bg-[${background}] py-2 pl-4 pr-10 rounded-r-full relative 
-            after:bg-[${background}] after:h-full after:rounded-full after:w-1/2 after:absolute after:top-0 after:left-0
-            after:-translate-x-1/2 after:-z-10 z-10 reveal-band ${className}`}
-      style={{ "--delay": `${index * 0.5}s` } as React.CSSProperties}
+      className={`w-max font-semibold py-2 pl-4 pr-10 rounded-r-full relative
+      after:h-full after:rounded-full after:w-1/2 after:absolute
+      after:top-0 after:left-0 after:-translate-x-1/2 after:-z-10
+      z-10 reveal-band ${className}`}
+      style={
+        {
+          "--delay": `${index * 0.5}s`,
+          "--bg-color": background,
+        } as React.CSSProperties
+      }
     >
       {"children" in props ? props.children : props.name}
     </span>
