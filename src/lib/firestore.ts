@@ -47,6 +47,7 @@ export async function createCandidate(
   positionId: string,
   resumeUrl = "",
   videoUrl = "",
+  hasHeadband?: boolean,
 ) {
   const positionRef = doc(db, "positions", positionId);
 
@@ -60,6 +61,7 @@ export async function createCandidate(
     videoUrl,
     createdAt: serverTimestamp(),
     lastUpdatedAt: serverTimestamp(),
+    hasHeadband,
   });
 
   return id;

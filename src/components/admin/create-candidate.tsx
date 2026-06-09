@@ -18,6 +18,7 @@ export default function CreateCandidate(props: FormProps) {
   const [videoUrl, setVideoUrl] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [hasHeadband, setHasHeadband] = useState<boolean>();
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -61,6 +62,7 @@ export default function CreateCandidate(props: FormProps) {
         positionId,
         finalResumeUrl,
         finalVideoUrl,
+        hasHeadband,
       );
 
       alert("Candidate created");
@@ -151,6 +153,12 @@ export default function CreateCandidate(props: FormProps) {
           />
         )}
       </div>
+
+      <Input
+        type="switch"
+        label={"This video has a headband?"}
+        onChange={(e) => setHasHeadband(e.target.checked)}
+      />
 
       <Button disabled={submitting}>
         {submitting ? "Creating Candidate..." : "Create Candidate"}
