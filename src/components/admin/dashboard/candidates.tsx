@@ -9,6 +9,7 @@ import CreateCandidate from "../create-candidate";
 import { useFormatDate } from "@/lib/useFormatDate";
 import DataTable from "../data/data-table";
 import EditCandidate from "../data/edit-candidate";
+import { handleShare } from "@/lib/useShare";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -151,6 +152,25 @@ export default function Candidates() {
               label: "Updated",
               render: (c) => useFormatDate(c.lastUpdatedAt, "month-year"),
             },
+            {
+              key: "",
+              label: "Demo",
+              render: (c) => (
+                <IconButton
+                  icon="share"
+                  width="50px"
+                  height="30px"
+                  stroke={0}
+                  filled
+                  onClick={() =>
+                    handleShare({
+                      url: `https://demo.interactiveworkers.com/${c.position.id}/${c.id}`,
+                      title: `${c.name} ${c.lastName} from InteractiveWorkers`,
+                    })
+                  }
+                />
+              ),
+            },
           ]}
           footer={
             <>
@@ -192,7 +212,20 @@ function CandidateCard({
 }) {
   return (
     <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card">
-      <div className="absolute top-0 right-0 z-10 pt-4 group-hover/card:opacity-100 opacity-0 transition-all duration-200">
+      <div className="absolute top-0 right-0 z-10 pt-4 group-hover/card:opacity-100 opacity-0 transition-all duration-200 flex">
+        <IconButton
+          icon="share"
+          width="50px"
+          height="30px"
+          stroke={0}
+          filled
+          onClick={() =>
+            handleShare({
+              url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
+              title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
+            })
+          }
+        />
         <IconButton
           icon="dots-vertical"
           width="50px"

@@ -3,8 +3,8 @@ import { IconButton } from "@/components/icons/icon-button";
 import { useIsMobile } from "@/lib/useMobile";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
   const isMobile = useIsMobile();
