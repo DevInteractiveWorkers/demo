@@ -1,10 +1,10 @@
 "use client";
-import { getCandidatesByPosition, getPosition } from "@/lib/firestore";
-import { Icon } from "../icons/icon";
-import { useEffect, useRef, useState, VideoHTMLAttributes } from "react";
+import { getCandidatesByPosition } from "@/lib/firestore";
+import { useEffect, useRef, useState } from "react";
 import { Candidate, Position } from "@/lib/type";
 import { IconButton } from "../icons/icon-button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function SeeMore({
   position,
@@ -16,6 +16,7 @@ export default function SeeMore({
   toggleClose?: () => void;
 }) {
   const [candidates, setCandidates] = useState<Candidate[]>();
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -47,11 +48,14 @@ export default function SeeMore({
             height="50px"
           />
         </div>
-        <ul>
+        <ul className="space-y-4">
           {candidates &&
             candidates.map((candidate) => {
               const fullName = `${candidate.name} ${candidate.lastName}`;
-              const candidateLink = `${position.id}/${candidate.id}`;
+              const candidateLink = `/${position.id}/${candidate.id}`;
+
+              if (pathname === candidateLink) return;
+
               return (
                 <li className="bg-[#202020] rounded-2xl overflow-hidden hover:outline-2 outline-[#DD272D] hover:scale-95 transition-all duration-500">
                   <CandidatePreview

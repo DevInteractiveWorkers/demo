@@ -7,6 +7,7 @@ import VideoPlayer, { VideoPlayerProps } from "./video-player";
 interface CandidateProps extends VideoPlayerProps {
   name: string;
   position: string;
+  hasHeadband?: boolean;
 }
 
 export default function Candidate({
@@ -17,6 +18,7 @@ export default function Candidate({
   onReady,
   name,
   position,
+  hasHeadband = false,
 }: CandidateProps) {
   const [showHeadband, setShowHeadband] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -77,7 +79,7 @@ export default function Candidate({
         onReady={onReady}
       />
 
-      {showHeadband && (
+      {!hasHeadband && showHeadband && (
         <Headband name={name} position={position} visible={isPlaying} />
       )}
     </div>

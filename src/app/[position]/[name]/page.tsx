@@ -1,4 +1,8 @@
-import { getCandidate, getPosition } from "@/lib/firestore";
+import {
+  getCandidate,
+  getCandidatesByPosition,
+  getPosition,
+} from "@/lib/firestore";
 
 import CandidatePageClient from "./CandidatePageClient";
 
@@ -25,10 +29,13 @@ export default async function Page({
     );
   }
 
+  const candidates = await getCandidatesByPosition(position);
+
   return (
     <CandidatePageClient
       candidate={JSON.parse(JSON.stringify(candidateData))}
       position={JSON.parse(JSON.stringify(positionData))}
+      seeMore={candidates.length > 1}
     />
   );
 }

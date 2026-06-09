@@ -16,8 +16,20 @@ import {
 import { db } from "./firebase";
 import { Candidate, Position } from "./type";
 
+function purifyId(id: string) {
+  const newId = id
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove accents
+    .replace(/[^a-z\s]/g, "") // keep only letters and spaces
+    .replace(/\s+/g, "-") // spaces -> hyphens
+    .replace(/-+/g, "-"); // avoid duplicate hyphens
+  return newId;
+}
+
 export async function createPosition(name: string, description: string) {
-  const id = name.trim().toLowerCase().replace(/\s+/g, "-");
+  const id = purifyId(name);
 
   await setDoc(doc(db, "positions", id), {
     name,
@@ -38,7 +50,9 @@ export async function createCandidate(
 ) {
   const positionRef = doc(db, "positions", positionId);
 
-  return addDoc(collection(db, "candidates"), {
+  const id = purifyId(`${firstName} ${lastName}`);
+
+  await setDoc(doc(db, "candidates", id), {
     name: firstName,
     lastName,
     position: positionRef,
@@ -47,6 +61,8 @@ export async function createCandidate(
     createdAt: serverTimestamp(),
     lastUpdatedAt: serverTimestamp(),
   });
+
+  return id;
 }
 
 export async function getPosition(id: string): Promise<Position | null> {

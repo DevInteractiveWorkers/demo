@@ -12,10 +12,12 @@ export const Navbar = ({
   fixed = false,
   hide = false,
   position,
+  seeMore,
 }: {
   fixed?: boolean;
   hide?: boolean;
   position?: Position;
+  seeMore?: boolean;
 }) => {
   const [seeMoreOpen, setSeeMore] = useState<boolean>(false);
 
@@ -40,14 +42,16 @@ export const Navbar = ({
               alt="InteractiveWorkers"
             />
           </Link>
-          <IconButton
-            icon={"toggle"}
-            stroke={1.5}
-            onClick={() => setSeeMore(true)}
-          />
+          {seeMore && (
+            <IconButton
+              icon={"toggle"}
+              stroke={1.5}
+              onClick={() => setSeeMore(true)}
+            />
+          )}
         </div>
       </nav>
-      {position && (
+      {position && seeMore && (
         <SeeMore
           position={position}
           isOpen={seeMoreOpen}

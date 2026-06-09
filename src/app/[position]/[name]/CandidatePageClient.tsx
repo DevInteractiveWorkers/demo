@@ -14,9 +14,11 @@ const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
 export default function CandidatePageClient({
   candidate,
   position,
+  seeMore,
 }: {
   candidate: any;
   position: any;
+  seeMore?: boolean;
 }) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isPDFOpen, setIsPDFOpen] = useState(false);
@@ -40,7 +42,12 @@ export default function CandidatePageClient({
 
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center">
-      <Navbar fixed hide={isVideoPlaying} position={position} />
+      <Navbar
+        fixed
+        hide={isVideoPlaying}
+        position={position}
+        seeMore={seeMore}
+      />
 
       <div
         className={`
@@ -55,13 +62,13 @@ export default function CandidatePageClient({
           ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
-        <h1 className="text-6xl pb-4 font-medium md:px-25 px-12">
+        <h1 className="md:text-6xl text-4xl sm:pb-4 font-medium md:px-25 sm:px-12 px-4">
           {fullName}
           <br />
           {position.name}
         </h1>
 
-        <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 px-12">
+        <div className="flex sm:pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4 w-max">
           <IconButton
             filled
             icon="play"
@@ -89,18 +96,21 @@ export default function CandidatePageClient({
         </div>
       </div>
 
-      <Candidate
-        name={fullName}
-        position={position.name}
-        isOpen={isVideoOpen}
-        videoUrl={candidate.videoUrl}
-        toggle={() => {
-          setIsVideoOpen(false);
-          setIsVideoPlaying(false);
-        }}
-        onPlayingChange={setIsVideoPlaying}
-        onReady={setVideoControls}
-      />
+      {candidate.videoUrl && (
+        <Candidate
+          name={fullName}
+          position={position.name}
+          isOpen={isVideoOpen}
+          videoUrl={candidate.videoUrl}
+          toggle={() => {
+            setIsVideoOpen(false);
+            setIsVideoPlaying(false);
+          }}
+          onPlayingChange={setIsVideoPlaying}
+          onReady={setVideoControls}
+          hasHeadband={candidate.hasHeadband}
+        />
+      )}
 
       {candidate.resumeUrl && (
         <PDFReader
