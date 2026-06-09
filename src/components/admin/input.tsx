@@ -279,7 +279,7 @@ export default function Input(props: InputProps) {
             onChange={onChange}
             placeholder={example}
             required={props.required}
-            className="border rounded border-[#292929] w-full px-4 py-2"
+            className="border rounded border-[#292929] w-full px-4 py-2 placeholder-shown:opacity-50"
           />
         </div>
       );
