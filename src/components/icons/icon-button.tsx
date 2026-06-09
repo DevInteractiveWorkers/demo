@@ -1,6 +1,6 @@
 "use client";
-import { Icon, IconProps } from "./icon";
 import { useEffect, useState } from "react";
+import { Icon, IconProps } from "./icon";
 
 interface IconButtonProps extends IconProps {
   icon: string;
@@ -9,6 +9,7 @@ interface IconButtonProps extends IconProps {
   onClick?: () => void;
   reversed?: boolean;
   filledOnHover?: boolean;
+  type?: "button" | "submit";
 }
 
 export const IconButton = ({
@@ -22,6 +23,8 @@ export const IconButton = ({
   reversed,
   height = "72px",
   width = "72px",
+  type = "button",
+  viewBox,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
   const [isPortrait, setIsPortait] = useState(false);
@@ -34,6 +37,7 @@ export const IconButton = ({
 
   return (
     <button
+      type={type}
       className={`flex items-center gap-2 cursor-pointer h-min select-none ${className} ${
         reversed && "flex-row-reverse"
       }`}
@@ -49,6 +53,7 @@ export const IconButton = ({
         stroke={stroke}
         width={width}
         height={height}
+        viewBox={viewBox}
       />
       {children}
     </button>

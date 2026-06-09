@@ -30,6 +30,24 @@ body {
   left: 0;
 }
 
+@layer base {
+  /* Change 'input' to 'input, select, textarea' if you want to target all form fields */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    /* Forces the background to be transparent using an inset shadow */
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+
+    /* Delays the browser's attempt to flash the default color */
+    transition: background-color 50000s ease-in-out 0s;
+  }
+}
+
+input {
+  -webkit-text-fill-color: #ffffff !important;
+}
+
 /* 1. Register Linear Mask Properties */
 @property --linear-mask-stop1 {
   syntax: "<percentage>";
@@ -40,7 +58,7 @@ body {
 @property --linear-mask-stop2 {
   syntax: "<percentage>";
   inherits: false;
-  initial-value: 0%;
+  initial-value: 40%;
 }
 
 /* 2. Register Radial Mask Properties */
@@ -102,8 +120,8 @@ body {
 @keyframes dissolveIn {
   0% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 40%; /*used to be 60%*/
-    --linear-mask-stop2: 80%;
+    --linear-mask-stop1: 0%; /*used to be 60%*/
+    --linear-mask-stop2: 100%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
   }
@@ -132,8 +150,8 @@ body {
   }
   100% {
     /* Your starting values from the original static mask */
-    --linear-mask-stop1: 40%; /*used to be 60%*/
-    --linear-mask-stop2: 80%;
+    --linear-mask-stop1: 0%; /*used to be 60%*/
+    --linear-mask-stop2: 100%;
     --radial-mask-stop1: 20%;
     --radial-mask-stop2: 50%;
   }

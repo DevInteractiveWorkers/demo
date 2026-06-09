@@ -1,5 +1,18 @@
 :root {
   --total-duration: 10s;
+  --bg-color: #dd272d;
+}
+
+.reveal-band {
+  background-color: var(--bg-color);
+}
+
+.reveal-band::after {
+  background-color: var(--bg-color);
+}
+
+.reveal-band > .name {
+  background-color: var(--bg-color);
 }
 
 /* ---------- LOGO ---------- */

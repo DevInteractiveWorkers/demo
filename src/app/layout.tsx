@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google"; // Import from the built-in module
-import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: "Demo InteractiveWorkers",

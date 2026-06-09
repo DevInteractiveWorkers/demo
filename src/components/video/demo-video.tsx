@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { IconButton } from "./icon-button";
+import { IconButton } from "../icons/icon-button";
 
 interface DemoVideoProps {
   videoUrl: string;
@@ -120,8 +120,8 @@ const DemoVideo: React.FC<DemoVideoProps> = ({
               videoCurrentTime === videoDuration
                 ? "replay"
                 : isVideoPlaying
-                ? "pause"
-                : "play"
+                  ? "pause"
+                  : "play"
             }
             onClick={handleVideoControls}
           />

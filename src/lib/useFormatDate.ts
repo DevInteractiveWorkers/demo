@@ -1,0 +1,72 @@
+// lib/useFormatDate.ts
+
+export const useFormatDate = (
+  value: any,
+  format:
+    | "date"
+    | "day"
+    | "month"
+    | "year"
+    | "time"
+    | "full-date"
+    | "month-year"
+    | "long" = "date",
+) => {
+  if (!value) return "";
+
+  let d: Date;
+
+  if (typeof value === "object" && value.toDate) {
+    d = value.toDate();
+  } else {
+    d = new Date(value);
+  }
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const month = months[d.getMonth()];
+  const day = d.getDate();
+  const year = d.getFullYear();
+
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+
+  switch (format) {
+    case "day":
+      return day;
+
+    case "month":
+      return month;
+
+    case "year":
+      return year;
+
+    case "time":
+      return `${hh}:${mm}`;
+
+    case "month-year":
+      return `${month} ${year}`;
+
+    case "long":
+      return `${month} ${day}, ${year}`;
+
+    case "full-date":
+      return `${month} ${day}, ${year} • ${hh}:${mm}`;
+
+    default:
+      return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${String(year).slice(-2)}`;
+  }
+};

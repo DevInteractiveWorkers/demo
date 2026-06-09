@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { IconButton } from "../components/icon-button";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
+import { IconButton } from "./icons/icon-button";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -56,7 +56,7 @@ const PDFComponent = ({ file }: { file: string }) => {
         />
       </Document>
       <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
-        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-transparent to-[#181621]">
+        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-linear-to-b from-transparent to-[#181621]">
           <IconButton
             icon="prev"
             filledOnHover

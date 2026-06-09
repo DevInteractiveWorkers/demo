@@ -1,11 +1,11 @@
 "use client";
 
-import { IconButton } from "@/components/icon-button";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Candidate from "@/components/candidate";
+import Candidate from "@/components/video/candidate";
+import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/video/navbar";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -58,9 +58,9 @@ export default function Home() {
             filled
             icon={"play"}
             className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+            onClick={handleWatchVideo}
             width="25px"
             height="25px"
-            onClick={handleWatchVideo}
           >
             Play
           </IconButton>
@@ -68,10 +68,11 @@ export default function Home() {
           <IconButton
             filled
             icon="info"
+            stroke={0}
             className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-            width="25.26px"
-            height="25.26px"
             onClick={() => setIsPDFOpen(true)}
+            width="25px"
+            height="25px"
           >
             More info
           </IconButton>
