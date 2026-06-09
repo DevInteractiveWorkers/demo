@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Icon } from "./icons/icon";
+import { Icon } from "../icons/icon";
 
 export const Navbar = ({
   fixed = false,

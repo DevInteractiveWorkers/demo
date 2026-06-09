@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/video/navbar";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
