@@ -39,8 +39,8 @@ export default function CandidatePageClient({
   };
 
   return (
-    <main className="flex flex-col h-dvh overflow-hidden justify-center">
-      <Navbar fixed hide={isVideoPlaying} />
+    <main className="flex flex-col h-dvh overflow-hidden relative justify-center">
+      <Navbar fixed hide={isVideoPlaying} position={position} />
 
       <div
         className={`
