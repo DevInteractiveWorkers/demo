@@ -1,40 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
-import Candidate from "@/components/video/candidate";
-import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
 
-const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
-  ssr: false,
-});
-
 export default function Home() {
-  const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [isPDFOpen, setIsPDFOpen] = useState(false);
-
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-
-  const [videoControls, setVideoControls] = useState<{
-    toggle: () => void;
-  } | null>(null);
-
-  const showIntroControls = !isVideoPlaying;
-
-  const handleWatchVideo = () => {
-    if (!isVideoOpen) {
-      setIsVideoOpen(true);
-      return;
-    }
-
-    videoControls?.toggle();
-  };
-
   return (
     <main className="flex flex-col h-dvh overflow-y-hidden justify-center">
-      <Navbar fixed hide={isVideoPlaying} />
+      <Navbar fixed />
       <div
         className={`
           absolute
@@ -45,15 +17,14 @@ export default function Home() {
           z-10
           transition-all
           duration-3000
-          ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
         <h1 className="text-6xl pb-4 font-medium md:px-25 px-12">
-          Axel Gonzalez <br />
-          CCTV Monitoring Agent
+          Demo Portfolio <br />
+          InteractiveWorkers
         </h1>
 
-        <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 px-12">
+        {/* <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 px-12">
           <IconButton
             filled
             icon={"play"}
@@ -62,7 +33,8 @@ export default function Home() {
             width="25px"
             height="25px"
           >
-            Play
+            Book your free
+            <br /> discovery call
           </IconButton>
 
           <IconButton
@@ -74,33 +46,20 @@ export default function Home() {
             width="25px"
             height="25px"
           >
-            More info
+            See our
+            <br />
+            services
           </IconButton>
-        </div>
+        </div> */}
       </div>
 
-      <Candidate
-        name="Axel Gonzalez"
-        position="CCTV Monitoring Agent"
-        isOpen={isVideoOpen}
-        videoUrl="/portfolios/Axel/Axel.webm"
-        toggle={() => {
-          setIsVideoOpen(false);
-          setIsVideoPlaying(false);
-        }}
-        onPlayingChange={setIsVideoPlaying}
-        onReady={setVideoControls}
-      />
-
-      <PDFReader
-        pdf="/portfolios/Mauro/MauroLealResumeDEMO.pdf"
-        isOpen={isPDFOpen}
-        toggle={() => setIsPDFOpen(false)}
-      />
       <div
-        className={`fixed bg-[#C2272D] w-full h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-full -translate-x-1/2 -translate-y-1/3 overflow-hidden ${isVideoPlaying ? "opacity-0 -translate-x-full" : ""} transition-all duration-2000`}
+        className={`fixed bg-[#C2272D] w-full h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-full -translate-x-1/2 -translate-y-1/3 overflow-hidden transition-all duration-2000`}
       >
         <ParticlesComponent id="gradient" color="#191919" />
+      </div>
+      <div className="mask-linear-from-20% -mask-linear-135 mask-linear-to-60% w-full h-full">
+        <ParticlesComponent id={"bg"} color="#FFF" />
       </div>
     </main>
   );
