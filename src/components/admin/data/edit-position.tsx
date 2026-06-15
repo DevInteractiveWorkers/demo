@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Form, { FormProps } from "@/components/form";
-import Input from "../input";
+import Input from "../input/input";
 import Button from "../button";
 
 import { updatePosition } from "@/lib/firestore";

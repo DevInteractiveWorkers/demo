@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { login } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import Input from "./input";
+import Input from "./input/input";
 import Button from "./button";
 
 export default function LoginForm() {

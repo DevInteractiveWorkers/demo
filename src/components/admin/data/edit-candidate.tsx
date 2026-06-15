@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Form, { FormProps } from "@/components/form";
-import Input from "../input";
+import Input from "../input/input";
 import Button from "../button";
 
 import { getPositions, updateCandidate } from "@/lib/firestore";
@@ -22,11 +22,17 @@ export default function EditCandidate(
   const [lastName, setLastName] = useState(candidate?.lastName ?? "");
   const [resumeUrl, setResumeUrl] = useState(candidate?.resumeUrl ?? "");
   const [videoUrl, setVideoUrl] = useState(candidate?.videoUrl ?? "");
+  const [position, setPosition] = useState(candidate?.position?.name ?? "");
   const [positionId, setPositionId] = useState(candidate?.position?.id ?? "");
 
   useEffect(() => {
     getPositions().then((data) => {
-      setPositions(data);
+      setPositions(
+        data.map((position) => ({
+          name: position.name,
+          value: position.id,
+        })),
+      );
     });
   }, []);
 
@@ -63,25 +69,26 @@ export default function EditCandidate(
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="First Name"
+        required
       />
 
       <Input
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
         placeholder="Last Name"
+        required
       />
 
       <Input
         type="select"
         placeholder="Position"
-        selected={positions.find((p) => p.id === positionId)?.name ?? ""}
-        options={positions.map((p) => ({
-          name: p.name,
-          value: p.id,
-        }))}
+        selected={position}
+        options={positions}
         onSelect={(option) => {
           setPositionId(option.value);
+          setPosition(option.name);
         }}
+        required
       />
 
       <Input

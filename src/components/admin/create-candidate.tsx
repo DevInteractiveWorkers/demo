@@ -2,7 +2,7 @@
 
 import { createCandidate, getPositions } from "@/lib/firestore";
 
-import Input from "./input";
+import Input from "./input/input";
 import Button from "./button";
 import { useState, useEffect } from "react";
 import { uploadToGHL } from "@/lib/gohighlevel";
@@ -111,7 +111,7 @@ export default function CreateCandidate(props: FormProps) {
       />
 
       <div
-        className={`grid gap-4 ${resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+        className={`grid gap-4 ${resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"} w-full`}
       >
         {!resumeFile && (
           <Input
@@ -133,7 +133,7 @@ export default function CreateCandidate(props: FormProps) {
       </div>
 
       <div
-        className={`grid gap-4 ${videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+        className={`grid gap-4 ${videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"} w-full`}
       >
         {!videoFile && (
           <Input
