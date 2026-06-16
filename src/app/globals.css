@@ -156,3 +156,32 @@ input {
     --radial-mask-stop2: 50%;
   }
 }
+
+/* slow sping for action */
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes dash-move {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.animate-dash {
+  animation: dash-move 2s linear infinite;
+}
