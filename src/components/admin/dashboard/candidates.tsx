@@ -10,13 +10,17 @@ import { useFormatDate } from "@/lib/useFormatDate";
 import DataTable from "../data/data-table";
 import EditCandidate from "../data/edit-candidate";
 import { handleShare } from "@/lib/useShare";
+import { Card } from "./card";
+import SelectGrid, { GridViewOptions } from "./select-grid";
+import { types } from "util";
+import { type } from "os";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [view, setView] = useState<GridViewOptions>("grid-large");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [monthFilter, setMonthFilter] = useState<string>("all");
@@ -69,16 +73,9 @@ export default function Candidates() {
           className="flex gap-2"
           title={`Change view to ${view === "list" ? "grid" : "list"}`}
         >
-          <IconButton
-            height="40px"
-            width="40px"
-            icon={view === "list" ? "grid" : "list"}
-            filled={view === "list"}
-            stroke={view === "list" ? 0 : 1.5}
-            onClick={() => {
-              if (view === "grid") setView("list");
-              if (view === "list") setView("grid");
-            }}
+          <SelectGrid
+            selected={view}
+            onSelect={(option) => setView(option.value as GridViewOptions)}
           />
         </div>
       </div>
@@ -102,13 +99,40 @@ export default function Candidates() {
         </IconButton>
       </div>
 
-      {view === "grid" ? (
-        <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-4">
+      {view.includes("grid") ? (
+        <div
+          className={`grid ${
+            view === "grid-small"
+              ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
+              : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4"
+          }`}
+        >
           {filteredCandidates.map((candidate) => (
-            <CandidateCard
+            <Card
               key={candidate.id}
-              candidate={candidate}
+              item={{
+                ...candidate,
+                name: `${candidate.name} ${candidate.lastName}`,
+                description: candidate.position.name,
+                tag: (
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full text-center ${
+                      candidate.resumeUrl
+                        ? "bg-green-500/10 text-green-500"
+                        : "bg-red-500/10 text-red-500"
+                    }`}
+                  >
+                    {candidate.resumeUrl ? "Resume" : "No Resume"}
+                  </span>
+                ),
+              }}
               onEdit={() => setEditingCandidate(candidate)}
+              onShare={() =>
+                handleShare({
+                  url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
+                  title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
+                })
+              }
             />
           ))}
         </div>
@@ -201,61 +225,5 @@ export default function Candidates() {
         />
       )}
     </section>
-  );
-}
-function CandidateCard({
-  candidate,
-  onEdit,
-}: {
-  candidate: any;
-  onEdit: () => void;
-}) {
-  return (
-    <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card">
-      <div className="absolute top-0 right-0 z-10 pt-4 group-hover/card:opacity-100 opacity-0 transition-all duration-200 flex">
-        <IconButton
-          icon="share"
-          width="50px"
-          height="30px"
-          stroke={0}
-          filled
-          onClick={() =>
-            handleShare({
-              url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
-              title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
-            })
-          }
-        />
-        <IconButton
-          icon="dots-vertical"
-          width="50px"
-          height="30px"
-          stroke={3}
-          onClick={onEdit}
-        />
-      </div>
-
-      <div className="aspect-square bg-[#202020]">
-        {candidate.videoUrl ? (
-          <video
-            src={candidate.videoUrl}
-            className="h-full object-cover opacity-50 mask-linear-180 mask-linear-from-black"
-          />
-        ) : (
-          <div className="flex flex-col justify-center items-center w-full h-full opacity-25">
-            <Icon icon="image" filled stroke={0} />
-            No Video Found
-          </div>
-        )}
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-medium">
-          {candidate.name} {candidate.lastName}
-        </h3>
-
-        <p className="text-sm opacity-60">{candidate.position?.name}</p>
-      </div>
-    </div>
   );
 }

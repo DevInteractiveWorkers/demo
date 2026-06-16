@@ -27,12 +27,12 @@ export const Required = () => {
 export default function Input(
   props:
     | DefaultPops
-    | TextareaProps
-    | PasswordProps
-    | SelectProps
-    | FileInputProps
-    | SwitchProps
-    | CheckboxProps,
+    | ({ type: "textarea" } & TextareaProps)
+    | ({ type: "password" } & PasswordProps)
+    | ({ type: "select" } & SelectProps)
+    | ({ type: "file" } & FileInputProps)
+    | ({ type: "switch" } & SwitchProps)
+    | ({ type: "checkbox" } & CheckboxProps),
 ) {
   switch (props.type) {
     case "switch": {

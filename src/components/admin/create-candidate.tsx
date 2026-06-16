@@ -103,6 +103,7 @@ export default function CreateCandidate(props: FormProps) {
         options={positions}
         placeholder="Position"
         example="Select a position..."
+        selected={positionId}
         onSelect={(option) => {
           setPositionId(option.value);
 

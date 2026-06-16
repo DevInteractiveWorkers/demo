@@ -1,13 +1,23 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { BasicInputProps, Required } from "./input";
-import { Icon } from "@/components/icons/icon";
+import { Icon, IconProps } from "@/components/icons/icon";
 import { IconButton } from "@/components/icons/icon-button";
 
+type SelectIconProps = Omit<IconProps, "icon"> & {
+  icon: string;
+};
+
 export type SelectProps = ({
-  type: "select";
   placeholder?: string;
+  icon?: SelectIconProps;
   example?: string;
-  options: { name: string; value: any }[];
+  options: {
+    name: string;
+    value: any;
+    icon?: SelectIconProps;
+  }[];
   onSelect?: (option: { name: string; value: any }) => void;
   onRemove?: (option: { name: string; value: any }) => void;
 } & (
@@ -22,11 +32,20 @@ export type SelectProps = ({
 )) &
   BasicInputProps;
 
-export default function Select(props: SelectProps) {
+export default function Select(
+  props: SelectProps & {
+    options: {
+      name: string;
+      value: any;
+      icon?: SelectIconProps;
+    }[];
+  },
+) {
   const {
     id,
     options,
     selected,
+    icon,
     multiple,
     placeholder,
     example,
@@ -35,7 +54,6 @@ export default function Select(props: SelectProps) {
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOptionsOpen, setSelectedOptionsOpen] = useState(false);
   const [search, setSearch] = useState(multiple ? "" : (selected ?? ""));
 
   const selectedValues = Array.isArray(selected)
@@ -44,7 +62,9 @@ export default function Select(props: SelectProps) {
       ? [selected]
       : [];
 
-  const isTyping = !multiple && search.trim() !== "" && search !== selected;
+  const [isTyping, setIsTyping] = useState(
+    !multiple && search.trim() !== "" && search !== selected,
+  );
 
   const filteredOptions = [...options]
     .filter((option) =>
@@ -72,18 +92,22 @@ export default function Select(props: SelectProps) {
     .filter((option) => {
       // Single select:
       // Only filter while typing a value different from selected
-      if (!multiple && isTyping) {
+      if (isTyping) {
         return option.name.toLowerCase().includes(search.toLowerCase());
       }
 
       return true;
     });
 
-  const selectedLabels = options
-    .filter((o) => selectedValues.includes(o.value))
-    .map((o) => o.name);
+  const ulRef = useRef<HTMLUListElement>(null);
+  const [alignRight, setAlignRight] = useState(false);
 
-  const [displayValue, setDisplayValue] = useState("");
+  useEffect(() => {
+    if (!isOpen || !ulRef.current) return;
+
+    const rect = ulRef.current.getBoundingClientRect();
+    setAlignRight(rect.right > window.innerWidth);
+  }, [isOpen]);
 
   return (
     <div className="w-full relative" onMouseLeave={() => setIsOpen(false)}>
@@ -91,51 +115,60 @@ export default function Select(props: SelectProps) {
         {placeholder}
         {props.required && <Required />}
       </label>
-
-      <div className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center gap-2 focus-within:outline-1">
-        <div className="flex flex-wrap w-full gap-1">
-          <input
-            id={id}
-            value={search}
-            placeholder={selectedValues.length ? "" : example}
-            onFocus={() => setIsOpen(true)}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setIsOpen(true);
-            }}
-            className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 w-full gap-2"
-          />
-
-          {multiple && (
-            <SelectedOptionsWrap
-              options={options.filter((o) => selectedValues.includes(o.value))}
-              onRemove={onRemove}
+      {icon ? (
+        <IconButton {...icon} onClick={() => setIsOpen((prev) => !prev)} />
+      ) : (
+        <div className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center gap-2 focus-within:outline-1">
+          <div className="flex flex-wrap w-full gap-1">
+            <input
+              id={id}
+              value={search}
+              placeholder={selectedValues.length ? "" : example}
+              onFocus={() => setIsOpen(true)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setIsOpen(true);
+                setIsTyping(true);
+                setTimeout(() => setIsTyping(false), 5000);
+              }}
+              className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 w-full gap-2"
             />
-          )}
-        </div>
 
-        <IconButton
-          filled
-          stroke={0}
-          width="6"
-          height="6"
-          icon="angle-down"
-          onClick={() => setIsOpen(!isOpen)}
-        />
-      </div>
+            {multiple && (
+              <SelectedOptionsWrap
+                options={options.filter((o) =>
+                  selectedValues.includes(o.value),
+                )}
+                onRemove={onRemove}
+              />
+            )}
+          </div>
+
+          <IconButton
+            filled
+            stroke={0}
+            width="6"
+            height="6"
+            icon="angle-down"
+            onClick={() => setIsOpen(!isOpen)}
+          />
+        </div>
+      )}
 
       {isOpen && (
         <ul
-          onMouseLeave={() => setIsOpen(false)}
-          className="border rounded border-[#393939] w-full max-h-60 overflow-y-auto absolute z-10 bg-[#292929] top-full left-0
-          shadow-[0_10px_10px_10px_rgb(25,25,25,0.5)]"
+          ref={ulRef}
+          className={`absolute top-full z-100 
+            ${alignRight ? "right-0 left-auto" : "left-0"}
+            border rounded border-[#393939] bg-[#292929]
+            min-w-max max-h-60 overflow-y-auto`}
         >
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option, i) => (
               <li
                 key={i}
-                className={`px-4 py-2 cursor-pointer ${
-                  selected === option.name
+                className={`px-4 py-2 cursor-pointer flex justify-start items-center ${selected} ${
+                  selected === option.value
                     ? "bg-[#C2272D]"
                     : " hover:bg-[#393939] "
                 }`}
@@ -146,10 +179,10 @@ export default function Select(props: SelectProps) {
                   } else {
                     setSearch("");
                   }
-                  setDisplayValue("");
                   onSelect?.(option);
                 }}
               >
+                {option.icon && <Icon {...option.icon} />}
                 {option.name}
               </li>
             ))
