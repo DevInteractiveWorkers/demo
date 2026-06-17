@@ -3,6 +3,7 @@ import { getPosition, getCandidatesByPosition } from "@/lib/firestore";
 import { Card } from "@/components/admin/dashboard/card";
 import JumpToButton from "@/components/jump-to";
 import Image from "next/image";
+import NotFound from "../not-found";
 
 export default async function PositionPage({
   params,
@@ -18,7 +19,7 @@ export default async function PositionPage({
   };
 
   if (!positionData) {
-    return <h1>Position not found</h1>;
+    return <NotFound />;
   }
 
   const candidates = await getCandidatesByPosition(position);

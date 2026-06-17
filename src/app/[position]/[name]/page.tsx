@@ -5,6 +5,7 @@ import {
 } from "@/lib/firestore";
 
 import CandidatePageClient from "./CandidatePageClient";
+import NotFound from "@/app/not-found";
 
 export default async function Page({
   params,
@@ -22,11 +23,7 @@ export default async function Page({
   ]);
 
   if (!positionData || !candidateData) {
-    return (
-      <main className="flex items-center justify-center h-dvh">
-        <h1 className="text-2xl font-medium">Not found</h1>
-      </main>
-    );
+    return <NotFound />;
   }
 
   const candidates = await getCandidatesByPosition(position);

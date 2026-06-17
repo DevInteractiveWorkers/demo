@@ -161,7 +161,7 @@ export default function Select(
           className={`absolute top-full z-100 
             ${alignRight ? "right-0 left-auto" : "left-0"}
             border rounded border-[#393939] bg-[#292929]
-            min-w-max max-h-60 overflow-y-auto`}
+            min-w-max w-full max-h-60 overflow-y-auto`}
         >
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option, i) => (

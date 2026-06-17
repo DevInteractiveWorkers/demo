@@ -48,12 +48,12 @@ export default function Home() {
             className={`transition-all duration-500 ${suggest ? "opacity-100" : "opacity-0"}`}
           >
             {suggest && (
-              <JumpToButtom cta="Request Your Demo" href="#request" />
+              <JumpToButtom cta="Request Your Demo" href="#request-demo" />
             )}
           </div>
         </div>
         <div
-          id="request"
+          id="request-demo"
           className="md:px-25 w-full flex justify-center min-h-svh py-5"
         >
           <RequestDemoForm />
