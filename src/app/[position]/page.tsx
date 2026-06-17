@@ -25,7 +25,7 @@ export default async function PositionPage({
   const candidates = await getCandidatesByPosition(position);
 
   return (
-    <main className="md:p-12 p-4">
+    <main className="md:p-12 p-4 overflow-hidden">
       <header className="border-b pb-4 mb-4 border-white/10">
         <Image
           src="/logo/01_Primary_Logo/Primary_Logo-04.png"

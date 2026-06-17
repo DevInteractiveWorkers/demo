@@ -57,7 +57,10 @@ export default function SeeMore({
               if (pathname === candidateLink) return;
 
               return (
-                <li className="bg-[#202020] rounded-2xl overflow-hidden hover:outline-2 outline-[#DD272D] hover:scale-95 transition-all duration-500">
+                <li
+                  key={candidate.id}
+                  className="bg-[#202020] rounded-2xl overflow-hidden hover:outline-2 outline-[#DD272D] hover:scale-95 transition-all duration-500"
+                >
                   <CandidatePreview
                     title={fullName}
                     href={candidateLink}

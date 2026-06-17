@@ -1,3 +1,4 @@
+import ParticlesBG from "@/components/particles/particles-bg";
 import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
@@ -5,5 +6,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      <ParticlesBG overflowHidden />
+      {children}
+    </AuthProvider>
+  );
 }

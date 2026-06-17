@@ -1,5 +1,9 @@
+import type { Metadata } from "next";
 import Navigation from "@/components/admin/dashboard/navigation";
-import { AuthProvider } from "@/context/AuthContext";
+
+export const metadata: Metadata = {
+  title: "Demo - Admin Panel",
+};
 
 export default function RootLayout({
   children,

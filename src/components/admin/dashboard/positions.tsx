@@ -53,11 +53,7 @@ export default function Positions() {
   });
 
   if (loading) {
-    return (
-      <section id="positions">
-        <LoadingPage />
-      </section>
-    );
+    return <LoadingPage />;
   }
 
   return (

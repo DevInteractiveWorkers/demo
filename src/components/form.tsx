@@ -33,8 +33,7 @@ export default function Form({
           onClick={toggleClose}
         />
       )}
-
-      <ParticlesBubble />
+      {!background && <ParticlesBubble />}
       <form
         onSubmit={onSubmit}
         className="md:p-10 px-4 py-10 w-full md:max-w-xl sm:max-w-9/12 max-w-11/12 mx-2 grid justify-items-center gap-4

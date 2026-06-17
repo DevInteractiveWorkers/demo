@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
@@ -40,6 +40,13 @@ export default function CandidatePageClient({
 
     videoControls?.toggle();
   };
+
+  useEffect(() => {
+    const setPageName = () => {
+      document.title = `${fullName} from InteractiveWorkers - Demo`;
+    };
+    setPageName();
+  }, []);
 
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center">

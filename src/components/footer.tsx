@@ -5,6 +5,15 @@ export default function Footer() {
     <footer className="w-full p-4 z-100">
       <ul className="flex max-md:flex-col items-center justify-center gap-4 cursor-default max-md:text-xs text-center">
         <li>
+          <Link
+            href={"/support"}
+            className="hover:text-[#CC272D] transition-all duration-150"
+          >
+            Contact Support
+          </Link>
+        </li>
+        <span className="max-md:hidden">•</span>
+        <li>
           © Copyright 2006 - 2024 Interactiveworkers.
           <br className="md:hidden" /> All Rights Reserved
         </li>
