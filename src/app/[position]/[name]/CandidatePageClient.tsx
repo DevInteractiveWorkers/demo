@@ -6,7 +6,7 @@ import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
-import ParticlesBubble from "@/components/particles-bubble";
+import ParticlesBubble from "@/components/particles/particles-bubble";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
