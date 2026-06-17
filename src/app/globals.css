@@ -185,3 +185,13 @@ input {
 .animate-dash {
   animation: dash-move 2s linear infinite;
 }
+
+/* globals.css */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
