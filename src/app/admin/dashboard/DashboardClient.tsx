@@ -1,5 +1,6 @@
 "use client";
 
+import { LoadingPage } from "@/components/loading";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -19,7 +20,12 @@ export default function DashboardClient() {
     }
   }, [user, loading, router]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <p>
+        <LoadingPage />
+      </p>
+    );
 
   if (!user) return null;
 

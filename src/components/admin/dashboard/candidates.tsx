@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getCandidates } from "@/lib/firestore";
 import { IconButton } from "@/components/icons/icon-button";
 import SearchInput from "../search";
-import { Icon } from "@/components/icons/icon";
 import CreateCandidate from "../create-candidate";
 import { useFormatDate } from "@/lib/useFormatDate";
 import DataTable from "../data/data-table";
@@ -12,8 +11,7 @@ import EditCandidate from "../data/edit-candidate";
 import { handleShare } from "@/lib/useShare";
 import { Card } from "./card";
 import SelectGrid, { GridViewOptions } from "./select-grid";
-import { types } from "util";
-import { type } from "os";
+import { Loading, LoadingPage } from "@/components/loading";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -61,7 +59,7 @@ export default function Candidates() {
   });
 
   if (loading) {
-    return <section id="candidates">Loading...</section>;
+    return <LoadingPage />;
   }
 
   return (

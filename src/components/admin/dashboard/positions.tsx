@@ -10,6 +10,7 @@ import { useFormatDate } from "@/lib/useFormatDate";
 import EditPosition from "../data/edit-position";
 import { Card } from "./card";
 import SelectGrid, { GridViewOptions } from "./select-grid";
+import { LoadingPage } from "@/components/loading";
 
 export default function Positions() {
   const [positions, setPositions] = useState<any[]>([]);
@@ -52,7 +53,11 @@ export default function Positions() {
   });
 
   if (loading) {
-    return <section id="positions">Loading...</section>;
+    return (
+      <section id="positions">
+        <LoadingPage />
+      </section>
+    );
   }
 
   return (
