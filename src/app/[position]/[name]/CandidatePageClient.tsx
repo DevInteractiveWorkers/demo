@@ -6,6 +6,7 @@ import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
+import ParticlesBubble from "@/components/particles-bubble";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -120,27 +121,7 @@ export default function CandidatePageClient({
         />
       )}
 
-      <div
-        className={`
-          fixed
-          bg-[#C2272D]
-          w-full
-          h-auto
-          aspect-square
-          mask-radial-from-0
-          mask-radial-to-70%
-          left-0
-          top-full
-          -translate-x-1/2
-          -translate-y-1/3
-          overflow-hidden
-          transition-all
-          duration-2000
-          ${isVideoPlaying ? "opacity-0 -translate-x-full" : "opacity-100"}
-        `}
-      >
-        <ParticlesComponent id="gradient" color="#191919" />
-      </div>
+      <ParticlesBubble hidden={isVideoPlaying} />
     </main>
   );
 }

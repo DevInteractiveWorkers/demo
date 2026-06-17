@@ -60,7 +60,7 @@ export default function Home() {
         </div>
       </div>
       <div
-        className={`absolute bg-[#C2272D] w-full h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-[100svh] -translate-x-1/2 -translate-y-1/3 overflow-hidden transition-all duration-2000 -z-10`}
+        className={`absolute bg-[#C2272D] md:w-full w-[200%] h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-[100svh] -translate-x-1/2 -translate-y-1/3 overflow-hidden transition-all duration-2000 -z-10`}
       >
         <ParticlesComponent id="gradient" color="#191919" />
       </div>
