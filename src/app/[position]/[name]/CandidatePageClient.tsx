@@ -49,7 +49,7 @@ export default function CandidatePageClient({
   }, []);
 
   return (
-    <main className="flex flex-col h-dvh overflow-hidden relative justify-center">
+    <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
       <Navbar
         fixed
         hide={isVideoPlaying}
@@ -70,10 +70,10 @@ export default function CandidatePageClient({
           ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
-        <h1 className="md:text-6xl text-4xl sm:pb-4 font-medium md:px-25 sm:px-12 px-4">
+        <h1 className="md:text-6xl text-4xl sm:pb-4 font-extralight md:px-25 sm:px-12 px-4">
           {fullName}
           <br />
-          {position.name}
+          <strong className="font-semibold">{position.name}</strong>
         </h1>
 
         <div className="flex sm:pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4 w-max">
