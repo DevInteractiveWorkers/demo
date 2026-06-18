@@ -7,6 +7,7 @@ import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
 import ParticlesBubble from "@/components/particles/particles-bubble";
+import { useIsMobile } from "@/lib/useMobile";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -48,6 +49,8 @@ export default function CandidatePageClient({
     setPageName();
   }, []);
 
+  const isMobile = useIsMobile();
+
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
       <Navbar
@@ -67,10 +70,11 @@ export default function CandidatePageClient({
           z-10
           transition-all
           duration-1000
+          ${isMobile ? "items-center w-full" : ""}
           ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
-        <h1 className="md:text-6xl text-4xl sm:pb-4 font-extralight md:px-25 sm:px-12 px-4">
+        <h1 className="md:text-6xl text-4xl sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 max-md:mt-[60svh]">
           {fullName}
           <br />
           <strong className="font-semibold">{position.name}</strong>
