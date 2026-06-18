@@ -2,6 +2,7 @@
 
 import { LoadingPage } from "@/components/loading";
 import { useAuth } from "@/context/AuthContext";
+import { logout } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -73,6 +74,12 @@ export default function DashboardClient() {
                 <DashboardLink href="/positions">positions</DashboardLink>.
               </p>
             </div>
+            <button
+              className="absolute bottom-0 p-4 hover:opacity-50 transition-all duration-150 cursor-pointer"
+              onClick={() => logout()}
+            >
+              Log Out
+            </button>
           </div>
         )}
       </div>
