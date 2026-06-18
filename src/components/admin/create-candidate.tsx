@@ -1,25 +1,28 @@
 "use client";
 
 import { createCandidate, getPositions } from "@/lib/firestore";
-
-import Input from "./input";
+import Input from "./input/input";
 import Button from "./button";
 import { useState, useEffect } from "react";
 import { uploadToGHL } from "@/lib/gohighlevel";
 import Form, { FormProps } from "../form";
 
 export default function CreateCandidate(props: FormProps) {
+  const { isOpen, toggleClose } = props;
+
   const [positions, setPositions] = useState<any[]>([]);
 
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [positionId, setPositionId] = useState("");
+
   const [resumeUrl, setResumeUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [hasHeadband, setHasHeadband] = useState<boolean>();
 
+  const [hasHeadband, setHasHeadband] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -36,24 +39,53 @@ export default function CreateCandidate(props: FormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!videoUrl && !videoFile) {
+      alert("Please provide a video URL or upload a video.");
+      return;
+    }
+
     try {
       setSubmitting(true);
 
       let finalResumeUrl = resumeUrl;
       let finalVideoUrl = videoUrl;
 
-      // Upload resume if a file was selected
-      if (resumeFile) {
-        const uploaded = await uploadToGHL(resumeFile);
+      // 🚀 Upload BOTH in parallel if they exist
+      const results = await Promise.allSettled([
+        resumeFile ? uploadToGHL(resumeFile) : null,
+        videoFile ? uploadToGHL(videoFile) : null,
+      ]);
 
-        finalResumeUrl = uploaded.url || uploaded.fileUrl || uploaded.mediaUrl;
+      const resumeUpload =
+        results[0].status === "fulfilled" ? results[0].value : null;
+
+      const videoUpload =
+        results[1].status === "fulfilled" ? results[1].value : null;
+
+      if (resumeFile && !resumeUpload) {
+        throw new Error("Resume upload failed");
       }
 
-      // Upload video if a file was selected
-      if (videoFile) {
-        const uploaded = await uploadToGHL(videoFile);
+      if (videoFile && !videoUpload) {
+        throw new Error("Video upload failed");
+      }
 
-        finalVideoUrl = uploaded.url || uploaded.fileUrl || uploaded.mediaUrl;
+      if (resumeUpload) {
+        finalResumeUrl =
+          resumeUpload.url ||
+          resumeUpload.fileUrl ||
+          resumeUpload.mediaUrl ||
+          "";
+      }
+
+      if (videoUpload) {
+        finalVideoUrl =
+          videoUpload.url || videoUpload.fileUrl || videoUpload.mediaUrl || "";
+      }
+
+      // ❗ hard stop if video still missing
+      if (!finalVideoUrl) {
+        throw new Error("Video upload failed or missing URL");
       }
 
       await createCandidate(
@@ -66,22 +98,15 @@ export default function CreateCandidate(props: FormProps) {
       );
 
       alert("Candidate created");
+
+      toggleClose?.();
     } catch (error) {
       console.error(error);
-      alert("Failed to create candidate");
+      alert(error);
     } finally {
       setSubmitting(false);
-      setName("");
-      setLastName("");
-      setPositionId("");
-      setResumeUrl("");
-      setVideoUrl("");
-      setResumeFile(null);
-      setVideoFile(null);
     }
   }
-
-  const { isOpen, toggleClose } = props;
 
   return (
     <Form isOpen={isOpen} onSubmit={handleSubmit} toggleClose={toggleClose}>
@@ -89,29 +114,32 @@ export default function CreateCandidate(props: FormProps) {
 
       <Input
         value={name}
+        required
         onChange={(e) => setName(e.target.value)}
         placeholder="First Name"
       />
 
       <Input
         value={lastName}
+        required
         onChange={(e) => setLastName(e.target.value)}
         placeholder="Last Name"
       />
+
       <Input
         type="select"
         options={positions}
+        required
         placeholder="Position"
         example="Select a position..."
-        onSelect={(option) => {
-          setPositionId(option.value);
-
-          console.log("Selected position:", option);
-        }}
+        selected={positionId}
+        onSelect={(option) => setPositionId(option.value)}
       />
 
       <div
-        className={`grid gap-4 ${resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+        className={`grid gap-4 ${
+          resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+        } w-full`}
       >
         {!resumeFile && (
           <Input
@@ -120,20 +148,21 @@ export default function CreateCandidate(props: FormProps) {
             placeholder="Resume URL"
           />
         )}
+
         {!resumeUrl && (
           <Input
             type="file"
             placeholder="Upload Resume"
             accept=".pdf,.doc,.docx"
-            onFileSelect={(file) => {
-              setResumeFile(file);
-            }}
+            onFileSelect={(file) => setResumeFile(file)}
           />
         )}
       </div>
 
       <div
-        className={`grid gap-4 ${videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"}`}
+        className={`grid gap-4 ${
+          videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+        } w-full`}
       >
         {!videoFile && (
           <Input
@@ -142,21 +171,21 @@ export default function CreateCandidate(props: FormProps) {
             placeholder="Video URL"
           />
         )}
+
         {!videoUrl && (
           <Input
             type="file"
             placeholder="Upload Video"
             accept="video/*"
-            onFileSelect={(file) => {
-              setVideoFile(file);
-            }}
+            onFileSelect={(file) => setVideoFile(file)}
           />
         )}
       </div>
 
       <Input
         type="switch"
-        label={"This video has a headband?"}
+        label="This video has a headband?"
+        checked={hasHeadband}
         onChange={(e) => setHasHeadband(e.target.checked)}
       />
 

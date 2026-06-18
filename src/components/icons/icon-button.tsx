@@ -6,7 +6,7 @@ interface IconButtonProps extends IconProps {
   icon: string;
   children?: React.ReactNode;
   className?: string;
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   reversed?: boolean;
   filledOnHover?: boolean;
   type?: "button" | "submit";

@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google"; // Import from the built-in module
+import { Poppins } from "next/font/google";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Demo InteractiveWorkers",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.className} bg-[#191919]`}>
       <body className={`bg-cover bg-no-repeat md:bg-top-right bg-top-left`}>
         {children}
+        <Footer />
       </body>
     </html>
   );

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { login } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import Input from "./input";
+import Input from "./input/input";
 import Button from "./button";
+import Form from "../form";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -42,11 +43,9 @@ export default function LoginForm() {
   }
 
   return (
-    <form
+    <Form
       onSubmit={handleSubmit}
-      className="md:p-10 px- py-10 w-full md:max-w-xl sm:max-w-9/12 max-w-11/12 mx-2 grid justify-items-center gap-4
-        border rounded-2xl border-[#292929] absolute z-10
-        bg-linear-0 from-[#191919] to-[#292929] inset-shadow-[0_-10px_10px_5px_#191919] backdrop-blur-2xl"
+      background={`absolute top-0 left-0 w-full h-dvh flex items-center justify-center`}
     >
       <h1 className="text-2xl font-medium">Welcome Back</h1>
       <p className="text-sm text-white/50 text-center">
@@ -81,6 +80,6 @@ export default function LoginForm() {
           <span className="absolute bg-[currentColor] h-px w-0 group-hover:w-full top-full left-1/2 group-hover:left-0 transition-all duration-200" />
         </a>
       </p>
-    </form>
+    </Form>
   );
 }

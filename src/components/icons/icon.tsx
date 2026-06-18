@@ -10,6 +10,7 @@ export interface IconProps {
   width?: string;
   height?: string;
   viewBox?: string;
+  className?: string;
 }
 
 export const Icon = ({
@@ -19,6 +20,7 @@ export const Icon = ({
   width = "72px",
   height = "72px",
   viewBox,
+  className,
 }: IconProps) => {
   const pathData = icons[icon];
 
@@ -29,7 +31,7 @@ export const Icon = ({
     <svg
       className={`${width === "auto" ? "w-auto" : `w-[${width}]`} ${
         height === "auto" ? "h-auto" : `h-[${width}]`
-      }`}
+      } ${className}`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width={width.includes("px") ? width.slice(0, width.length - 2) : "24"}

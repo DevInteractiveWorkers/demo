@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
+import ParticlesBubble from "@/components/particles/particles-bubble";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -40,8 +41,15 @@ export default function CandidatePageClient({
     videoControls?.toggle();
   };
 
+  useEffect(() => {
+    const setPageName = () => {
+      document.title = `${fullName} from InteractiveWorkers - Demo`;
+    };
+    setPageName();
+  }, []);
+
   return (
-    <main className="flex flex-col h-dvh overflow-hidden relative justify-center">
+    <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
       <Navbar
         fixed
         hide={isVideoPlaying}
@@ -62,10 +70,10 @@ export default function CandidatePageClient({
           ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
-        <h1 className="md:text-6xl text-4xl sm:pb-4 font-medium md:px-25 sm:px-12 px-4">
+        <h1 className="md:text-6xl text-4xl sm:pb-4 font-extralight md:px-25 sm:px-12 px-4">
           {fullName}
           <br />
-          {position.name}
+          <strong className="font-semibold">{position.name}</strong>
         </h1>
 
         <div className="flex sm:pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4 w-max">
@@ -120,27 +128,7 @@ export default function CandidatePageClient({
         />
       )}
 
-      <div
-        className={`
-          fixed
-          bg-[#C2272D]
-          w-full
-          h-auto
-          aspect-square
-          mask-radial-from-0
-          mask-radial-to-70%
-          left-0
-          top-full
-          -translate-x-1/2
-          -translate-y-1/3
-          overflow-hidden
-          transition-all
-          duration-2000
-          ${isVideoPlaying ? "opacity-0 -translate-x-full" : "opacity-100"}
-        `}
-      >
-        <ParticlesComponent id="gradient" color="#191919" />
-      </div>
+      <ParticlesBubble hidden={isVideoPlaying} />
     </main>
   );
 }
