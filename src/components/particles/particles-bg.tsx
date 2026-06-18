@@ -10,7 +10,6 @@ export default function ParticlesBG({
   overflowHidden?: boolean;
 }) {
   const pathname = usePathname();
-  const segments = pathname.split("/");
 
   if (pathname.includes("dashboard")) {
     return (
@@ -22,11 +21,9 @@ export default function ParticlesBG({
 
   return (
     <>
-      {segments.length < 2 && (
-        <div className="fixed inset-0 pointer-events-none -z-10 mask-linear-from-20% -mask-linear-135 mask-linear-to-60%">
-          <ParticlesComponent id="bg" color="#FFF" />
-        </div>
-      )}
+      <div className="fixed inset-0 pointer-events-none -z-10 mask-linear-from-20% -mask-linear-135 mask-linear-to-60%">
+        <ParticlesComponent id="bg" color="#FFF" />
+      </div>
 
       <ParticlesBubble
         className={overflowHidden ? "" : "absolute top-[100svh]"}

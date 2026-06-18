@@ -2,7 +2,9 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full p-4 z-100">
+    <footer
+      className={`w-full p-4 z-100 border-t border-[#292929] bg-[#191919]/50 backdrop-blur-2xl`}
+    >
       <ul className="flex max-md:flex-col items-center justify-center gap-4 cursor-default max-md:text-xs text-center">
         <li>
           <Link

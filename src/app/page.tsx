@@ -6,6 +6,8 @@ import RequestDemoForm from "@/components/request-demo-form";
 import JumpToButtom from "@/components/jump-to";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import ParticlesBG from "@/components/particles/particles-bg";
+import ParticlesBubble from "@/components/particles/particles-bubble";
 
 export default function Home() {
   const [suggest, setSuggest] = useState<boolean>(false);
@@ -27,8 +29,9 @@ export default function Home() {
           duration-3000
           `}
       >
-        <div id="landing" className="h-svh relative z-50">
+        <div id="landing" className="h-svh relative">
           <Navbar />
+          <ParticlesBG />
           <div className="absolute top-[50svh] -translate-y-1/2">
             <h1 className="md:text-6xl text-4xl pb-4 font-medium md:px-25 sm:px-12 px-4">
               Demo Portfolio <br />
@@ -53,12 +56,12 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div
+        <section
           id="request-demo"
           className="md:px-25 w-full flex justify-center min-h-svh py-5"
         >
           <RequestDemoForm />
-        </div>
+        </section>
       </div>
       <div className="relative">
         <JumpToButtom

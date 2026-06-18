@@ -4,6 +4,7 @@ import { Card } from "@/components/admin/dashboard/card";
 import JumpToButton from "@/components/jump-to";
 import Image from "next/image";
 import NotFound from "../not-found";
+import ParticlesBG from "@/components/particles/particles-bg";
 
 export default async function PositionPage({
   params,
@@ -25,7 +26,8 @@ export default async function PositionPage({
   const candidates = await getCandidatesByPosition(position);
 
   return (
-    <main className="md:p-12 p-4 overflow-hidden">
+    <main className="md:p-12 p-4 overflow-hidden min-h-svh">
+      <ParticlesBG overflowHidden />
       <header className="border-b pb-4 mb-4 border-white/10">
         <Image
           src="/logo/01_Primary_Logo/Primary_Logo-04.png"
