@@ -11,7 +11,10 @@ import EditCandidate from "../data/edit-candidate";
 import { handleShare } from "@/lib/useShare";
 import { Card } from "./card";
 import SelectGrid, { GridViewOptions } from "./select-grid";
-import { Loading, LoadingPage } from "@/components/loading";
+import { LoadingPage } from "@/components/loading";
+import { Icon } from "@/components/icons/icon";
+import DateFilter from "./date-filter";
+import { FormatType } from "../input/date";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -23,6 +26,16 @@ export default function Candidates() {
 
   const [monthFilter, setMonthFilter] = useState<string>("all");
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
+
+  const [date, setDate] = useState(new Date());
+
+  const [format, setFormat] = useState<{
+    name: string;
+    value: FormatType;
+  }>({
+    name: "Year View",
+    value: "year",
+  });
 
   const loadCandidates = async () => {
     setLoading(true);
@@ -46,16 +59,20 @@ export default function Candidates() {
   }, []);
 
   const filteredCandidates = candidates.filter((candidate) => {
-    if (monthFilter === "all") return true;
-
     const query = search.toLowerCase();
 
-    return (
-      useFormatDate(candidate.createdAt, "month") === monthFilter ||
+    const matchesSearch =
+      !query ||
       candidate.name?.toLowerCase().includes(query) ||
       candidate.lastName?.toLowerCase().includes(query) ||
-      candidate.position?.name?.toLowerCase().includes(query)
-    );
+      candidate.position?.name?.toLowerCase().includes(query);
+
+    const candidateDate = useFormatDate(candidate.createdAt, format.value);
+    const selectedDate = useFormatDate(date, format.value);
+
+    const matchesDate = candidateDate === selectedDate;
+
+    return matchesSearch && matchesDate;
   });
 
   if (loading) {
@@ -79,6 +96,12 @@ export default function Candidates() {
       </div>
       <div className="flex justify-between items-center">
         <p className="opacity-60">{filteredCandidates.length} candidates</p>
+        <DateFilter
+          date={date}
+          setDate={setDate}
+          format={format}
+          setFormat={setFormat}
+        />
 
         <IconButton
           filled
@@ -114,13 +137,20 @@ export default function Candidates() {
                 description: candidate.position.name,
                 tag: (
                   <span
+                    title={candidate.resumeUrl ? "Resume" : "No Resume"}
                     className={`text-xs px-2 py-1 rounded-full text-center ${
                       candidate.resumeUrl
                         ? "bg-green-500/10 text-green-500"
                         : "bg-red-500/10 text-red-500"
                     }`}
                   >
-                    {candidate.resumeUrl ? "Resume" : "No Resume"}
+                    <Icon
+                      icon="file-pdf"
+                      width="20px"
+                      height="20px"
+                      filled
+                      stroke={0}
+                    />
                   </span>
                 ),
               }}

@@ -7,6 +7,7 @@ import Switch, { SwitchProps } from "./switch";
 import PasswordInput, { PasswordProps } from "./password";
 import TextareaInput, { TextareaProps } from "./textarea";
 import CheckboxInput, { CheckboxProps } from "./checkbox";
+import DateInput, { DateProps } from "./date";
 
 export type BasicInputProps = {
   id?: string;
@@ -32,7 +33,8 @@ export default function Input(
     | ({ type: "select" } & SelectProps)
     | ({ type: "file" } & FileInputProps)
     | ({ type: "switch" } & SwitchProps)
-    | ({ type: "checkbox" } & CheckboxProps),
+    | ({ type: "checkbox" } & CheckboxProps)
+    | ({ type: "date" } & DateProps),
 ) {
   switch (props.type) {
     case "switch": {
@@ -50,8 +52,12 @@ export default function Input(
     case "select": {
       return <Select {...props} />;
     }
-    case "file":
+    case "file": {
       return <FileInput {...props} />;
+    }
+    case "date": {
+      return <DateInput {...props} />;
+    }
     default: {
       return <DefaultInput {...props} />;
     }
