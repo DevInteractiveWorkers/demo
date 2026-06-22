@@ -74,7 +74,7 @@ export default function CandidatePageClient({
           ${showIntroControls ? "left-0 opacity-100" : "-left-full opacity-0"}
         `}
       >
-        <h1 className="md:text-6xl sm:text-4xl text-[2rem] md:leading-7 sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 max-md:mt-[60svh]">
+        <h1 className="md:text-6xl sm:text-4xl text-[2rem] max-md:leading-7 sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 max-md:mt-[60svh]">
           {fullName}
           <br />
           <strong className="font-semibold">{position.name}</strong>
