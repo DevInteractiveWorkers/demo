@@ -13,7 +13,7 @@ export function Card({
   onNotFound?: { icon?: string; message?: string };
 }) {
   return (
-    <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card bg-[#191919]/50 z-0">
+    <div className="border border-[#292929] rounded-xl overflow-hidden relative group/card bg-[#191919]/50 z-0 h-max">
       <div className="absolute top-0 right-0 z-10 pt-4 md:group-hover/card:opacity-100 md:opacity-0 transition-all duration-200 flex">
         {onShare && (
           <IconButton

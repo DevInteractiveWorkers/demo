@@ -30,16 +30,20 @@ export default function SeeMore({
   return (
     <div
       className={`
-        before:transition-all before:duration-500 before:backdrop-blur-sm before:z-50 before:w-full before:h-full before:absolute before:left-0 before:top-0 before:bg-[#191919]/50 ${isOpen ? "" : "before:opacity-0 before:pointer-events-none"}
-      `}
+        before:transition-all before:duration-500 before:backdrop-blur-sm before:z-50 before:w-full before:h-full before:absolute 
+        before:left-0 before:top-0 before:bg-[#191919]/50 ${isOpen ? "overflow-hidden" : "before:opacity-0 before:pointer-events-none"}
+        max-h-svh`}
     >
       <aside
-        className={`bg-[#191919] absolute z-50 top-0 right-0 p-4 w-full h-full md:max-w-3/12 max-w-10/12 transition-all duration-500 overflow-hidden ${isOpen ? "" : "translate-x-full"}`}
+        className={`bg-[#191919] absolute z-50 top-0 right-0 p-4 w-full h-svh md:max-w-3/12 max-w-10/12 transition-all duration-500 overflow-hidden flex flex-col ${
+          isOpen ? "" : "translate-x-full"
+        }`}
       >
-        <div className="flex py-4">
-          <h2 className="text-2xl text-start leading-5">
+        <div className="flex py-4 shrink-0 items-center justify-around">
+          <h2 className="text-2xl text-start leading-7">
             See more {position ? `${position.name} candidates` : "candidates"}
           </h2>
+
           <IconButton
             icon="close"
             stroke={1.5}
@@ -48,7 +52,8 @@ export default function SeeMore({
             height="50px"
           />
         </div>
-        <ul className="space-y-4">
+
+        <ul className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-2">
           {candidates &&
             candidates.map((candidate) => {
               const fullName = `${candidate.name} ${candidate.lastName}`;
@@ -59,6 +64,7 @@ export default function SeeMore({
               return (
                 <li
                   key={candidate.id}
+                  title={`See ${candidate.name}'s Demo`}
                   className="bg-[#202020] rounded-2xl overflow-hidden hover:outline-2 outline-[#DD272D] hover:scale-95 transition-all duration-500"
                 >
                   <CandidatePreview

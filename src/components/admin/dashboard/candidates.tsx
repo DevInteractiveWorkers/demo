@@ -80,7 +80,8 @@ export default function Candidates() {
   }
 
   return (
-    <section id="candidates" className="space-y-6">
+    <section id="candidates" className="flex flex-col h-screen space-y-6 ">
+      {" "}
       <div className="flex justify-between items-center">
         <SearchInput value={search} onChange={setSearch} />
 
@@ -94,15 +95,19 @@ export default function Candidates() {
           />
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <p className="opacity-60">{filteredCandidates.length} candidates</p>
-        <DateFilter
-          date={date}
-          setDate={setDate}
-          format={format}
-          setFormat={setFormat}
-        />
+      <div className="flex justify-between items-center gap-2">
+        <p className="opacity-60 max-md:hidden">
+          {filteredCandidates.length} candidates
+        </p>
 
+        <div className="md:w-min">
+          <DateFilter
+            date={date}
+            setDate={setDate}
+            format={format}
+            setFormat={setFormat}
+          />
+        </div>
         <IconButton
           filled
           icon="plus"
@@ -119,121 +124,130 @@ export default function Candidates() {
           Add Candidate
         </IconButton>
       </div>
-
-      {view.includes("grid") ? (
-        <div
-          className={`grid ${
-            view === "grid-small"
-              ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
-              : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4"
-          }`}
-        >
-          {filteredCandidates.map((candidate) => (
-            <Card
-              key={candidate.id}
-              item={{
-                ...candidate,
-                name: `${candidate.name} ${candidate.lastName}`,
-                description: candidate.position.name,
-                tag: (
-                  <span
-                    title={candidate.resumeUrl ? "Resume" : "No Resume"}
-                    className={`text-xs px-2 py-1 rounded-full text-center ${
-                      candidate.resumeUrl
-                        ? "bg-green-500/10 text-green-500"
-                        : "bg-red-500/10 text-red-500"
-                    }`}
-                  >
-                    <Icon
-                      icon="file-pdf"
-                      width="20px"
-                      height="20px"
-                      filled
-                      stroke={0}
-                    />
-                  </span>
-                ),
-              }}
-              onEdit={() => setEditingCandidate(candidate)}
-              onShare={() =>
-                handleShare({
-                  url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
-                  title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
-                })
-              }
-            />
-          ))}
-        </div>
-      ) : (
-        <DataTable
-          data={filteredCandidates}
-          columns={[
-            {
-              key: "name",
-              label: "Name",
-              render: (c) => `${c.name} ${c.lastName}`,
-            },
-            {
-              key: "position",
-              label: "Position",
-              render: (c) => c.position?.name,
-            },
-            {
-              key: "resume",
-              label: "Resume",
-              render: (c) =>
-                c.resumeUrl ? (
-                  <a href={c.resumeUrl}>Resume</a>
-                ) : (
-                  <i>No Resume</i>
-                ),
-            },
-            {
-              key: "video",
-              label: "Video",
-              render: (c) =>
-                c.videoUrl ? <a href={c.videoUrl}>Video</a> : <i>No Video</i>,
-            },
-            {
-              key: "createdAt",
-              label: "Created",
-              render: (c) => useFormatDate(c.createdAt, "long"),
-            },
-            {
-              key: "updatedAt",
-              label: "Updated",
-              render: (c) => useFormatDate(c.lastUpdatedAt, "month-year"),
-            },
-            {
-              key: "",
-              label: "Demo",
-              render: (c) => (
-                <IconButton
-                  icon="share"
-                  width="50px"
-                  height="30px"
-                  stroke={0}
-                  filled
-                  onClick={() =>
+      {filteredCandidates.length > 0 ? (
+        <>
+          {view.includes("grid") ? (
+            <div
+              className={`flex-1 overflow-y-auto grid ${
+                view === "grid-small"
+                  ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                  : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
+              } gap-4`}
+            >
+              {filteredCandidates.map((candidate) => (
+                <Card
+                  key={candidate.id}
+                  item={{
+                    ...candidate,
+                    name: `${candidate.name} ${candidate.lastName}`,
+                    description: candidate.position.name,
+                    tag: (
+                      <span
+                        title={candidate.resumeUrl ? "Resume" : "No Resume"}
+                        className={`text-xs px-2 py-1 rounded-full text-center ${
+                          candidate.resumeUrl
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-red-500/10 text-red-500"
+                        }`}
+                      >
+                        <Icon
+                          icon="file-pdf"
+                          width="20px"
+                          height="20px"
+                          filled
+                          stroke={0}
+                        />
+                      </span>
+                    ),
+                  }}
+                  onEdit={() => setEditingCandidate(candidate)}
+                  onShare={() =>
                     handleShare({
-                      url: `https://demo.interactiveworkers.com/${c.position.id}/${c.id}`,
-                      title: `${c.name} ${c.lastName} from InteractiveWorkers`,
+                      url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
+                      title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
                     })
                   }
                 />
-              ),
-            },
-          ]}
-          footer={
-            <>
-              <span className="opacity-50">Total Candidates:</span>{" "}
-              {filteredCandidates.length}
-            </>
-          }
-          onRowSelect={(candidate) => {
-            setEditingCandidate(candidate);
-          }}
-        />
+              ))}
+            </div>
+          ) : (
+            <DataTable
+              data={filteredCandidates}
+              columns={[
+                {
+                  key: "name",
+                  label: "Name",
+                  render: (c) => `${c.name} ${c.lastName}`,
+                },
+                {
+                  key: "position",
+                  label: "Position",
+                  render: (c) => c.position?.name,
+                },
+                {
+                  key: "resume",
+                  label: "Resume",
+                  render: (c) =>
+                    c.resumeUrl ? (
+                      <a href={c.resumeUrl}>Resume</a>
+                    ) : (
+                      <i>No Resume</i>
+                    ),
+                },
+                {
+                  key: "video",
+                  label: "Video",
+                  render: (c) =>
+                    c.videoUrl ? (
+                      <a href={c.videoUrl}>Video</a>
+                    ) : (
+                      <i>No Video</i>
+                    ),
+                },
+                {
+                  key: "createdAt",
+                  label: "Created",
+                  render: (c) => useFormatDate(c.createdAt, "long"),
+                },
+                {
+                  key: "updatedAt",
+                  label: "Updated",
+                  render: (c) => useFormatDate(c.lastUpdatedAt, "month-year"),
+                },
+                {
+                  key: "",
+                  label: "Demo",
+                  render: (c) => (
+                    <IconButton
+                      icon="share"
+                      width="50px"
+                      height="30px"
+                      stroke={0}
+                      filled
+                      onClick={() =>
+                        handleShare({
+                          url: `https://demo.interactiveworkers.com/${c.position.id}/${c.id}`,
+                          title: `${c.name} ${c.lastName} from InteractiveWorkers`,
+                        })
+                      }
+                    />
+                  ),
+                },
+              ]}
+              footer={
+                <>
+                  <span className="opacity-50">Total Candidates:</span>{" "}
+                  {filteredCandidates.length}
+                </>
+              }
+              onRowSelect={(candidate) => {
+                setEditingCandidate(candidate);
+              }}
+            />
+          )}
+        </>
+      ) : (
+        <span>No data found.</span>
       )}
       <CreateCandidate
         isOpen={isOpen}
