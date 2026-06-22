@@ -33,11 +33,7 @@ export default function Home() {
           <Navbar />
           <ParticlesBG />
           <div className="absolute top-[50svh] md:-translate-y-1/2">
-            {/* <h1 className="md:text-6xl text-4xl pb-4 font-medium md:px-25 sm:px-12 px-4">
-              Demo Portfolio <br />
-              InteractiveWorkers
-            </h1> */}
-            <h1 className="md:text-6xl sm:text-4xl text-[2rem] leading-7 sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 mb-2">
+            <h1 className="md:text-6xl sm:text-4xl text-[2rem] max-md:leading-7 sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 mb-2">
               Demo Portfolio
               <br />
               <strong className="font-semibold">InteractiveWorkers</strong>

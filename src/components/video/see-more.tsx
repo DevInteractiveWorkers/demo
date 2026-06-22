@@ -40,7 +40,7 @@ export default function SeeMore({
         }`}
       >
         <div className="flex py-4 shrink-0 items-center justify-around">
-          <h2 className="text-2xl text-start leading-7">
+          <h2 className="text-2xl text-start md:leading-7">
             See more {position ? `${position.name} candidates` : "candidates"}
           </h2>
 
