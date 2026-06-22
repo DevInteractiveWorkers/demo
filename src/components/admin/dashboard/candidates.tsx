@@ -15,6 +15,7 @@ import { LoadingPage } from "@/components/loading";
 import { Icon } from "@/components/icons/icon";
 import DateFilter from "./date-filter";
 import { FormatType } from "../input/date";
+import Tag from "@/components/tag";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -24,7 +25,6 @@ export default function Candidates() {
   const [view, setView] = useState<GridViewOptions>("grid-large");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [monthFilter, setMonthFilter] = useState<string>("all");
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
 
   const [date, setDate] = useState(new Date());
@@ -142,13 +142,9 @@ export default function Candidates() {
                     name: `${candidate.name} ${candidate.lastName}`,
                     description: candidate.position.name,
                     tag: (
-                      <span
+                      <Tag
                         title={candidate.resumeUrl ? "Resume" : "No Resume"}
-                        className={`text-xs px-2 py-1 rounded-full text-center ${
-                          candidate.resumeUrl
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
-                        }`}
+                        color={candidate.resumeUrl ? "green-500" : "red-500"}
                       >
                         <Icon
                           icon="file-pdf"
@@ -157,7 +153,7 @@ export default function Candidates() {
                           filled
                           stroke={0}
                         />
-                      </span>
+                      </Tag>
                     ),
                   }}
                   onEdit={() => setEditingCandidate(candidate)}
@@ -183,36 +179,39 @@ export default function Candidates() {
                   key: "position",
                   label: "Position",
                   render: (c) => c.position?.name,
+                  sortValue: (c) => c.position?.name,
                 },
                 {
                   key: "resume",
                   label: "Resume",
-                  render: (c) =>
-                    c.resumeUrl ? (
-                      <a href={c.resumeUrl}>Resume</a>
-                    ) : (
-                      <i>No Resume</i>
-                    ),
+                  render: (c) => (
+                    <Tag
+                      title={c.resumeUrl ? "Resume" : "No Resume"}
+                      color={c.resumeUrl ? "green-500" : "red-500"}
+                    />
+                  ),
                 },
                 {
                   key: "video",
                   label: "Video",
-                  render: (c) =>
-                    c.videoUrl ? (
-                      <a href={c.videoUrl}>Video</a>
-                    ) : (
-                      <i>No Video</i>
-                    ),
+                  render: (c) => (
+                    <Tag
+                      title={c.videoUrl ? "Video" : "No Video"}
+                      color={c.videoUrl ? "green-500" : "red-500"}
+                    />
+                  ),
                 },
                 {
                   key: "createdAt",
                   label: "Created",
                   render: (c) => useFormatDate(c.createdAt, "long"),
+                  sortValue: (c) => useFormatDate(c.createdAt, "long"),
                 },
                 {
                   key: "updatedAt",
                   label: "Updated",
-                  render: (c) => useFormatDate(c.lastUpdatedAt, "month-year"),
+                  render: (c) => useFormatDate(c.lastUpdatedAt, "long"),
+                  sortValue: (c) => useFormatDate(c.lastUpdatedAt, "long"),
                 },
                 {
                   key: "",
@@ -232,6 +231,7 @@ export default function Candidates() {
                       }
                     />
                   ),
+                  sortAllowed: false,
                 },
               ]}
               footer={
