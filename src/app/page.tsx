@@ -32,17 +32,21 @@ export default function Home() {
         <div id="landing" className="h-svh relative">
           <Navbar />
           <ParticlesBG />
-          <div className="absolute top-[50svh] -translate-y-1/2">
-            <h1 className="md:text-6xl text-4xl pb-4 font-medium md:px-25 sm:px-12 px-4">
+          <div className="absolute top-[50svh] md:-translate-y-1/2">
+            {/* <h1 className="md:text-6xl text-4xl pb-4 font-medium md:px-25 sm:px-12 px-4">
               Demo Portfolio <br />
               InteractiveWorkers
+            </h1> */}
+            <h1 className="md:text-6xl sm:text-4xl text-[2rem] leading-7 sm:pb-4 font-extralight md:px-25 sm:px-12 px-4 mb-2">
+              Demo Portfolio
+              <br />
+              <strong className="font-semibold">InteractiveWorkers</strong>
             </h1>
 
-            <div className="flex pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4">
+            <div className="flex sm:pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4 md:w-max w-full max-md:items-center">
               <Link
                 href="https://calendly.com/interactiveworkersgm/30min"
-                target="_blank"
-                className={`bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200 cursor-pointer`}
+                className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
               >
                 Book a Call
               </Link>

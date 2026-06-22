@@ -1,7 +1,6 @@
 // src/lib/firestore.ts
 
 import {
-  addDoc,
   collection,
   doc,
   getDocs,
@@ -11,6 +10,10 @@ import {
   DocumentReference,
   updateDoc,
   setDoc,
+  limit as firestoreLimit,
+  startAfter,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
@@ -92,41 +95,72 @@ export async function getPositions() {
   });
 }
 
-export async function getCandidates(): Promise<Candidate[]> {
-  const snapshot = await getDocs(collection(db, "candidates"));
+export async function getCandidates(options?: {
+  limit?: number;
+  lastDoc?: QueryDocumentSnapshot<DocumentData>;
+}): Promise<{
+  candidates: Candidate[];
+  lastDoc: QueryDocumentSnapshot<DocumentData> | null;
+  hasMore: boolean;
+}> {
+  let candidatesQuery;
 
-  const candidates = await Promise.all(
-    snapshot.docs.map(async (candidateDoc) => {
-      const data = candidateDoc.data();
+  if (options?.limit) {
+    candidatesQuery = options.lastDoc
+      ? query(
+          collection(db, "candidates"),
+          startAfter(options.lastDoc),
+          firestoreLimit(options.limit),
+        )
+      : query(collection(db, "candidates"), firestoreLimit(options.limit));
+  } else {
+    candidatesQuery = query(collection(db, "candidates"));
+  }
 
-      let position: Position | null = null;
+  const snapshot = await getDocs(candidatesQuery);
 
-      if (data.position) {
-        const positionSnap = await getDoc(data.position as DocumentReference);
+  // Fetch all positions once
+  const positionsSnapshot = await getDocs(collection(db, "positions"));
 
-        if (positionSnap.exists()) {
-          position = {
-            id: positionSnap.id,
-            ...(positionSnap.data() as Omit<Position, "id">),
-          };
-        }
-      }
+  const positionsMap = new Map<string, Position>();
 
-      return {
-        id: candidateDoc.id,
-        ...(data as Omit<Candidate, "id" | "position">),
-        position,
-      };
-    }),
-  );
+  positionsSnapshot.docs.forEach((doc) => {
+    positionsMap.set(doc.id, {
+      id: doc.id,
+      ...(doc.data() as Omit<Position, "id">),
+    });
+  });
 
-  return candidates;
+  const candidates = snapshot.docs.map((candidateDoc) => {
+    const data = candidateDoc.data();
+
+    let position: Position | null = null;
+
+    if (data.position) {
+      const positionRef = data.position as DocumentReference;
+
+      position = positionsMap.get(positionRef.id) ?? null;
+    }
+
+    return {
+      id: candidateDoc.id,
+      ...(data as Omit<Candidate, "id" | "position">),
+      position,
+    };
+  });
+
+  return {
+    candidates,
+    lastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null,
+    hasMore:
+      options?.limit != null ? snapshot.docs.length === options.limit : false,
+  };
 }
 
 export async function getCandidatesByPosition(
   positionId: string,
 ): Promise<Candidate[]> {
-  const candidates = await getCandidates();
+  const { candidates } = await getCandidates();
 
   return candidates.filter(
     (candidate) => candidate.position?.id === positionId,

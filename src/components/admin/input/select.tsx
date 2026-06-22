@@ -110,7 +110,10 @@ export default function Select(
   }, [isOpen]);
 
   return (
-    <div className="w-full relative" onMouseLeave={() => setIsOpen(false)}>
+    <div
+      className={`${icon ? "w-min" : "w-full"} relative`}
+      onMouseLeave={() => setIsOpen(false)}
+    >
       <label className="w-full">
         {placeholder}
         {props.required && <Required />}

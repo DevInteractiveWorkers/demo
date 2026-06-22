@@ -83,9 +83,13 @@ const NavigationLink = ({
 }) => {
   return (
     <li
-      className={`cursor-pointer rounded-xl px-4 py-2  hover:bg-[#292929] ${current ? "text-[#C2272D] font-semibold" : ""}`}
+      className={`cursor-pointer rounded-xl overflow-hidden flex ${current ? "text-[#C2272D] font-semibold" : ""}`}
     >
-      <Link href={`/admin/dashboard/${href}`} prefetch>
+      <Link
+        href={`/admin/dashboard/${href}`}
+        className="w-full hover:bg-[#292929] px-4 py-2 "
+        prefetch
+      >
         {children}
       </Link>
     </li>

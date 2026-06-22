@@ -5,6 +5,7 @@ export const useFormatDate = (
   format:
     | "date"
     | "day"
+    | "week"
     | "month"
     | "year"
     | "time"
@@ -47,6 +48,18 @@ export const useFormatDate = (
   switch (format) {
     case "day":
       return day;
+
+    case "week": {
+      const start = new Date(d);
+      start.setDate(d.getDate() - d.getDay());
+
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+
+      return `${months[start.getMonth()]} ${start.getDate()} - ${
+        months[end.getMonth()]
+      } ${end.getDate()}, ${end.getFullYear()}`;
+    }
 
     case "month":
       return month;
