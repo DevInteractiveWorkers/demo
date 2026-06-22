@@ -153,7 +153,16 @@ export default function DataTable<T>({
               >
                 {columns.map((column) => (
                   <td key={column.key} className="p-4">
-                    {column.render ? column.render(item) : item[column.key]}
+                    {typeof item[column.key] === "string" &&
+                    item[column.key] === "" ? (
+                      <p className="line-clamp-2 opacity-50">
+                        No {column.label}
+                      </p>
+                    ) : column.render ? (
+                      column.render(item)
+                    ) : (
+                      item[column.key]
+                    )}
                   </td>
                 ))}
 

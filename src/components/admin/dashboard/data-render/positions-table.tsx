@@ -1,5 +1,6 @@
 import { useFormatDate } from "@/lib/useFormatDate";
 import DataTable from "../../data/data-table";
+import Tag from "@/components/tag";
 
 export default function PositionsTableRender({
   data,
@@ -25,9 +26,10 @@ export default function PositionsTableRender({
           key: "active",
           label: "Status",
           render: (p) => (
-            <span className={p.active ? "text-green-500" : "text-red-500"}>
-              {p.active ? "Active" : "Inactive"}
-            </span>
+            <Tag
+              title={p.active ? "Active" : "Inactive"}
+              color={p.active ? "green-500" : "red-500"}
+            />
           ),
         },
         {

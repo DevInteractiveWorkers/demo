@@ -77,25 +77,20 @@ export default function Candidates() {
 
   return (
     <section id="candidates" className="flex flex-col h-screen space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex max-md:flex-col justify-between md:items-center items-end gap-2">
         <SearchInput value={search} onChange={setSearch} />
 
         <div
           className="flex gap-2"
           title={`Change view to ${view === "list" ? "grid" : "list"}`}
-        >
-          <SelectGrid
-            selected={view}
-            onSelect={(option) => setView(option.value as GridViewOptions)}
-          />
-        </div>
+        ></div>
       </div>
 
       <div className="flex justify-between items-center gap-2">
-        <p className="opacity-60 max-md:hidden">
-          {filteredCandidates.length} candidates
-        </p>
-
+        <SelectGrid
+          selected={view}
+          onSelect={(option) => setView(option.value as GridViewOptions)}
+        />
         <div className="md:w-min">
           <DateFilter
             date={date}
@@ -115,25 +110,29 @@ export default function Candidates() {
           viewBox="0 0 17 17"
           className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
           onClick={toggleCreateCandidate}
-        >
-          Add Candidate
-        </IconButton>
+        />
       </div>
 
       {filteredCandidates.length > 0 ? (
         view !== "list" ? (
-          <div
-            className={`flex-1 overflow-y-auto grid ${
-              view === "grid-small"
-                ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
-            } gap-4`}
-          >
-            <CandidateGridRender
-              data={filteredCandidates}
-              onEdit={setEditingCandidate}
-            />
-          </div>
+          <>
+            <p className="opacity-60 max-xl:hidden text-xs">
+              {filteredCandidates.length}{" "}
+              <span className="max-lg:hidden">candidates</span>
+            </p>
+            <div
+              className={`flex-1 overflow-y-auto grid ${
+                view === "grid-small"
+                  ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                  : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
+              } gap-4`}
+            >
+              <CandidateGridRender
+                data={filteredCandidates}
+                onEdit={setEditingCandidate}
+              />
+            </div>
+          </>
         ) : (
           <CandidatesTableRender
             data={filteredCandidates}
