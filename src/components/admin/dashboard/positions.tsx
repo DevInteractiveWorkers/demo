@@ -11,6 +11,8 @@ import EditPosition from "../data/edit-position";
 import { Card } from "./card";
 import SelectGrid, { GridViewOptions } from "./select-grid";
 import { LoadingPage } from "@/components/loading";
+import PositionsGridRender from "./data-render/positions-grid";
+import PositionsTableRender from "./data-render/positions-table";
 
 export default function Positions() {
   const [positions, setPositions] = useState<any[]>([]);
@@ -96,68 +98,15 @@ export default function Positions() {
               : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4"
           }`}
         >
-          {filteredPositions.map((position) => (
-            <Card
-              key={position.id}
-              item={{
-                ...position,
-                description:
-                  position.description !== ""
-                    ? position.description
-                    : "No description available",
-                tag: (
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      position.active
-                        ? "bg-green-500/10 text-green-500"
-                        : "bg-red-500/10 text-red-500"
-                    }`}
-                  >
-                    {position.active ? "Active" : "Inactive"}
-                  </span>
-                ),
-              }}
-              onEdit={() => setEditingPosition(position)}
-            />
-          ))}
+          <PositionsGridRender
+            data={filteredPositions}
+            onEdit={(position) => setEditingPosition(position)}
+          />
         </div>
       ) : (
-        <DataTable
+        <PositionsTableRender
           data={filteredPositions}
-          columns={[
-            {
-              key: "name",
-              label: "Position",
-            },
-            {
-              key: "description",
-              label: "Description",
-              render: (p) => <p className="line-clamp-2">{p.description}</p>,
-            },
-            {
-              key: "active",
-              label: "Status",
-              render: (p) => (
-                <span className={p.active ? "text-green-500" : "text-red-500"}>
-                  {p.active ? "Active" : "Inactive"}
-                </span>
-              ),
-            },
-            {
-              key: "createdAt",
-              label: "Created",
-              render: (p) => useFormatDate(p.createdAt, "long"),
-            },
-          ]}
-          footer={
-            <>
-              <span className="opacity-50">Total Positions:</span>{" "}
-              {filteredPositions.length}
-            </>
-          }
-          onRowSelect={(position) => {
-            setEditingPosition(position);
-          }}
+          onRowSelect={(position) => setEditingPosition(position)}
         />
       )}
       <CreatePosition

@@ -8,7 +8,7 @@ export function Card({
   onNotFound = { icon: "image", message: "No Source Found" },
 }: {
   item: any;
-  onEdit?: () => void;
+  onEdit?: (any: any) => void;
   onShare?: () => void;
   onNotFound?: { icon?: string; message?: string };
 }) {

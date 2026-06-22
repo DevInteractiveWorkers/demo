@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getCandidates } from "@/lib/firestore";
 import { IconButton } from "@/components/icons/icon-button";
 import SearchInput from "../search";
 import CreateCandidate from "../create-candidate";
 import { useFormatDate } from "@/lib/useFormatDate";
-import DataTable from "../data/data-table";
 import EditCandidate from "../data/edit-candidate";
-import { handleShare } from "@/lib/useShare";
-import { Card } from "./card";
 import SelectGrid, { GridViewOptions } from "./select-grid";
 import { LoadingPage } from "@/components/loading";
-import { Icon } from "@/components/icons/icon";
 import DateFilter from "./date-filter";
 import { FormatType } from "../input/date";
-import Tag from "@/components/tag";
+import CandidatesTableRender from "./data-render/candidates-table";
+import CandidateGridRender from "./data-render/candidates-grid";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -23,8 +20,8 @@ export default function Candidates() {
 
   const [search, setSearch] = useState("");
   const [view, setView] = useState<GridViewOptions>("grid-large");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [isOpen, setIsOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
 
   const [date, setDate] = useState(new Date());
@@ -41,8 +38,8 @@ export default function Candidates() {
     setLoading(true);
 
     try {
-      const data = await getCandidates();
-      setCandidates(data);
+      const { candidates } = await getCandidates();
+      setCandidates(candidates);
     } finally {
       setLoading(false);
     }
@@ -52,36 +49,34 @@ export default function Candidates() {
     loadCandidates();
   }, []);
 
-  useEffect(() => {
-    getCandidates()
-      .then(setCandidates)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filteredCandidates = candidates.filter((candidate) => {
+  const filteredCandidates = useMemo(() => {
     const query = search.toLowerCase();
 
-    const matchesSearch =
-      !query ||
-      candidate.name?.toLowerCase().includes(query) ||
-      candidate.lastName?.toLowerCase().includes(query) ||
-      candidate.position?.name?.toLowerCase().includes(query);
+    return candidates.filter((candidate) => {
+      const matchesSearch =
+        !query ||
+        candidate.name?.toLowerCase().includes(query) ||
+        candidate.lastName?.toLowerCase().includes(query) ||
+        candidate.position?.name?.toLowerCase().includes(query);
 
-    const candidateDate = useFormatDate(candidate.createdAt, format.value);
-    const selectedDate = useFormatDate(date, format.value);
+      const candidateDate = useFormatDate(candidate.createdAt, format.value);
 
-    const matchesDate = candidateDate === selectedDate;
+      const selectedDate = useFormatDate(date, format.value);
 
-    return matchesSearch && matchesDate;
-  });
+      return matchesSearch && candidateDate === selectedDate;
+    });
+  }, [candidates, search, date, format.value]);
+
+  const toggleCreateCandidate = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   if (loading) {
     return <LoadingPage />;
   }
 
   return (
-    <section id="candidates" className="flex flex-col h-screen space-y-6 ">
-      {" "}
+    <section id="candidates" className="flex flex-col h-screen space-y-6">
       <div className="flex justify-between items-center">
         <SearchInput value={search} onChange={setSearch} />
 
@@ -95,6 +90,7 @@ export default function Candidates() {
           />
         </div>
       </div>
+
       <div className="flex justify-between items-center gap-2">
         <p className="opacity-60 max-md:hidden">
           {filteredCandidates.length} candidates
@@ -108,153 +104,48 @@ export default function Candidates() {
             setFormat={setFormat}
           />
         </div>
+
         <IconButton
           filled
           icon="plus"
           stroke={0}
-          className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
           reversed
           width="20px"
           height="20px"
           viewBox="0 0 17 17"
-          onClick={() => {
-            setIsOpen(!isOpen);
-          }}
+          className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+          onClick={toggleCreateCandidate}
         >
           Add Candidate
         </IconButton>
       </div>
+
       {filteredCandidates.length > 0 ? (
-        <>
-          {view.includes("grid") ? (
-            <div
-              className={`flex-1 overflow-y-auto grid ${
-                view === "grid-small"
-                  ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
-              } gap-4`}
-            >
-              {filteredCandidates.map((candidate) => (
-                <Card
-                  key={candidate.id}
-                  item={{
-                    ...candidate,
-                    name: `${candidate.name} ${candidate.lastName}`,
-                    description: candidate.position.name,
-                    tag: (
-                      <Tag
-                        title={candidate.resumeUrl ? "Resume" : "No Resume"}
-                        color={candidate.resumeUrl ? "green-500" : "red-500"}
-                      >
-                        <Icon
-                          icon="file-pdf"
-                          width="20px"
-                          height="20px"
-                          filled
-                          stroke={0}
-                        />
-                      </Tag>
-                    ),
-                  }}
-                  onEdit={() => setEditingCandidate(candidate)}
-                  onShare={() =>
-                    handleShare({
-                      url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
-                      title: `${candidate.name} ${candidate.lastName} from InteractiveWorkers`,
-                    })
-                  }
-                />
-              ))}
-            </div>
-          ) : (
-            <DataTable
+        view !== "list" ? (
+          <div
+            className={`flex-1 overflow-y-auto grid ${
+              view === "grid-small"
+                ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
+            } gap-4`}
+          >
+            <CandidateGridRender
               data={filteredCandidates}
-              columns={[
-                {
-                  key: "name",
-                  label: "Name",
-                  render: (c) => `${c.name} ${c.lastName}`,
-                },
-                {
-                  key: "position",
-                  label: "Position",
-                  render: (c) => c.position?.name,
-                  sortValue: (c) => c.position?.name,
-                },
-                {
-                  key: "resume",
-                  label: "Resume",
-                  render: (c) => (
-                    <Tag
-                      title={c.resumeUrl ? "Resume" : "No Resume"}
-                      color={c.resumeUrl ? "green-500" : "red-500"}
-                    />
-                  ),
-                },
-                {
-                  key: "video",
-                  label: "Video",
-                  render: (c) => (
-                    <Tag
-                      title={c.videoUrl ? "Video" : "No Video"}
-                      color={c.videoUrl ? "green-500" : "red-500"}
-                    />
-                  ),
-                },
-                {
-                  key: "createdAt",
-                  label: "Created",
-                  render: (c) => useFormatDate(c.createdAt, "long"),
-                  sortValue: (c) => useFormatDate(c.createdAt, "long"),
-                },
-                {
-                  key: "updatedAt",
-                  label: "Updated",
-                  render: (c) => useFormatDate(c.lastUpdatedAt, "long"),
-                  sortValue: (c) => useFormatDate(c.lastUpdatedAt, "long"),
-                },
-                {
-                  key: "",
-                  label: "Demo",
-                  render: (c) => (
-                    <IconButton
-                      icon="share"
-                      width="50px"
-                      height="30px"
-                      stroke={0}
-                      filled
-                      onClick={() =>
-                        handleShare({
-                          url: `https://demo.interactiveworkers.com/${c.position.id}/${c.id}`,
-                          title: `${c.name} ${c.lastName} from InteractiveWorkers`,
-                        })
-                      }
-                    />
-                  ),
-                  sortAllowed: false,
-                },
-              ]}
-              footer={
-                <>
-                  <span className="opacity-50">Total Candidates:</span>{" "}
-                  {filteredCandidates.length}
-                </>
-              }
-              onRowSelect={(candidate) => {
-                setEditingCandidate(candidate);
-              }}
+              onEdit={setEditingCandidate}
             />
-          )}
-        </>
+          </div>
+        ) : (
+          <CandidatesTableRender
+            data={filteredCandidates}
+            onRowSelect={setEditingCandidate}
+          />
+        )
       ) : (
         <span>No data found.</span>
       )}
-      <CreateCandidate
-        isOpen={isOpen}
-        toggleClose={() => {
-          setIsOpen(false);
-        }}
-      />
+
+      <CreateCandidate isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
+
       {editingCandidate && (
         <EditCandidate
           candidate={editingCandidate}
