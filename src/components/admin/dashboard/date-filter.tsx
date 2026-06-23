@@ -42,7 +42,7 @@ export default function DateFilter({
         />
       )}
       <div
-        className={`flex max-md:flex-col gap-2 
+        className={`flex max-md:flex-col gap-2
             ${
               isMobile &&
               `absolute z-10 bg-[#191919] p-4 border border-[#282828] rounded-xl

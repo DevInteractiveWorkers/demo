@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPosition } from "./lib/firestore";
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const segments = pathname.split("/").filter(Boolean);
 
@@ -30,13 +31,15 @@ export function proxy(req: NextRequest) {
    * Protect only /[position]
    *
    * Examples:
-   * /general-va
-   * /customer-service
+   * /general-va or /customer-service
    *
    * But NOT:
    * /general-va/john-doe
    */
   if (segments.length === 1) {
+    const position = await getPosition(segments[0]);
+    if (!position || !position.active) return;
+
     if (!token) {
       return NextResponse.redirect(
         new URL(`/api/position-redirect/${segments[0]}`, req.url),

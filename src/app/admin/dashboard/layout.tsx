@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="grid xl:grid-cols-[20%_60%_20%] md:grid-cols-[20%_80%] h-svh relative">
+    <main className="grid xl:grid-cols-[20%_60%_20%] md:grid-cols-[15%_85%] h-svh relative">
       <Navigation />
       <div className="h-full p-4 lg:border-r border-[#292929] max-md:overflow-x-hidden">
         {children}

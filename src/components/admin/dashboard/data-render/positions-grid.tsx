@@ -1,7 +1,5 @@
 import Tag from "@/components/tag";
 import { Card } from "../card";
-import { Icon } from "@/components/icons/icon";
-import { handleShare } from "@/lib/useShare";
 
 export default function PositionsGridRender({
   data,
@@ -22,11 +20,11 @@ export default function PositionsGridRender({
         tag: (
           <Tag
             title={position.active ? "Active" : "Inactive"}
-            color={position.active ? "green-500" : "red-500"}
+            color={position.active ? "#00c950" : "#fb2c36"}
           />
         ),
       }}
-      onEdit={onEdit}
+      onEdit={() => onEdit(position)}
     />
   ));
 }

@@ -32,7 +32,7 @@ export default function CandidatesTableRender({
           render: (c) => (
             <Tag
               title={c.resumeUrl ? "Resume" : "No Resume"}
-              color={c.resumeUrl ? "green-500" : "red-500"}
+              color={c.resumeUrl ? "#00c950" : "#fb2c36"}
             />
           ),
         },
@@ -42,7 +42,7 @@ export default function CandidatesTableRender({
           render: (c) => (
             <Tag
               title={c.videoUrl ? "Video" : "No Video"}
-              color={c.videoUrl ? "green-500" : "red-500"}
+              color={c.videoUrl ? "#00c950" : "#fb2c36"}
             />
           ),
         },

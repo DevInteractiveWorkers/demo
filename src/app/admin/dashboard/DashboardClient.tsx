@@ -23,12 +23,7 @@ export default function DashboardClient() {
     }
   }, [user, loading, router]);
 
-  if (loading)
-    return (
-      <p>
-        <LoadingPage />
-      </p>
-    );
+  if (loading) return <LoadingPage />;
 
   if (!user) return null;
 
