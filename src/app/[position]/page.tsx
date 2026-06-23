@@ -17,9 +17,10 @@ export default async function PositionPage({
     id: string;
     name: string;
     description: string;
+    active: boolean;
   };
 
-  if (!positionData) {
+  if (!positionData || !positionData.active) {
     return <NotFound />;
   }
 
@@ -55,7 +56,6 @@ export default async function PositionPage({
         >
           {candidates.map((candidate, index) => {
             const nextCandidate = candidates[(index + 1) % candidates.length];
-            console.log(candidates.length, index);
 
             return (
               <div

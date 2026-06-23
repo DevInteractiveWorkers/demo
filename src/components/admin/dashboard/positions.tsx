@@ -58,19 +58,34 @@ export default function Positions() {
   }
 
   return (
-    <DashboardDisplay
-      title="Positions"
-      data={filteredPositions}
-      loading={loading}
-      onSearch={setSearch}
-      onCreate={() => setIsOpen(true)}
-      onEdit={setEditingPosition}
-      renderGrid={(data, onEdit) => (
-        <PositionsGridRender data={data} onEdit={onEdit} />
+    <>
+      <DashboardDisplay
+        title="Positions"
+        data={filteredPositions}
+        loading={loading}
+        onSearch={setSearch}
+        onCreate={() => setIsOpen(true)}
+        onEdit={setEditingPosition}
+        renderGrid={(data, onEdit) => (
+          <PositionsGridRender data={data} onEdit={onEdit} />
+        )}
+        renderTable={(data, onEdit) => (
+          <PositionsTableRender data={data} onRowSelect={onEdit} />
+        )}
+      />
+
+      <CreatePosition isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
+
+      {editingPosition && (
+        <EditPosition
+          position={editingPosition}
+          isOpen
+          toggleClose={() => {
+            setEditingPosition(null);
+          }}
+          onUpdated={loadPositions}
+        />
       )}
-      renderTable={(data, onEdit) => (
-        <PositionsTableRender data={data} onRowSelect={onEdit} />
-      )}
-    />
+    </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import ParticlesBG from "@/components/particles/particles-bg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,6 +12,7 @@ export default function NotFound() {
       id="not-found"
       className="w-full h-svh flex justify-center items-center z-1000 relative"
     >
+      <ParticlesBG overflowHidden />
       <div className="max-w-3xl grid justify-items-center space-y-4">
         <h2 className="text-4xl font-medium">Error 404</h2>
         <label>
@@ -23,7 +25,8 @@ export default function NotFound() {
         </p>
         <Link
           href={"/#request-demo"}
-          className="cursor-pointer hover:text-[#C2272D] transition-all duration-150"
+          className={`bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 
+            active:bg-white active:text-black transition-all duration-200 cursor-pointer disabled:opacity-50`}
         >
           Request Your Demo Here
         </Link>
@@ -34,7 +37,8 @@ export default function NotFound() {
         </p>
         <Link
           href={"/support"}
-          className="cursor-pointer hover:text-[#C2272D] transition-all duration-150"
+          className={`bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 
+            active:bg-white active:text-black transition-all duration-200 cursor-pointer disabled:opacity-50`}
         >
           Contact Support Now
         </Link>

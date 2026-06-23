@@ -1,7 +1,5 @@
 import Tag from "@/components/tag";
 import { Card } from "../card";
-import { Icon } from "@/components/icons/icon";
-import { handleShare } from "@/lib/useShare";
 
 export default function PositionsGridRender({
   data,
@@ -26,7 +24,7 @@ export default function PositionsGridRender({
           />
         ),
       }}
-      onEdit={onEdit}
+      onEdit={() => onEdit(position)}
     />
   ));
 }
