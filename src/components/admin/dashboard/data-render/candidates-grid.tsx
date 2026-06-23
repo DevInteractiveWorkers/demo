@@ -32,7 +32,7 @@ export default function CandidateGridRender({
           </Tag>
         ),
       }}
-      onEdit={onEdit}
+      onEdit={() => onEdit(candidate)}
       onShare={() =>
         handleShare({
           url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,

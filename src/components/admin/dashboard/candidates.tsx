@@ -13,6 +13,7 @@ import DateFilter from "./date-filter";
 import { FormatType } from "../input/date";
 import CandidatesTableRender from "./data-render/candidates-table";
 import CandidateGridRender from "./data-render/candidates-grid";
+import DashboardDisplay from "./dashboard-display";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -76,73 +77,29 @@ export default function Candidates() {
   }
 
   return (
-    <section id="candidates" className="flex flex-col h-screen space-y-6">
-      <div className="flex max-md:flex-col justify-between md:items-center items-end gap-2">
-        <SearchInput value={search} onChange={setSearch} />
-
-        <div
-          className="flex gap-2"
-          title={`Change view to ${view === "list" ? "grid" : "list"}`}
-        ></div>
-      </div>
-
-      <div className="flex justify-between items-center gap-2">
-        <SelectGrid
-          selected={view}
-          onSelect={(option) => setView(option.value as GridViewOptions)}
-        />
-        <div className="md:w-min">
+    <>
+      <DashboardDisplay
+        title="Candidates"
+        data={filteredCandidates}
+        loading={loading}
+        onSearch={setSearch}
+        onCreate={() => setIsOpen(true)}
+        onEdit={setEditingCandidate}
+        extraFilters={
           <DateFilter
             date={date}
             setDate={setDate}
             format={format}
             setFormat={setFormat}
           />
-        </div>
-
-        <IconButton
-          filled
-          icon="plus"
-          stroke={0}
-          reversed
-          width="20px"
-          height="20px"
-          viewBox="0 0 17 17"
-          className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-          onClick={toggleCreateCandidate}
-        />
-      </div>
-
-      {filteredCandidates.length > 0 ? (
-        view !== "list" ? (
-          <>
-            <p className="opacity-60 max-xl:hidden text-xs">
-              {filteredCandidates.length}{" "}
-              <span className="max-lg:hidden">candidates</span>
-            </p>
-            <div
-              className={`flex-1 overflow-y-auto grid ${
-                view === "grid-small"
-                  ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
-              } gap-4`}
-            >
-              <CandidateGridRender
-                data={filteredCandidates}
-                onEdit={setEditingCandidate}
-              />
-            </div>
-          </>
-        ) : (
-          <CandidatesTableRender
-            data={filteredCandidates}
-            onRowSelect={setEditingCandidate}
-          />
-        )
-      ) : (
-        <span>No data found.</span>
-      )}
-
+        }
+        renderGrid={(data, onEdit) => (
+          <CandidateGridRender data={data} onEdit={onEdit} />
+        )}
+        renderTable={(data, onEdit) => (
+          <CandidatesTableRender data={data} onRowSelect={onEdit} />
+        )}
+      />
       <CreateCandidate isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
 
       {editingCandidate && (
@@ -156,6 +113,6 @@ export default function Candidates() {
           onUpdated={loadCandidates}
         />
       )}
-    </section>
+    </>
   );
 }
