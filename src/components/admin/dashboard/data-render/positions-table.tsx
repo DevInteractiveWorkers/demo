@@ -28,7 +28,7 @@ export default function PositionsTableRender({
           render: (p) => (
             <Tag
               title={p.active ? "Active" : "Inactive"}
-              color={p.active ? "green-500" : "red-500"}
+              color={p.active ? "#00c950" : "#fb2c36"}
             />
           ),
         },

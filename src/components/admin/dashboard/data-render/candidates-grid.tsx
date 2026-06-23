@@ -20,7 +20,7 @@ export default function CandidateGridRender({
         tag: (
           <Tag
             title={candidate.resumeUrl ? "Resume" : "No Resume"}
-            color={candidate.resumeUrl ? "green-500" : "red-500"}
+            color={candidate.resumeUrl ? "#00c950" : "#fb2c36"}
           >
             <Icon
               icon="file-pdf"
