@@ -13,6 +13,7 @@ export default function CandidateGridRender({
   return data.map((candidate) => (
     <Card
       key={candidate.id}
+      href={`${window.location.origin}/${candidate.position.id}/${candidate.id}`}
       item={{
         ...candidate,
         name: `${candidate.name} ${candidate.lastName}`,

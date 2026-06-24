@@ -5,6 +5,7 @@ import { Candidate, Position } from "@/lib/type";
 import { IconButton } from "../icons/icon-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import VideoThumbnail from "./video-thumbnail";
 
 export default function SeeMore({
   position,
@@ -118,24 +119,28 @@ const CandidatePreview = ({
   return (
     <Link
       href={href}
-      className="group/link"
+      className="group/preview"
       onMouseEnter={() => {
         setTimeout(startPreview, 500);
       }}
       onMouseLeave={stopPreview}
     >
-      <div className="flex flex-col justify-center items-center w-full h-full hover">
+      <div className="flex flex-col justify-center items-center w-full h-full relative">
+        <VideoThumbnail
+          src={videoUrl}
+          className="absolute top-0 left-0 w-full h-full group-hover/preview:opacity-0 opacity-50 transition-all duration-200"
+        />
         <video
           ref={ref}
           src={videoUrl}
           muted
           playsInline
           preload="metadata"
-          className="group-hover/link:opacity-100 opacity-50 transition-all duration-200"
+          className="group-hover/preview:opacity-100 opacity-0 transition-all duration-200"
         />
       </div>
 
-      <p className="text-xl p-4 group-hover/link:bg-[#DD272D]">{title}</p>
+      <p className="text-xl p-4 group-hover/preview:bg-[#DD272D]">{title}</p>
     </Link>
   );
 };
