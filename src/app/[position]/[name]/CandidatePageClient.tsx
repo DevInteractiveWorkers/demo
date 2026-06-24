@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
-import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
 import ParticlesBubble from "@/components/particles/particles-bubble";
 import { useIsMobile } from "@/lib/useMobile";
