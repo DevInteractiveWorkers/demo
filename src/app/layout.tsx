@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Footer from "@/components/footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Demo InteractiveWorkers",
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={`bg-cover bg-no-repeat md:bg-top-right bg-top-left`}>
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
