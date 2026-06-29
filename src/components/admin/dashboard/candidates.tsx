@@ -2,38 +2,56 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getCandidates } from "@/lib/firestore";
-import { IconButton } from "@/components/icons/icon-button";
-import SearchInput from "../search";
-import CreateCandidate from "../create-candidate";
-import { useFormatDate } from "@/lib/useFormatDate";
-import EditCandidate from "../data/edit-candidate";
-import SelectGrid, { GridViewOptions } from "./select-grid";
 import { LoadingPage } from "@/components/loading";
-import DateFilter from "./date-filter";
-import { FormatType } from "../input/date";
-import CandidatesTableRender from "./data-render/candidates-table";
-import CandidateGridRender from "./data-render/candidates-grid";
+
+import CreateCandidate from "../create-candidate";
+import EditCandidate from "../data/edit-candidate";
 import DashboardDisplay from "./dashboard-display";
+import DateFilter from "./date-filter";
+import CandidateGridRender from "./data-render/candidates-grid";
+import CandidatesTableRender from "./data-render/candidates-table";
+
+import { DateMode } from "../input/calendar-input";
+import { dateMatches } from "@/lib/dateMatches";
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<GridViewOptions>("grid-large");
 
   const [isOpen, setIsOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<any>(null);
 
   const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState<DateMode>("year");
 
-  const [format, setFormat] = useState<{
-    name: string;
-    value: FormatType;
-  }>({
-    name: "Year View",
-    value: "year",
-  });
+  useEffect(() => {
+    const next = new Date(date);
+
+    switch (mode) {
+      case "week":
+        next.setDate(next.getDate() - ((next.getDay() + 6) % 7));
+        break;
+
+      case "month":
+        next.setDate(1);
+        break;
+
+      case "year":
+        next.setMonth(0, 1);
+        break;
+
+      case "date":
+      case "range":
+      default:
+        return;
+    }
+
+    if (next.getTime() !== date.getTime()) {
+      setDate(next);
+    }
+  }, [mode]);
 
   const loadCandidates = async () => {
     setLoading(true);
@@ -60,17 +78,9 @@ export default function Candidates() {
         candidate.lastName?.toLowerCase().includes(query) ||
         candidate.position?.name?.toLowerCase().includes(query);
 
-      const candidateDate = useFormatDate(candidate.createdAt, format.value);
-
-      const selectedDate = useFormatDate(date, format.value);
-
-      return matchesSearch && candidateDate === selectedDate;
+      return matchesSearch && dateMatches(candidate.createdAt, date, mode);
     });
-  }, [candidates, search, date, format.value]);
-
-  const toggleCreateCandidate = () => {
-    setIsOpen((prev) => !prev);
-  };
+  }, [candidates, search, date, mode]);
 
   if (loading) {
     return <LoadingPage />;
@@ -89,8 +99,10 @@ export default function Candidates() {
           <DateFilter
             date={date}
             setDate={setDate}
-            format={format}
-            setFormat={setFormat}
+            mode={mode}
+            setMode={() =>
+              setMode((prev) => (prev === "week" ? "month" : "week"))
+            }
           />
         }
         renderGrid={(data, onEdit) => (
@@ -100,6 +112,7 @@ export default function Candidates() {
           <CandidatesTableRender data={data} onRowSelect={onEdit} />
         )}
       />
+
       <CreateCandidate isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
 
       {editingCandidate && (

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { BasicInputProps, Required } from "./input";
 import { Icon, IconProps } from "@/components/icons/icon";
 import { IconButton } from "@/components/icons/icon-button";
+import DropDown from "@/components/dropdown";
 
 type SelectIconProps = Omit<IconProps, "icon"> & {
   icon: string;
@@ -11,6 +12,7 @@ type SelectIconProps = Omit<IconProps, "icon"> & {
 
 export type SelectProps = ({
   placeholder?: string;
+  className?: string;
   icon?: SelectIconProps;
   example?: string;
   options: {
@@ -53,7 +55,6 @@ export default function Select(
     onRemove,
   } = props;
 
-  const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState(multiple ? "" : (selected ?? ""));
 
   const selectedValues = Array.isArray(selected)
@@ -100,101 +101,77 @@ export default function Select(
     });
 
   const ulRef = useRef<HTMLUListElement>(null);
-  const [alignRight, setAlignRight] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen || !ulRef.current) return;
-
-    const rect = ulRef.current.getBoundingClientRect();
-    setAlignRight(rect.right > window.innerWidth);
-  }, [isOpen]);
 
   return (
-    <div
-      className={`${icon ? "w-min" : "w-full"} relative`}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <label className="w-full">
-        {placeholder}
-        {props.required && <Required />}
-      </label>
-      {icon ? (
-        <IconButton {...icon} onClick={() => setIsOpen((prev) => !prev)} />
-      ) : (
-        <div className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center gap-2 focus-within:outline-1">
-          <div className="flex flex-wrap w-full gap-1">
-            <input
-              id={id}
-              value={search}
-              placeholder={selectedValues.length ? "" : example}
-              onFocus={() => setIsOpen(true)}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setIsOpen(true);
-                setIsTyping(true);
-                setTimeout(() => setIsTyping(false), 5000);
-              }}
-              className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 w-full gap-2"
-            />
-
-            {multiple && (
-              <SelectedOptionsWrap
-                options={options.filter((o) =>
-                  selectedValues.includes(o.value),
-                )}
-                onRemove={onRemove}
-              />
-            )}
-          </div>
-
-          <IconButton
-            filled
-            stroke={0}
-            width="6"
-            height="6"
-            icon="angle-down"
-            onClick={() => setIsOpen(!isOpen)}
-          />
-        </div>
-      )}
-
-      {isOpen && (
-        <ul
-          ref={ulRef}
-          className={`absolute top-full z-100 
-            ${alignRight ? "right-0 left-auto" : "left-0"}
-            border rounded border-[#393939] bg-[#292929]
-            min-w-max w-full max-h-60 overflow-y-auto`}
-        >
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option, i) => (
-              <li
-                key={i}
-                className={`px-4 py-2 cursor-pointer flex justify-start items-center ${selected} ${
-                  selected === option.value
-                    ? "bg-[#C2272D]"
-                    : " hover:bg-[#393939] "
-                }`}
-                onClick={() => {
-                  if (!multiple) {
-                    setSearch(option.name);
-                    setIsOpen(false);
-                  } else {
-                    setSearch("");
-                  }
-                  onSelect?.(option);
-                }}
-              >
-                {option.icon && <Icon {...option.icon} />}
-                {option.name}
-              </li>
-            ))
+    <DropDown
+      maxHeight={"15rem"}
+      placeholder={
+        <label className="w-full">
+          {placeholder}
+          {props.required && <Required />}
+        </label>
+      }
+      className={props.className ?? `${icon ? "w-min" : "w-full"} relative`}
+      button={
+        <div>
+          {icon ? (
+            <IconButton {...icon} />
           ) : (
-            <li className="px-4 py-2 opacity-50">No results found</li>
+            <div className="flex flex-wrap w-full gap-1">
+              <input
+                id={id}
+                value={search}
+                placeholder={selectedValues.length ? "" : example}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setIsTyping(true);
+                  setTimeout(() => setIsTyping(false), 5000);
+                }}
+                className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 w-full gap-2"
+              />
+
+              {multiple && (
+                <SelectedOptionsWrap
+                  options={options.filter((o) =>
+                    selectedValues.includes(o.value),
+                  )}
+                  onRemove={onRemove}
+                />
+              )}
+            </div>
           )}
-        </ul>
-      )}
-    </div>
+        </div>
+      }
+    >
+      <ul>
+        {filteredOptions.length > 0 ? (
+          filteredOptions.map((option, i) => (
+            <li
+              key={i}
+              className={`px-4 py-2 cursor-pointer flex items-center ${
+                selected === option.value
+                  ? "bg-[#C2272D]"
+                  : "hover:bg-[#393939]"
+              }`}
+              onClick={() => {
+                if (!multiple) {
+                  setSearch(option.name);
+                } else {
+                  setSearch("");
+                }
+
+                onSelect?.(option);
+              }}
+            >
+              {option.icon && <Icon {...option.icon} />}
+              {option.name}
+            </li>
+          ))
+        ) : (
+          <li className="px-4 py-2 opacity-50">No results found</li>
+        )}
+      </ul>
+    </DropDown>
   );
 }
 const SelectedOptionsWrap = ({
