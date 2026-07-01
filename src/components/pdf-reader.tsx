@@ -97,7 +97,7 @@ const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
       />
       {isOpen && (
         <div className="absolute top-0 h-dvh flex">
-          <PDFComponent file="/portfolios/Mauro/MauroLealResumeDEMO.pdf" />
+          <PDFComponent file={pdf} />
         </div>
       )}
     </div>

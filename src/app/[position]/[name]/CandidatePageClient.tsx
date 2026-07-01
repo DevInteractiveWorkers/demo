@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { Navbar } from "@/components/video/navbar";
-import ParticlesBubble from "@/components/particles/particles-bubble";
 import { useIsMobile } from "@/lib/useMobile";
+import { ParticlesComponent } from "iw-particles";
 
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
@@ -101,7 +101,8 @@ export default function CandidatePageClient({
               width="25px"
               height="25px"
             >
-              More info
+              {/* More info */}
+              Resume
             </IconButton>
           )}
         </div>
@@ -131,7 +132,11 @@ export default function CandidatePageClient({
         />
       )}
 
-      <ParticlesBubble hidden={isVideoPlaying} />
+      <div
+        className={`fixed bg-[#C2272D] md:w-full w-[200%] h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-full -translate-x-1/2 -translate-y-1/3 overflow-hidden ${isVideoPlaying ? "opacity-0 -translate-x-full" : ""} transition-all duration-2000 -z-100`}
+      >
+        <ParticlesComponent id="gradient" color={"#191919"} />
+      </div>
     </main>
   );
 }
