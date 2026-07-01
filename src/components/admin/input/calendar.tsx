@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { IconButton } from "@/components/icons/icon-button";
 import { useFormatDate } from "@/lib/useFormatDate";
 import { DateMode, months, weekDays } from "./calendar-input";
@@ -7,17 +8,23 @@ import { DateMode, months, weekDays } from "./calendar-input";
 type CalendarViewProps = {
   mode: DateMode;
   availableModes?: DateMode[];
+
   value: Date;
   viewDate: Date;
   today: Date;
+
   calendar: {
     date: Date;
     currentMonth: boolean;
   }[];
+
   isSameDay: (a: Date, b: Date) => boolean;
   navigate: (direction: number) => void;
+
   onModeChange?: (mode: DateMode) => void;
+
   handleSelect: (date: Date) => void;
+  onRangeSelect?: (start: Date, end: Date) => void;
 };
 
 export default function Calendar({
@@ -31,12 +38,87 @@ export default function Calendar({
   navigate,
   onModeChange,
   handleSelect,
+  onRangeSelect,
 }: CalendarViewProps) {
   const modes = availableModes ?? ["date", "month", "year"];
 
   const nextMode = () => {
     const index = modes.indexOf(mode);
     return modes[(index + 1) % modes.length];
+  };
+
+  // ---------------- RANGE ----------------
+
+  const [rangeStart, setRangeStart] = useState<Date | null>(null);
+  const [rangeEnd, setRangeEnd] = useState<Date | null>(null);
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+
+  const normalize = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const previewEnd = isSelecting && hoverDate ? hoverDate : rangeEnd;
+
+  const orderedRange = useMemo(() => {
+    if (!rangeStart || !previewEnd) return null;
+
+    const a = normalize(rangeStart);
+    const b = normalize(previewEnd);
+
+    return a <= b ? { start: a, end: b } : { start: b, end: a };
+  }, [rangeStart, previewEnd]);
+
+  const inRange = (date: Date) => {
+    if (!orderedRange) return false;
+
+    const d = normalize(date);
+
+    return d >= orderedRange.start && d <= orderedRange.end;
+  };
+
+  const isRangeStart = (date: Date) =>
+    orderedRange && isSameDay(date, orderedRange.start);
+
+  const isRangeEnd = (date: Date) =>
+    orderedRange && isSameDay(date, orderedRange.end);
+
+  const onDateClick = (date: Date) => {
+    if (mode !== "range") {
+      handleSelect(date);
+      return;
+    }
+
+    if (!isSelecting) {
+      setRangeStart(date);
+      setRangeEnd(null);
+      setHoverDate(date);
+      setIsSelecting(true);
+      return;
+    }
+
+    setRangeEnd(date);
+    setHoverDate(date);
+    setIsSelecting(false);
+
+    if (rangeStart) {
+      const start =
+        normalize(rangeStart) <= normalize(date) ? rangeStart : date;
+
+      const end = normalize(rangeStart) <= normalize(date) ? date : rangeStart;
+
+      onRangeSelect?.(start, end);
+    }
+  };
+
+  const onDateDoubleClick = (date: Date) => {
+    if (mode !== "range") return;
+
+    setRangeStart(date);
+    setRangeEnd(date);
+    setHoverDate(date);
+    setIsSelecting(false);
+
+    onRangeSelect?.(date, date);
   };
 
   return (
@@ -82,8 +164,9 @@ export default function Calendar({
             return (
               <button
                 key={year}
-                className={`rounded py-2 relative overflow-hidden after:absolute after:top-0 after:left-0 after:w-full after:h-full hover:after:bg-white/10
-                  ${value.getFullYear() === year ? "bg-[#C2272D]" : ""}`}
+                className={`rounded py-2 relative overflow-hidden after:absolute after:inset-0 hover:after:bg-white/10 ${
+                  value.getFullYear() === year ? "bg-[#C2272D]" : ""
+                }`}
                 onClick={() => {
                   const d = new Date(viewDate);
                   d.setFullYear(year);
@@ -102,13 +185,12 @@ export default function Calendar({
           {months.map((month, i) => (
             <button
               key={month}
-              className={`rounded py-2 relative overflow-hidden after:absolute after:top-0 after:left-0 after:w-full after:h-full hover:after:bg-white/10
-                ${
-                  value.getMonth() === i &&
-                  value.getFullYear() === viewDate.getFullYear()
-                    ? "bg-[#C2272D]"
-                    : ""
-                }`}
+              className={`rounded py-2 relative overflow-hidden after:absolute after:inset-0 hover:after:bg-white/10 ${
+                value.getMonth() === i &&
+                value.getFullYear() === viewDate.getFullYear()
+                  ? "bg-[#C2272D]"
+                  : ""
+              }`}
               onClick={() => {
                 const d = new Date(viewDate);
                 d.setMonth(i);
@@ -142,34 +224,51 @@ export default function Calendar({
                     const selected = isSameDay(date, value);
                     const isToday = isSameDay(date, today);
 
+                    const start = isRangeStart(date);
+                    const end = isRangeEnd(date);
+                    const between = inRange(date);
+
                     return (
                       <td key={date.toISOString()} className="text-center p-1">
                         <button
-                          onClick={() => handleSelect(date)}
+                          onMouseEnter={() => isSelecting && setHoverDate(date)}
+                          onClick={() => onDateClick(date)}
+                          onDoubleClick={() => onDateDoubleClick(date)}
                           className={`
                             w-9 h-9 rounded-full text-sm transition relative flex justify-center items-center
 
                             ${
-                              selected
+                              mode === "range" && between
+                                ? "bg-[#C2272D]/25"
+                                : ""
+                            }
+
+                            ${
+                              mode === "range" && (start || end)
                                 ? "bg-[#C2272D] text-white"
-                                : isToday
-                                  ? "border border-[#C2272D]"
-                                  : ""
+                                : ""
+                            }
+
+                            ${
+                              mode !== "range" && selected
+                                ? "bg-[#C2272D] text-white"
+                                : ""
+                            }
+
+                            ${
+                              !selected && !between && isToday
+                                ? "border border-[#C2272D]"
+                                : ""
                             }
 
                             ${
                               currentMonth
-                                ? "relative overflow-hidden after:absolute after:top-0 after:left-0 after:w-full after:h-full hover:after:bg-white/10"
-                                : "opacity-40 relative overflow-hidden after:absolute after:top-0 after:left-0 after:w-full after:h-full hover:after:bg-white/10"
+                                ? "relative overflow-hidden after:absolute after:inset-0 hover:after:bg-white/10"
+                                : "opacity-40 relative overflow-hidden after:absolute after:inset-0 hover:after:bg-white/10"
                             }
                           `}
                         >
                           {date.getDate()}
-                          {/* {dayHasActivity && <span
-                            className={`absolute bottom-1 w-1 h-1 aspect-square rounded-full ${
-                              selected ? "bg-white" : "bg-[#C2272D]"
-                            }`}
-                          />} */}
                         </button>
                       </td>
                     );
@@ -179,6 +278,7 @@ export default function Calendar({
           </tbody>
         </table>
       )}
+
       <div className="flex justify-end">
         <p className="text-xs opacity-50">
           Week: {useFormatDate(value, "week")}

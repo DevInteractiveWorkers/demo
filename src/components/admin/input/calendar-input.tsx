@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Calendar from "./calendar";
 
 export type DateMode = "date" | "week" | "month" | "year" | "range";
@@ -14,7 +14,12 @@ export type CalendarInputProps = {
   onModeChange?: (mode: DateMode) => void;
 
   onNavigate: (date: Date) => void;
+
+  // Existing callback
   onSelect?: (date: Date) => void;
+
+  // New callback for range mode
+  onRangeSelect?: (start: Date, end: Date) => void;
 };
 
 export const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -42,6 +47,7 @@ export default function CalendarInput({
   onNavigate,
   onModeChange,
   onSelect,
+  onRangeSelect,
 }: CalendarInputProps) {
   const today = new Date();
 
@@ -98,6 +104,26 @@ export default function CalendarInput({
         break;
       }
 
+      case "month": {
+        const d = new Date(date);
+        d.setDate(1);
+        onSelect?.(d);
+        break;
+      }
+
+      case "year": {
+        const d = new Date(date);
+        d.setMonth(0, 1);
+        onSelect?.(d);
+        break;
+      }
+
+      case "range":
+        // Calendar now manages the range internally.
+        // This callback exists only so Calendar has access to it.
+        onSelect?.(date);
+        break;
+
       default:
         onSelect?.(date);
     }
@@ -115,6 +141,7 @@ export default function CalendarInput({
       navigate={navigate}
       onModeChange={onModeChange}
       handleSelect={handleSelect}
+      onRangeSelect={onRangeSelect}
     />
   );
 }

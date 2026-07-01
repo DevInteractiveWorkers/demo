@@ -19,18 +19,24 @@ export type DateFormat =
 
 export type DateProps = {
   value?: Date | string;
+
   mode?: DateMode;
   availableModes?: DateMode[];
   onModeChange?: (mode: DateMode) => void;
+
   onChange?: (date: Date) => void;
+
+  // NEW
+  onRangeSelect?: (start: Date, end: Date) => void;
 };
 
 export default function DateInput({
   value = new Date(),
-  onChange,
   mode = "date",
-  onModeChange,
   availableModes,
+  onModeChange,
+  onChange,
+  onRangeSelect,
 }: DateProps) {
   const currentDate = value instanceof Date ? value : new Date(value);
 
@@ -40,17 +46,32 @@ export default function DateInput({
     setViewDate(currentDate);
   }, [currentDate]);
 
-  const displayValue =
-    mode === "week"
-      ? useFormatDate(currentDate, "week")
-      : mode === "month"
-        ? useFormatDate(currentDate, "month-year")
-        : mode === "year"
-          ? String(useFormatDate(currentDate, "year"))
-          : `${useFormatDate(currentDate, "weekday")}, ${useFormatDate(
-              currentDate,
-              "long",
-            )}`;
+  const displayValue = (() => {
+    switch (mode) {
+      case "week":
+        return useFormatDate(currentDate, "week");
+
+      case "month":
+        return useFormatDate(currentDate, "month-year");
+
+      case "year":
+        return useFormatDate(currentDate, "year");
+
+      case "range":
+        // Until a committed range is supplied,
+        // show the selected start date.
+        return `${useFormatDate(currentDate, "weekday")}, ${useFormatDate(
+          currentDate,
+          "long",
+        )}`;
+
+      default:
+        return `${useFormatDate(currentDate, "weekday")}, ${useFormatDate(
+          currentDate,
+          "long",
+        )}`;
+    }
+  })();
 
   return (
     <DropDown
@@ -71,6 +92,7 @@ export default function DateInput({
         viewDate={viewDate}
         onNavigate={setViewDate}
         onSelect={onChange}
+        onRangeSelect={onRangeSelect}
       />
     </DropDown>
   );

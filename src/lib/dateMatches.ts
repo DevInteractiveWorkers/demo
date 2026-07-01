@@ -1,5 +1,10 @@
 import { DateMode } from "@/components/admin/input/calendar-input";
 
+export type DateRange = {
+  start: Date;
+  end: Date;
+};
+
 function toDate(value: any): Date {
   if (value instanceof Date) return value;
 
@@ -14,22 +19,26 @@ function toDate(value: any): Date {
 
 export function dateMatches(
   candidateDate: any,
-  selectedDate: Date,
+  selected: Date | DateRange,
   mode: DateMode,
 ) {
   const candidate = toDate(candidateDate);
-  const selected = toDate(selectedDate);
 
   switch (mode) {
-    case "date":
+    case "date": {
+      const date = toDate(selected as Date);
+
       return (
-        candidate.getFullYear() === selected.getFullYear() &&
-        candidate.getMonth() === selected.getMonth() &&
-        candidate.getDate() === selected.getDate()
+        candidate.getFullYear() === date.getFullYear() &&
+        candidate.getMonth() === date.getMonth() &&
+        candidate.getDate() === date.getDate()
       );
+    }
 
     case "week": {
-      const start = new Date(selected);
+      const date = toDate(selected as Date);
+
+      const start = new Date(date);
       start.setHours(0, 0, 0, 0);
       start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
 
@@ -39,14 +48,37 @@ export function dateMatches(
       return candidate >= start && candidate < end;
     }
 
-    case "month":
-      return (
-        candidate.getFullYear() === selected.getFullYear() &&
-        candidate.getMonth() === selected.getMonth()
-      );
+    case "month": {
+      const date = toDate(selected as Date);
 
-    case "year":
-      return candidate.getFullYear() === selected.getFullYear();
+      return (
+        candidate.getFullYear() === date.getFullYear() &&
+        candidate.getMonth() === date.getMonth()
+      );
+    }
+
+    case "year": {
+      const date = toDate(selected as Date);
+
+      return candidate.getFullYear() === date.getFullYear();
+    }
+
+    case "range": {
+      const { start, end } = selected as DateRange;
+
+      const startDate = toDate(start);
+      const endDate = toDate(end);
+
+      // Normalize time
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+
+      const min = startDate <= endDate ? startDate : endDate;
+
+      const max = startDate <= endDate ? endDate : startDate;
+
+      return candidate >= min && candidate <= max;
+    }
 
     default:
       return true;
