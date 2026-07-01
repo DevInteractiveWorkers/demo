@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IconButton } from "../icons/icon-button";
 
 export interface VideoPlayerProps {
@@ -44,7 +44,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     updatePlayingState(true);
   };
 
-  const handleVideoControls = () => {
+  const handleVideoControls = useCallback(() => {
     const video = videoRef.current;
 
     if (!video) return;
@@ -63,7 +63,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       video.pause();
       updatePlayingState(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     onReady?.({
@@ -97,7 +97,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const handlePause = () => updatePlayingState(false);
     const handleEnded = () => updatePlayingState(false);
 
-    video.addEventListener("loadedmetadata", updateDuration);
     video.addEventListener("play", handlePlay);
     video.addEventListener("pause", handlePause);
     video.addEventListener("ended", handleEnded);
