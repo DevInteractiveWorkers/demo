@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import Candidate from "@/components/video/candidate";
 import { IconButton } from "@/components/icons/icon-button";
 import { Navbar } from "@/components/video/navbar";
 import { useIsMobile } from "@/lib/useMobile";
 import { ParticlesComponent } from "iw-particles";
 
+const Candidate = dynamic(() => import("@/components/video/candidate"));
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
 });
@@ -124,10 +124,10 @@ export default function CandidatePageClient({
         />
       )}
 
-      {candidate.resumeUrl && (
+      {candidate.resumeUrl && isPDFOpen && (
         <PDFReader
           pdf={candidate.resumeUrl}
-          isOpen={isPDFOpen}
+          isOpen
           toggle={() => setIsPDFOpen(false)}
         />
       )}

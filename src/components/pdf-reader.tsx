@@ -14,7 +14,7 @@ export interface ReaderProps {
 }
 
 const PDFComponent = ({ file }: { file: string }) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(2);
   const [numPages, setNumPages] = useState<number>(1);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
@@ -55,7 +55,7 @@ const PDFComponent = ({ file }: { file: string }) => {
           renderTextLayer={false}
         />
       </Document>
-      <div className="absolute h-1/2 bottom-0 text-white w-full hover:opacity-100 opacity-0 transition-all">
+      {/* <div className="absolute h-1/2 bottom-0 text-white w-full transition-all">
         <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-linear-to-b from-transparent to-[#181621]">
           <IconButton
             icon="prev"
@@ -78,7 +78,7 @@ const PDFComponent = ({ file }: { file: string }) => {
             Next
           </IconButton>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

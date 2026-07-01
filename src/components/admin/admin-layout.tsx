@@ -14,6 +14,7 @@ import EditCandidate from "./data/edit-candidate";
 import { usePathname } from "next/navigation";
 import { getCandidate } from "@/lib/firestore";
 import Link from "next/link";
+import { logout } from "@/lib/auth";
 
 export default function AdminLayout({
   children,
@@ -196,6 +197,14 @@ function AdminSettings() {
               Admin Panel
             </Link>
             <ul className="flex gap-4">
+              <li>
+                <button
+                  className="hover:underline hover:opacity-50 transition-all duration-150 cursor-pointer"
+                  onClick={() => logout()}
+                >
+                  Logout
+                </button>
+              </li>
               <li>
                 <button
                   className="hover:underline hover:opacity-50 transition-all duration-150 cursor-pointer"
