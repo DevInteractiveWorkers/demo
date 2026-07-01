@@ -1,11 +1,14 @@
 "use client";
 
-import { IconButton } from "@/components/icons/icon-button";
+import { useEffect, useState } from "react";
+import DropDown from "@/components/dropdown";
+import CalendarInput, { DateMode } from "./calendar-input";
 import { useFormatDate } from "@/lib/useFormatDate";
 
-export type FormatType =
+export type DateFormat =
   | "date"
   | "day"
+  | "weekday"
   | "week"
   | "month"
   | "year"
@@ -16,67 +19,81 @@ export type FormatType =
 
 export type DateProps = {
   value?: Date | string;
+
+  mode?: DateMode;
+  availableModes?: DateMode[];
+  onModeChange?: (mode: DateMode) => void;
+
   onChange?: (date: Date) => void;
-  format?: FormatType;
+
+  // NEW
+  onRangeSelect?: (start: Date, end: Date) => void;
 };
 
 export default function DateInput({
   value = new Date(),
+  mode = "date",
+  availableModes,
+  onModeChange,
   onChange,
-  format = "long",
+  onRangeSelect,
 }: DateProps) {
   const currentDate = value instanceof Date ? value : new Date(value);
 
-  const handleDateChange = (direction: -1 | 1) => {
-    const newDate = new Date(currentDate);
+  const [viewDate, setViewDate] = useState(currentDate);
 
-    switch (format) {
-      case "year":
-        newDate.setFullYear(newDate.getFullYear() + direction);
-        break;
+  useEffect(() => {
+    setViewDate(currentDate);
+  }, [currentDate]);
+
+  const displayValue = (() => {
+    switch (mode) {
+      case "week":
+        return useFormatDate(currentDate, "week");
 
       case "month":
-      case "month-year":
-        newDate.setMonth(newDate.getMonth() + direction);
-        break;
+        return useFormatDate(currentDate, "month-year");
 
-      case "week":
-        newDate.setDate(newDate.getDate() + direction * 7);
-        break;
+      case "year":
+        return useFormatDate(currentDate, "year");
+
+      case "range":
+        // Until a committed range is supplied,
+        // show the selected start date.
+        return `${useFormatDate(currentDate, "weekday")}, ${useFormatDate(
+          currentDate,
+          "long",
+        )}`;
 
       default:
-        newDate.setDate(newDate.getDate() + direction);
-        break;
+        return `${useFormatDate(currentDate, "weekday")}, ${useFormatDate(
+          currentDate,
+          "long",
+        )}`;
     }
-
-    onChange?.(newDate);
-  };
+  })();
 
   return (
-    <div className="border rounded border-[#292929] w-full px-4 py-2 flex items-center gap-2">
-      <IconButton
-        icon="angle-left"
-        width="25px"
-        height="25px"
-        stroke={1.5}
-        onClick={() => handleDateChange(-1)}
-        className="transition-all duration-100 hover:scale-90"
+    <DropDown
+      className="p-2 w-80"
+      button={
+        <input
+          readOnly
+          value={displayValue}
+          className="outline-none flex-1 bg-transparent cursor-pointer"
+        />
+      }
+    >
+      <CalendarInput
+        value={currentDate}
+        mode={mode}
+        availableModes={availableModes}
+        onModeChange={onModeChange}
+        viewDate={viewDate}
+        onNavigate={setViewDate}
+        onSelect={onChange}
+        onRangeSelect={onRangeSelect}
       />
-
-      <input
-        readOnly
-        value={useFormatDate(currentDate, format)}
-        className="outline-0 flex-1 text-center bg-transparent"
-      />
-
-      <IconButton
-        icon="angle-right"
-        width="25px"
-        height="25px"
-        stroke={1.5}
-        onClick={() => handleDateChange(1)}
-        className="transition-all duration-100 hover:scale-90"
-      />
-    </div>
+    </DropDown>
   );
 }

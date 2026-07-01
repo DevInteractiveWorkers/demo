@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Form, { FormProps } from "@/components/form";
 import Input from "../input/input";
 import Button from "../button";
+import { uploadToGHL } from "@/lib/gohighlevel";
 
 import { getPositions, updateCandidate } from "@/lib/firestore";
 
@@ -24,6 +25,8 @@ export default function EditCandidate(
   const [videoUrl, setVideoUrl] = useState(candidate?.videoUrl ?? "");
   const [position, setPosition] = useState(candidate?.position?.name ?? "");
   const [positionId, setPositionId] = useState(candidate?.position?.id ?? "");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
 
   useEffect(() => {
     getPositions().then((data) => {
@@ -42,14 +45,47 @@ export default function EditCandidate(
     try {
       setSaving(true);
 
-      console.log("Updating candidate:", candidate.id);
+      let finalResumeUrl = resumeUrl;
+      let finalVideoUrl = videoUrl;
+
+      const results = await Promise.allSettled([
+        resumeFile ? uploadToGHL(resumeFile) : null,
+        videoFile ? uploadToGHL(videoFile) : null,
+      ]);
+
+      const resumeUpload =
+        results[0].status === "fulfilled" ? results[0].value : null;
+
+      const videoUpload =
+        results[1].status === "fulfilled" ? results[1].value : null;
+
+      if (resumeFile && !resumeUpload) {
+        throw new Error("Resume upload failed");
+      }
+
+      if (videoFile && !videoUpload) {
+        throw new Error("Video upload failed");
+      }
+
+      if (resumeUpload) {
+        finalResumeUrl =
+          resumeUpload.url ||
+          resumeUpload.fileUrl ||
+          resumeUpload.mediaUrl ||
+          "";
+      }
+
+      if (videoUpload) {
+        finalVideoUrl =
+          videoUpload.url || videoUpload.fileUrl || videoUpload.mediaUrl || "";
+      }
 
       await updateCandidate(candidate.id, {
         name,
         lastName,
         positionId,
-        resumeUrl,
-        videoUrl,
+        resumeUrl: finalResumeUrl,
+        videoUrl: finalVideoUrl,
       });
 
       onUpdated?.();
@@ -91,17 +127,51 @@ export default function EditCandidate(
         required
       />
 
-      <Input
-        value={resumeUrl}
-        onChange={(e) => setResumeUrl(e.target.value)}
-        placeholder="Resume URL"
-      />
+      <div
+        className={`grid gap-4 ${
+          resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+        } w-full`}
+      >
+        {!resumeFile && (
+          <Input
+            value={resumeUrl}
+            onChange={(e) => setResumeUrl(e.target.value)}
+            placeholder="Resume URL"
+          />
+        )}
 
-      <Input
-        value={videoUrl}
-        onChange={(e) => setVideoUrl(e.target.value)}
-        placeholder="Video URL"
-      />
+        {!resumeUrl && (
+          <Input
+            type="file"
+            placeholder="Upload Resume"
+            accept=".pdf,.doc,.docx"
+            onFileSelect={(file) => setResumeFile(file)}
+          />
+        )}
+      </div>
+
+      <div
+        className={`grid gap-4 ${
+          videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+        } w-full`}
+      >
+        {!videoFile && (
+          <Input
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="Video URL"
+          />
+        )}
+
+        {!videoUrl && (
+          <Input
+            type="file"
+            placeholder="Upload Video"
+            accept="video/*"
+            onFileSelect={(file) => setVideoFile(file)}
+          />
+        )}
+      </div>
 
       <Button disabled={saving}>{saving ? "Updating..." : "Update"}</Button>
     </Form>

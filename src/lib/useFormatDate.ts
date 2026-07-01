@@ -5,6 +5,7 @@ export const useFormatDate = (
   format:
     | "date"
     | "day"
+    | "weekday"
     | "week"
     | "month"
     | "year"
@@ -38,6 +39,16 @@ export const useFormatDate = (
     "December",
   ];
 
+  const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
   const month = months[d.getMonth()];
   const day = d.getDate();
   const year = d.getFullYear();
@@ -48,6 +59,9 @@ export const useFormatDate = (
   switch (format) {
     case "day":
       return day;
+
+    case "weekday":
+      return weekdays[d.getDay()];
 
     case "week": {
       const start = new Date(d);

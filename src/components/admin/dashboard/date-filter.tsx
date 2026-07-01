@@ -1,28 +1,26 @@
 import Button from "../button";
 import Input from "../input/input";
-import { FormatType } from "../input/date";
 import { IconButton } from "@/components/icons/icon-button";
 import { useState } from "react";
 import { useIsMobile } from "@/lib/useMobile";
+import { DateMode } from "../input/calendar-input";
+import { DateProps } from "../input/date";
 
-const DateOptions = [
-  { name: "Week View", value: "week" },
-  { name: "Month View", value: "month" },
-  { name: "Year View", value: "year" },
-];
+type DateFilterProps = {
+  date: Date;
+  setDate: (date: Date) => void;
+  mode: DateMode;
+  setMode: (mode: DateMode) => void;
+};
 
 export default function DateFilter({
   date,
   setDate,
-  format,
-  setFormat,
-}: {
-  date: Date;
-  setDate: (date: Date) => void;
-  format: { name: string; value: FormatType };
-  setFormat: (format: { name: string; value: FormatType }) => void;
-}) {
+  mode,
+  setMode,
+}: DateFilterProps) {
   const isMobile = useIsMobile();
+
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -41,29 +39,26 @@ export default function DateFilter({
           onClick={() => setIsOpen(!isOpen)}
         />
       )}
+
       <div
-        className={`flex max-md:flex-col gap-2
-            ${
-              isMobile &&
-              `absolute z-10 bg-[#191919] p-4 border border-[#282828] rounded-xl
-                ${isOpen ? "left-0 top-full" : "left-0 -top-full opacity-0 scale-0"} transition-all duration-100`
-            }
-            `}
+        className={`flex max-md:flex-col gap-2 items-center
+          ${
+            isMobile &&
+            `absolute z-10 bg-[#191919] p-4 border border-[#282828] rounded-xl
+            ${isOpen ? "left-0 top-full" : "left-0 -top-full opacity-0 scale-0"}
+            transition-all duration-100`
+          }
+        `}
       >
         <Button onClick={() => setDate(new Date())}>Today</Button>
 
         <Input
           type="date"
           value={date}
+          mode={mode}
+          availableModes={["week", "month", "year"]}
+          onModeChange={setMode}
           onChange={setDate}
-          format={format.value}
-        />
-
-        <Input
-          type="select"
-          selected={format.value}
-          options={DateOptions}
-          onSelect={(option) => setFormat(option)}
         />
       </div>
     </div>
