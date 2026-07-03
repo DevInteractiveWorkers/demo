@@ -5,12 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { Icon } from "@/components/icons/icon";
 
 export default function Navigation() {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const path = usePathname();
-  const current = path.split("/").pop();
 
   return (
     <aside className="md:border-r max-md:border-b max-md:h-min border-[#292929] p-4 flex flex-col items-center gap-4">
@@ -59,10 +58,10 @@ export default function Navigation() {
           </div>
         )}
 
-        <NavigationLink href="positions" current={current === "positions"}>
+        <NavigationLink href="positions" icon="briefcase">
           Positions
         </NavigationLink>
-        <NavigationLink href="candidates" current={current === "candidates"}>
+        <NavigationLink href="candidates" icon="users-group">
           Candidates
         </NavigationLink>
       </ul>
@@ -72,22 +71,25 @@ export default function Navigation() {
 
 const NavigationLink = ({
   href,
-  current,
+  icon,
   children,
 }: {
   href: string;
-  current: boolean;
+  icon?: string;
   children: React.ReactNode;
 }) => {
+  const path = usePathname();
+  const current = path.split("/").pop();
   return (
     <li
-      className={`cursor-pointer rounded-xl overflow-hidden flex ${current ? "text-[#C2272D] font-semibold" : ""}`}
+      className={`cursor-pointer rounded-xl overflow-hidden ${current === href ? "text-[#C2272D] font-semibold" : ""}`}
     >
       <Link
         href={`/admin/dashboard/${href}`}
-        className="w-full hover:bg-[#292929] px-4 py-2 "
+        className="w-full hover:bg-[#292929] px-4 py-2 flex gap-2 items-center"
         prefetch
       >
+        {icon && <Icon icon={icon} height="25" width="25" stroke={0} filled />}
         {children}
       </Link>
     </li>
