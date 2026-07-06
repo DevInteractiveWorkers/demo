@@ -4,6 +4,7 @@ import SearchInput from "../search";
 import SelectGrid, { GridViewOptions } from "./select-grid";
 import { IconButton } from "@/components/icons/icon-button";
 import { LoadingPage } from "@/components/loading";
+import { useGridView } from "@/lib/useLocalStorage";
 import { ReactNode, useState } from "react";
 
 type DashboardDisplayProps<T> = {
@@ -36,7 +37,7 @@ export default function DashboardDisplay<T>({
   onEdit,
 }: DashboardDisplayProps<T>) {
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<GridViewOptions>("grid-large");
+  const { view, setView } = useGridView();
 
   const handleSearch = (value: string) => {
     setSearch(value);

@@ -17,16 +17,23 @@ export default async function Page({
 }) {
   const { position, name } = await params;
 
-  const [positionData, candidateData] = await Promise.all([
+  const [positionData, candidateData, candidates] = await Promise.all([
     getPosition(position),
     getCandidate(name),
+    getCandidatesByPosition(position),
   ]);
 
   if (!positionData || !candidateData) {
     return <NotFound />;
   }
 
-  const candidates = await getCandidatesByPosition(position);
+  const belongsToPosition = candidates.some(
+    (candidate) => candidate.id === candidateData.id,
+  );
+
+  if (!belongsToPosition) {
+    return <NotFound />;
+  }
 
   return (
     <CandidatePageClient

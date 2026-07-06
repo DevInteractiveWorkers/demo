@@ -35,6 +35,7 @@ export default function CandidatesTableRender({
               color={c.resumeUrl ? "#00c950" : "#fb2c36"}
             />
           ),
+          sortValue: (c) => (c.resumeUrl ? "Resume" : "No Resume"),
         },
         {
           key: "video",
@@ -45,6 +46,7 @@ export default function CandidatesTableRender({
               color={c.videoUrl ? "#00c950" : "#fb2c36"}
             />
           ),
+          sortValue: (c) => (c.videoUrl ? "Video" : "No Video"),
         },
         {
           key: "createdAt",

@@ -60,7 +60,7 @@ export default function DateInput({
         height="25px"
         stroke={1.5}
         onClick={() => handleDateChange(-1)}
-        className="transition-all duration-100 hover:scale-90"
+        className="transition-all duration-100 hover:scale-90 outline-0"
       />
 
       <input
@@ -75,7 +75,7 @@ export default function DateInput({
         height="25px"
         stroke={1.5}
         onClick={() => handleDateChange(1)}
-        className="transition-all duration-100 hover:scale-90"
+        className="transition-all duration-100 hover:scale-90 outline-0"
       />
     </div>
   );
