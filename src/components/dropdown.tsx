@@ -33,7 +33,8 @@ export default function DropDown({
     <div className={className}>
       {placeholder}
       <div
-        className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center gap-2 focus-within:outline-1"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center justify-between gap-2 focus-within:outline-1"
         onMouseLeave={() => setIsOpen(false)}
       >
         {button}
@@ -44,7 +45,7 @@ export default function DropDown({
             absolute top-full z-100
             ${alignRight ? "right-0 left-auto" : "left-0"}
             border rounded border-[#393939] bg-[#292929]
-            min-w-max w-full  overflow-y-auto
+            min-w-max w-full overflow-y-auto
             `}
             style={{ maxHeight }}
             onMouseLeave={() => setIsOpen(false)}
@@ -53,11 +54,11 @@ export default function DropDown({
           </div>
         )}
         <IconButton
-          filled
-          stroke={0}
+          stroke={2}
           width="6"
           height="6"
           icon="angle-down"
+          className={`transition-transform duration-250 ${isOpen ? "rotate-180" : ""}`}
           onClick={() => setIsOpen(!isOpen)}
         />
       </div>

@@ -14,6 +14,7 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   DocumentData,
+  orderBy,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
@@ -109,12 +110,20 @@ export async function getCandidates(options?: {
     candidatesQuery = options.lastDoc
       ? query(
           collection(db, "candidates"),
+          orderBy("lastUpdatedAt", "desc"),
           startAfter(options.lastDoc),
           firestoreLimit(options.limit),
         )
-      : query(collection(db, "candidates"), firestoreLimit(options.limit));
+      : query(
+          collection(db, "candidates"),
+          orderBy("lastUpdatedAt", "desc"),
+          firestoreLimit(options.limit),
+        );
   } else {
-    candidatesQuery = query(collection(db, "candidates"));
+    candidatesQuery = query(
+      collection(db, "candidates"),
+      orderBy("lastUpdatedAt", "desc"),
+    );
   }
 
   const snapshot = await getDocs(candidatesQuery);
@@ -138,7 +147,6 @@ export async function getCandidates(options?: {
 
     if (data.position) {
       const positionRef = data.position as DocumentReference;
-
       position = positionsMap.get(positionRef.id) ?? null;
     }
 

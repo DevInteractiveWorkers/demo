@@ -105,7 +105,7 @@ export default function DataTable<T>({
                 return (
                   <th
                     key={column.key}
-                    className="bg-[#292929] hover:bg-[#222] text-left min-w-45 transition-colors"
+                    className="bg-[#292929] hover:bg-[#222] text-left transition-colors"
                   >
                     <div className="relative p-4 flex items-center justify-between group/item">
                       <span>{column.label}</span>
