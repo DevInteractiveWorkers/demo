@@ -113,11 +113,11 @@ export default function Select(
       }
       className={props.className ?? `${icon ? "w-min" : "w-full"} relative`}
       button={
-        <div>
+        <div className="w-full">
           {icon ? (
             <IconButton {...icon} />
           ) : (
-            <div className="flex flex-wrap w-full gap-1">
+            <div className="flex flex-wrap gap-1">
               <input
                 id={id}
                 value={search}
@@ -127,7 +127,7 @@ export default function Select(
                   setIsTyping(true);
                   setTimeout(() => setIsTyping(false), 5000);
                 }}
-                className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 w-full gap-2"
+                className="flex-1 min-w-35 bg-transparent outline-none placeholder-shown:opacity-50 gap-2"
               />
 
               {multiple && (

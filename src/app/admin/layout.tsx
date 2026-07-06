@@ -1,4 +1,3 @@
-import ParticlesBG from "@/components/particles/particles-bg";
 import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
@@ -8,7 +7,7 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-      <ParticlesBG overflowHidden />
+      {/* <ParticlesBG overflowHidden /> */}
       {children}
     </AuthProvider>
   );
