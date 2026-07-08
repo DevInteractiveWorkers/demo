@@ -55,8 +55,8 @@ export default function DropDown({
         )}
         <IconButton
           stroke={2}
-          width="6"
-          height="6"
+          height={25}
+          width={25}
           icon="angle-down"
           className={`transition-transform duration-250 ${isOpen ? "rotate-180" : ""}`}
           onClick={() => setIsOpen(!isOpen)}

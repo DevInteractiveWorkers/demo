@@ -16,14 +16,19 @@ type FormData = {
 export default function SupportForm() {
   const [currentUrl, setCurrentUrl] = useState("");
   const [referrer, setReferrer] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const [form, setForm] = useState<FormData>({
+  const initialForm: FormData = {
     name: "",
     email: "",
     issue: "",
     description: "",
     url: "",
-  });
+  };
+
+  const [form, setForm] = useState<FormData>(initialForm);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -32,9 +37,40 @@ export default function SupportForm() {
     }
   }, []);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Sent to support ", form);
+    setSending(true);
+
+    try {
+      const response = await fetch("/api/support", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          currentUrl,
+          referrer,
+          userAgent: navigator.userAgent,
+          submittedAt: new Date().toISOString(),
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          screenResolution: `${window.screen.width} × ${window.screen.height}`,
+          viewport: `${window.innerWidth} × ${window.innerHeight}`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send support request.");
+      }
+
+      setMessage("Support request sent successfully!");
+      setSending(false);
+      setForm(initialForm);
+      setSuccess(true);
+    } catch (e) {
+      setSuccess(false);
+      setMessage("Failed to send email. Please try again later.");
+    }
   };
 
   return (
@@ -120,8 +156,15 @@ export default function SupportForm() {
           onChange={(e: any) => setForm({ ...form, url: e.target.value })}
         />
       )}
+      {message && (
+        <p className={success ? "text-green-400" : "text-[#DD272D]"}>
+          {message}
+        </p>
+      )}
 
-      <Button>Send Support Request</Button>
+      <Button disabled={sending}>
+        {sending ? "Sending..." : "Send Support Request"}
+      </Button>
     </Form>
   );
 }
