@@ -27,8 +27,8 @@ export default function CheckboxInput(props: CheckboxProps) {
           {/* ✅ peer MUST come first */}
           <IconButton
             icon="check"
-            width="2"
-            height="2"
+            width={20}
+            height={20}
             stroke={2}
             className="peer-checked:scale-100 scale-0 transition-all duration-150"
           />
