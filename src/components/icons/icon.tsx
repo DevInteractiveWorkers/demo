@@ -7,9 +7,17 @@ export interface IconProps {
   icon: string;
   filled?: boolean;
   stroke?: number;
-  width?: string;
-  height?: string;
-  viewBox?: string;
+
+  /** Uses the same value for width & height. Ignored if width/height are provided. */
+  size?: number | string;
+
+  width?: string | number;
+  height?: string | number;
+
+  color?: string;
+
+  viewBox?: string | { width: number; height?: number };
+
   className?: string;
 }
 
@@ -17,38 +25,48 @@ export const Icon = ({
   icon,
   filled = false,
   stroke = 0.6,
-  width = "72px",
-  height = "72px",
+  size = 30,
+  width,
+  height,
+  color,
   viewBox,
   className,
 }: IconProps) => {
   const pathData = icons[icon];
 
   if (!pathData) return null;
+
   const paths = Array.isArray(pathData) ? pathData : [pathData];
+
+  const svgWidth = width ?? size;
+  const svgHeight = height ?? size;
 
   return (
     <svg
-      className={`${width === "auto" ? "w-auto" : `w-[${width}]`} ${
-        height === "auto" ? "h-auto" : `h-[${width}]`
-      } ${className}`}
-      aria-hidden="true"
+      className={className}
+      style={{
+        width: svgWidth,
+        height: svgHeight,
+      }}
       xmlns="http://www.w3.org/2000/svg"
-      width={width.includes("px") ? width.slice(0, width.length - 2) : "24"}
-      height={height.includes("px") ? height.slice(0, height.length - 2) : "24"}
-      fill={filled ? "currentColor" : "none"}
-      viewBox={viewBox ?? "0 0 25.65 25.65"}
+      aria-hidden="true"
+      fill={filled ? (color ?? "currentColor") : "none"}
+      stroke={!filled ? (color ?? "currentColor") : "currentColor"}
+      strokeWidth={stroke}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      preserveAspectRatio="xMidYMid meet"
+      viewBox={
+        typeof viewBox === "string"
+          ? viewBox
+          : `0 0 ${viewBox?.width ?? 25.65} ${
+              viewBox?.height ?? viewBox?.width ?? 25.65
+            }`
+      }
     >
-      <path
-        fillRule="evenodd"
-        stroke="currentColor"
-        strokeWidth={stroke}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d={`${paths.map((d, index) => {
-          return d;
-        })} `}
-      />
+      {paths.map((d, index) => (
+        <path key={index} fillRule="evenodd" d={d} />
+      ))}
     </svg>
   );
 };

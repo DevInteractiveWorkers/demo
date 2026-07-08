@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Headband from "./headband";
-import VideoPlayer, { VideoPlayerProps } from "./video-player";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { VideoPlayerProps } from "./video-player";
+
+const VideoPlayer = dynamic(() => import("@/components/video/video-player"));
 
 interface CandidateProps extends VideoPlayerProps {
   name: string;
@@ -13,7 +16,6 @@ interface CandidateProps extends VideoPlayerProps {
 export default function Candidate({
   videoUrl,
   isOpen,
-  toggle,
   onPlayingChange,
   onReady,
   name,
@@ -59,29 +61,18 @@ export default function Candidate({
   }, [isOpen, isPlaying]);
 
   return (
-    <div
-      className="
-        fixed
-        inset-0
-        overflow-hidden
-        transition-all
-        duration-700
-      "
+    <VideoPlayer
+      videoUrl={videoUrl}
+      isOpen={isOpen}
+      onPlayingChange={(playing) => {
+        setIsPlaying(playing);
+        onPlayingChange?.(playing);
+      }}
+      onReady={onReady}
     >
-      <VideoPlayer
-        videoUrl={videoUrl}
-        isOpen={isOpen}
-        toggle={toggle}
-        onPlayingChange={(playing) => {
-          setIsPlaying(playing);
-          onPlayingChange?.(playing);
-        }}
-        onReady={onReady}
-      />
-
       {!hasHeadband && showHeadband && (
         <Headband name={name} position={position} visible={isPlaying} />
       )}
-    </div>
+    </VideoPlayer>
   );
 }
