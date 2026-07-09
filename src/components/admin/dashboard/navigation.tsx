@@ -19,6 +19,7 @@ export default function Navigation() {
         <Link href={"/admin/dashboard"} className="cursor-pointer">
           <Image
             src={"/logo/01_Primary_Logo/Primary_Logo-05.png"}
+            loading="eager"
             className={"w-50"}
             width={1080}
             height={1080}
