@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Icon, IconProps } from "./icon";
 
 interface IconButtonProps extends IconProps {
+  id?: string;
   icon: string;
   children?: React.ReactNode;
   className?: string;
@@ -13,6 +14,7 @@ interface IconButtonProps extends IconProps {
 }
 
 export const IconButton = ({
+  id,
   icon,
   children = "",
   className = "",
@@ -37,6 +39,7 @@ export const IconButton = ({
 
   return (
     <button
+      id={id}
       type={type}
       className={`flex items-center gap-2 cursor-pointer h-min select-none ${className} ${
         reversed && "flex-row-reverse"

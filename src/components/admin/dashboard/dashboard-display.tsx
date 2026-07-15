@@ -53,14 +53,18 @@ export default function DashboardDisplay<T>({
       id={title.toLowerCase()}
       className="flex flex-col h-screen space-y-6"
     >
-      <div className="flex max-md:flex-col justify-between md:items-center items-end gap-2">
+      <div
+        id="search"
+        className="flex max-md:flex-col justify-between md:items-center items-end gap-2"
+      >
         <SearchInput value={search} onChange={handleSearch} />
       </div>
 
-      <div className="flex justify-between items-center gap-2">
+      <div id="filters" className="flex justify-between items-center gap-2">
         {extraFilters}
 
         <IconButton
+          id={`add-${title.toLowerCase()}`}
           filled
           icon="plus"
           stroke={0}
@@ -73,7 +77,7 @@ export default function DashboardDisplay<T>({
         />
       </div>
 
-      <div className="flex justify-between items-center gap-2">
+      <div id="view-filter" className="flex justify-between items-center gap-2">
         <p className="opacity-60 text-xs">
           {data.length} {title.toLowerCase()}
         </p>
@@ -84,6 +88,7 @@ export default function DashboardDisplay<T>({
       </div>
       {view !== "list" ? (
         <div
+          id={`${title}-grid`}
           className={`flex-1 overflow-y-auto grid ${
             view === "grid-small"
               ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"

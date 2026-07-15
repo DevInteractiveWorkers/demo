@@ -12,7 +12,10 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <aside className="md:border-r max-md:border-b max-md:h-min border-[#292929] p-4 flex flex-col items-center gap-4">
+    <aside
+      id="navigation"
+      className="md:border-r max-md:border-b max-md:h-min border-[#292929] p-4 flex flex-col items-center gap-4"
+    >
       <div
         className={isMobile ? "flex w-11/12 items-center justify-between" : ""}
       >
