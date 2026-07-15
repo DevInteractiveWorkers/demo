@@ -4,8 +4,23 @@ import { createCandidate, getPositions } from "@/lib/firestore";
 import Input from "./input/input";
 import Button from "./button";
 import { useState, useEffect } from "react";
-import { uploadToGHL } from "@/lib/gohighlevel";
 import Form, { FormProps } from "../form";
+
+async function uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/upload-media", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload file");
+  }
+
+  return response.json();
+}
 
 export default function CreateCandidate(props: FormProps) {
   const { isOpen, toggleClose } = props;
@@ -39,10 +54,10 @@ export default function CreateCandidate(props: FormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!videoUrl && !videoFile) {
-      alert("Please provide a video URL or upload a video.");
-      return;
-    }
+    // if (!videoUrl && !videoFile) {
+    //   alert("Please provide a video URL or upload a video.");
+    //   return;
+    // }
 
     try {
       setSubmitting(true);
@@ -52,8 +67,8 @@ export default function CreateCandidate(props: FormProps) {
 
       // 🚀 Upload BOTH in parallel if they exist
       const results = await Promise.allSettled([
-        resumeFile ? uploadToGHL(resumeFile) : null,
-        videoFile ? uploadToGHL(videoFile) : null,
+        resumeFile ? uploadFile(resumeFile) : null,
+        videoFile ? uploadFile(videoFile) : null,
       ]);
 
       const resumeUpload =
@@ -84,9 +99,9 @@ export default function CreateCandidate(props: FormProps) {
       }
 
       // ❗ hard stop if video still missing
-      if (!finalVideoUrl) {
-        throw new Error("Video upload failed or missing URL");
-      }
+      // if (!finalVideoUrl) {
+      //   throw new Error("Video upload failed or missing URL");
+      // }
 
       await createCandidate(
         name,

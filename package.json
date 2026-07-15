@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1086.0",
+    "@aws-sdk/s3-request-presigner": "^3.1086.0",
     "@julscodes/react-spotlight-tour": "^0.1.0",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
