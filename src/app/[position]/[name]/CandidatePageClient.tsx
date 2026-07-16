@@ -99,7 +99,17 @@ export default function CandidatePageClient({
               icon="info"
               stroke={0}
               className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-              onClick={() => setIsPDFOpen(true)}
+              // onClick={() => setIsPDFOpen(true)}
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = candidate.resumeUrl;
+                link.download = `${fullName}-Resume.pdf`;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
               width="25px"
               height="25px"
             >
