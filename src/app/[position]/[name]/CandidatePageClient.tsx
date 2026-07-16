@@ -8,8 +8,15 @@ import { useIsMobile } from "@/lib/useMobile";
 
 const ParticlesBubble = dynamic(
   () => import("@/components/particles/particles-bubble"),
+  { ssr: false },
 );
-const Candidate = dynamic(() => import("@/components/video/candidate"));
+// Candidate mounts a <video> element plus touch/matchMedia-driven controls.
+// It must never be rendered on the server — doing so risks a hydration
+// mismatch (or an outright crash) the moment any browser-only API runs
+// during the render pass instead of inside an effect.
+const Candidate = dynamic(() => import("@/components/video/candidate"), {
+  ssr: false,
+});
 const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
 });
@@ -44,11 +51,8 @@ export default function CandidatePageClient({
   };
 
   useEffect(() => {
-    const setPageName = () => {
-      document.title = `${fullName} from InteractiveWorkers - Demo`;
-    };
-    setPageName();
-  }, []);
+    document.title = `${fullName} from InteractiveWorkers - Demo`;
+  }, [fullName]);
 
   const isMobile = useIsMobile();
 
@@ -61,6 +65,8 @@ export default function CandidatePageClient({
         seeMore={seeMore}
       />
 
+      {/* Play / Resume controls — styling, classNames, and position
+          preserved exactly as before. */}
       <div
         className={`
           absolute
@@ -99,7 +105,6 @@ export default function CandidatePageClient({
               icon="info"
               stroke={0}
               className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-              // onClick={() => setIsPDFOpen(true)}
               onClick={() => {
                 const link = document.createElement("a");
                 link.href = candidate.resumeUrl;
@@ -113,24 +118,27 @@ export default function CandidatePageClient({
               width="25px"
               height="25px"
             >
-              {/* More info */}
               Resume
             </IconButton>
           )}
         </div>
       </div>
 
-      {candidate.videoUrl && (
-        <Candidate
-          name={fullName}
-          position={position.name}
-          isOpen={isVideoOpen}
-          videoUrl={candidate.videoUrl}
-          onPlayingChange={setIsVideoPlaying}
-          onReady={setVideoControls}
-          hasHeadband={candidate.hasHeadband}
-        />
-      )}
+      <div
+        className={`${isVideoPlaying ? "opacity-100" : "opacity-0"} transition-opacity duration-150`}
+      >
+        {candidate.videoUrl && (
+          <Candidate
+            name={fullName}
+            position={position.name}
+            isOpen={isVideoOpen}
+            videoUrl={candidate.videoUrl}
+            onPlayingChange={setIsVideoPlaying}
+            onReady={setVideoControls}
+            hasHeadband={candidate.hasHeadband}
+          />
+        )}
+      </div>
 
       {candidate.resumeUrl && isPDFOpen && (
         <PDFReader
@@ -141,11 +149,6 @@ export default function CandidatePageClient({
       )}
 
       <ParticlesBubble hidden={isVideoPlaying} />
-      {/* <div
-        className={`fixed bg-[#C2272D] md:w-full w-[200%] h-auto aspect-square mask-radial-from-0 mask-radial-to-70% left-0 top-full -translate-x-1/2 -translate-y-1/3 overflow-hidden ${isVideoPlaying ? "opacity-0 -translate-x-full" : ""} transition-all duration-2000 -z-100`}
-      >
-        <ParticlesComponent id="gradient" color={"#191919"} />
-      </div> */}
     </main>
   );
 }
