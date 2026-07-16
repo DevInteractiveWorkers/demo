@@ -108,5 +108,7 @@ export default function TutorialSteps() {
     }));
   };
 
+  return null;
+
   return <Tutorial key={pathname} steps={steps} onClose={handleClose} />;
 }
