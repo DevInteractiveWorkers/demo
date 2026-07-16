@@ -105,7 +105,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   return (
     <div
       className={`w-full h-full object-cover faded-video transition-all duration-2000
-        ${playing ? "translate-x-0" : "translate-x-1/4"} ${animationClass}`}
+        ${playing ? "translate-x-0" : "translate-x-1/4 opacity-0"} ${animationClass}`}
     >
       <video
         ref={videoRef}
