@@ -124,21 +124,17 @@ export default function CandidatePageClient({
         </div>
       </div>
 
-      <div
-        className={`${isVideoPlaying ? "opacity-100" : "opacity-0"} transition-opacity duration-150`}
-      >
-        {candidate.videoUrl && (
-          <Candidate
-            name={fullName}
-            position={position.name}
-            isOpen={isVideoOpen}
-            videoUrl={candidate.videoUrl}
-            onPlayingChange={setIsVideoPlaying}
-            onReady={setVideoControls}
-            hasHeadband={candidate.hasHeadband}
-          />
-        )}
-      </div>
+      {candidate.videoUrl && (
+        <Candidate
+          name={fullName}
+          position={position.name}
+          isOpen={isVideoOpen}
+          videoUrl={candidate.videoUrl}
+          onPlayingChange={setIsVideoPlaying}
+          onReady={setVideoControls}
+          hasHeadband={candidate.hasHeadband}
+        />
+      )}
 
       {candidate.resumeUrl && isPDFOpen && (
         <PDFReader
