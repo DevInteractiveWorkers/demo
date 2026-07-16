@@ -13,6 +13,7 @@ export default function CandidatesTableRender({
 }) {
   return (
     <DataTable
+      name={"candidates"}
       data={data}
       columns={[
         {

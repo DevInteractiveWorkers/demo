@@ -12,6 +12,7 @@ type Column<T> = {
 };
 
 type DataTableProps<T> = {
+  name?: string;
   data: T[];
   columns: Column<T>[];
   footer?: React.ReactNode;
@@ -24,6 +25,7 @@ type SortConfig = {
 };
 
 export default function DataTable<T>({
+  name,
   data,
   columns,
   footer,
@@ -94,7 +96,10 @@ export default function DataTable<T>({
   }, [data, sortConfig, columns]);
 
   return (
-    <div className="border border-[#292929] rounded-xl overflow-hidden flex flex-col h-full">
+    <div
+      id={name ? `${name}-table` : "table"}
+      className="border border-[#292929] rounded-xl overflow-hidden flex flex-col h-full"
+    >
       <div className="flex-1 min-h-0 overflow-auto">
         <table className="w-full">
           <thead className="sticky top-0 z-10">

@@ -70,7 +70,7 @@ export default function Candidates() {
   return (
     <>
       <DashboardDisplay
-        title="Candidates"
+        title="candidates"
         data={filteredCandidates}
         loading={loading}
         onSearch={setSearch}
