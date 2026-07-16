@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import Form, { FormProps } from "@/components/form";
 import Input from "../input/input";
 import Button from "../button";
-import { uploadToGHL } from "@/lib/gohighlevel";
-
 import { getPositions, updateCandidate } from "@/lib/firestore";
+import { uploadFile } from "@/lib/useBuckets";
 
 export default function EditCandidate(
   props: {
@@ -49,8 +48,8 @@ export default function EditCandidate(
       let finalVideoUrl = videoUrl;
 
       const results = await Promise.allSettled([
-        resumeFile ? uploadToGHL(resumeFile) : null,
-        videoFile ? uploadToGHL(videoFile) : null,
+        resumeFile ? uploadFile(resumeFile) : null,
+        videoFile ? uploadFile(videoFile) : null,
       ]);
 
       const resumeUpload =
