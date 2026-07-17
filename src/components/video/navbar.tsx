@@ -42,13 +42,13 @@ export const Navbar = ({
               alt="InteractiveWorkers"
             />
           </Link>
-          {seeMore && (
+          {/* {seeMore && (
             <IconButton
               icon={"toggle"}
               stroke={1.5}
               onClick={() => setSeeMore(true)}
             />
-          )}
+          )} */}
         </div>
       </nav>
       {/* {position && seeMore && (
