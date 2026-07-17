@@ -51,13 +51,13 @@ export const Navbar = ({
           )}
         </div>
       </nav>
-      {position && seeMore && (
+      {/* {position && seeMore && (
         <SeeMore
           position={position}
           isOpen={seeMoreOpen}
           toggleClose={() => setSeeMore(false)}
         />
-      )}
+      )} */}
     </>
   );
 };
