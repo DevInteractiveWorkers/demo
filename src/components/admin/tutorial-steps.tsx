@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useGridView, useLocalStorage } from "@/lib/useLocalStorage";
 
 export default function TutorialSteps() {
+  return null;
+
   const { view } = useGridView();
 
   const [completed, setCompleted] = useLocalStorage<Record<string, boolean>>(
@@ -107,8 +109,6 @@ export default function TutorialSteps() {
       [currentPath]: true,
     }));
   };
-
-  return null;
 
   return <Tutorial key={pathname} steps={steps} onClose={handleClose} />;
 }

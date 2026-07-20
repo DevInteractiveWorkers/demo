@@ -32,6 +32,7 @@ export default async function PositionPage({
       <header className="border-b pb-4 mb-4 border-white/10">
         <Image
           src="/logo/01_Primary_Logo/Primary_Logo-04.png"
+          loading="eager"
           width={1080}
           height={1080}
           className="w-50"
