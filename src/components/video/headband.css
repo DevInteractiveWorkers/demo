@@ -17,7 +17,7 @@
 
 /* ---------- LOGO ---------- */
 
-.headband-logo {
+.animated.headband-logo {
   transform-origin: center center;
   transform: scale(0) rotate(0deg);
 
@@ -28,7 +28,7 @@
 
 /* ---------- BAND ---------- */
 
-.reveal-band {
+.animated.reveal-band {
   transform-origin: left center;
   transform: scaleX(0);
 
@@ -40,7 +40,7 @@
 
 /* ---------- TEXT ---------- */
 
-.reveal-band > .name {
+.animated.reveal-band > .name {
   clip-path: inset(0 100% 0 0);
 
   animation:

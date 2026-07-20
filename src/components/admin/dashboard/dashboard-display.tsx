@@ -51,7 +51,7 @@ export default function DashboardDisplay<T>({
   return (
     <section
       id={title.toLowerCase()}
-      className="flex flex-col h-screen space-y-6"
+      className="flex flex-col h-screen space-y-6 py-4"
     >
       <div
         id="search"

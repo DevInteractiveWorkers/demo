@@ -47,36 +47,14 @@ export default function EditCandidate(
       let finalResumeUrl = resumeUrl;
       let finalVideoUrl = videoUrl;
 
-      const results = await Promise.allSettled([
-        resumeFile ? uploadFile(resumeFile) : null,
-        videoFile ? uploadFile(videoFile) : null,
-      ]);
-
-      const resumeUpload =
-        results[0].status === "fulfilled" ? results[0].value : null;
-
-      const videoUpload =
-        results[1].status === "fulfilled" ? results[1].value : null;
-
-      if (resumeFile && !resumeUpload) {
-        throw new Error("Resume upload failed");
+      if (resumeFile) {
+        const uploaded = await uploadFile(resumeFile);
+        finalResumeUrl = uploaded.url;
       }
 
-      if (videoFile && !videoUpload) {
-        throw new Error("Video upload failed");
-      }
-
-      if (resumeUpload) {
-        finalResumeUrl =
-          resumeUpload.url ||
-          resumeUpload.fileUrl ||
-          resumeUpload.mediaUrl ||
-          "";
-      }
-
-      if (videoUpload) {
-        finalVideoUrl =
-          videoUpload.url || videoUpload.fileUrl || videoUpload.mediaUrl || "";
+      if (videoFile) {
+        const uploaded = await uploadFile(videoFile);
+        finalVideoUrl = uploaded.url;
       }
 
       await updateCandidate(candidate.id, {
@@ -128,7 +106,7 @@ export default function EditCandidate(
 
       <div
         className={`grid gap-4 ${
-          resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+          resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
         } w-full`}
       >
         {!resumeFile && (
@@ -151,7 +129,7 @@ export default function EditCandidate(
 
       <div
         className={`grid gap-4 ${
-          videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_30%]"
+          videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
         } w-full`}
       >
         {!videoFile && (

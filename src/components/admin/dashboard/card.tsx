@@ -40,12 +40,16 @@ export function Card({
       </div>
 
       <div className="aspect-square bg-[#202020]">
-        {item.videoUrl ? (
-          <VideoThumbnail
-            src={item.videoUrl}
+        {item.thumbnailSrc ? (
+          <img
+            src={item.thumbnailSrc}
             className="w-full h-full object-cover opacity-50 mask-linear-180 mask-linear-from-black"
           />
         ) : (
+          // <VideoThumbnail
+          //   src={item.videoUrl}
+          //   className="w-full h-full object-cover opacity-50 mask-linear-180 mask-linear-from-black"
+          // />
           <div className="flex flex-col justify-center items-center w-full h-full opacity-25">
             <Icon icon={onNotFound.icon!} filled stroke={0} />
             {onNotFound.message}

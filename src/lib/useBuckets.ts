@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 export const s3 = new S3Client({
   endpoint: process.env.S3_ENDPOINT,
@@ -10,6 +10,27 @@ export const s3 = new S3Client({
   forcePathStyle: true,
 });
 
+export async function uploadFileToBucket(file: File) {
+  const extension = file.name.split(".").pop();
+  const key = `${crypto.randomUUID()}.${extension}`;
+
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET!,
+      Key: key,
+      Body: Buffer.from(await file.arrayBuffer()),
+      ContentType: file.type,
+    }),
+  );
+
+  return {
+    fileName: key,
+    bucket: process.env.S3_BUCKET!,
+    key,
+    url: `${process.env.S3_PUBLIC_URL}/${process.env.S3_BUCKET!}/${key}`,
+  };
+}
+
 export async function uploadFile(file: File) {
   const formData = new FormData();
   formData.append("file", file);
@@ -19,38 +40,11 @@ export async function uploadFile(file: File) {
     body: formData,
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("Failed to upload file");
+    throw new Error(data.error);
   }
 
-  return response.json();
-}
-
-export async function uploadFileToBucket({
-  bucket,
-  key,
-  body,
-  contentType,
-}: {
-  bucket: string;
-  key: string;
-  body: Buffer;
-  contentType: string;
-}) {
-  console.log(key);
-
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: body,
-      ContentType: contentType,
-    }),
-  );
-
-  return {
-    bucket,
-    key,
-    url: `${process.env.S3_PUBLIC_URL}/${bucket}/${key}`,
-  };
+  return data;
 }

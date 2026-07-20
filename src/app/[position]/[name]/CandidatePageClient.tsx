@@ -66,7 +66,8 @@ export default function CandidatePageClient({
       />
 
       {/* Play / Resume controls — styling, classNames, and position
-          preserved exactly as before. */}
+          preserved exactly as before. Already absolutely positioned, so
+          it never contributed to the collapse. */}
       <div
         className={`
           absolute
@@ -88,16 +89,18 @@ export default function CandidatePageClient({
         </h1>
 
         <div className="flex sm:pt-4 text-2xl gap-5 max-sm:flex-col md:px-25 sm:px-12 px-4 w-max">
-          <IconButton
-            filled
-            icon="play"
-            className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-            onClick={handleWatchVideo}
-            width="25px"
-            height="25px"
-          >
-            Play
-          </IconButton>
+          {candidate.videoUrl && (
+            <IconButton
+              filled
+              icon="play"
+              className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+              onClick={handleWatchVideo}
+              width="25px"
+              height="25px"
+            >
+              Play
+            </IconButton>
+          )}
 
           {candidate.resumeUrl && (
             <IconButton
@@ -124,16 +127,24 @@ export default function CandidatePageClient({
         </div>
       </div>
 
+      {/* Taken out of normal flow entirely. This is the fix for the layout
+          collapse: `absolute inset-0` sizes this box against `main`
+          (which has a real height via h-dvh) instead of asking Candidate /
+          VideoPlayer's `h-full` chain to resolve against an auto-height
+          flex item, which is what was collapsing to 0. */}
       {candidate.videoUrl && (
-        <Candidate
-          name={fullName}
-          position={position.name}
-          isOpen={isVideoOpen}
-          videoUrl={candidate.videoUrl}
-          onPlayingChange={setIsVideoPlaying}
-          onReady={setVideoControls}
-          hasHeadband={candidate.hasHeadband}
-        />
+        <div className="absolute inset-0">
+          <Candidate
+            name={fullName}
+            position={position.name}
+            isOpen={isVideoOpen}
+            videoUrl={candidate.videoUrl}
+            thumbnailSrc={candidate.thumbnailSrc}
+            onPlayingChange={setIsVideoPlaying}
+            onReady={setVideoControls}
+            hasHeadband={candidate.hasHeadband}
+          />
+        </div>
       )}
 
       {candidate.resumeUrl && isPDFOpen && (

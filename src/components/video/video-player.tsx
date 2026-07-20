@@ -5,6 +5,7 @@ import Controls from "./controls";
 
 export interface VideoPlayerProps {
   videoUrl: string;
+  thumbnailSrc?: string | null;
   width?: string;
   height?: string;
   isOpen: boolean;
@@ -15,6 +16,7 @@ export interface VideoPlayerProps {
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   videoUrl,
+  thumbnailSrc,
   isOpen,
   onPlayingChange,
   onReady,
@@ -28,6 +30,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
+  // onPlayingChange can be a fresh function identity on every parent
+  // render. If the listener-setup effect below depended on it directly,
+  // React would tear the listeners down and re-run setup on every single
+  // play/pause toggle — previously this reset video state mid-playback
+  // and caused a runaway reload loop. Keeping the latest callback in a
+  // ref lets handlers call the current version without the effect ever
+  // needing to depend on it.
+  const onPlayingChangeRef = useRef(onPlayingChange);
+  useEffect(() => {
+    onPlayingChangeRef.current = onPlayingChange;
+  }, [onPlayingChange]);
+
   const togglePlayback = useCallback(async () => {
     const video = videoRef.current;
 
@@ -40,7 +54,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (video.paused) {
       try {
         await video.play();
-      } catch {}
+      } catch {
+        // Rejected play() (no gesture yet, source not ready) — non-fatal.
+      }
     } else {
       video.pause();
     }
@@ -58,12 +74,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const handlePlay = () => {
       setPlaying(true);
       setHasPlayed(true);
-      onPlayingChange?.(true);
+      onPlayingChangeRef.current?.(true);
     };
 
     const handlePause = () => {
       setPlaying(false);
-      onPlayingChange?.(false);
+      onPlayingChangeRef.current?.(false);
     };
 
     video.addEventListener("loadedmetadata", handleLoaded);
@@ -81,15 +97,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       video.removeEventListener("pause", handlePause);
       video.removeEventListener("ended", handlePause);
     };
-  }, [onPlayingChange]);
+    // Deliberately NOT depending on onPlayingChange — see the ref above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoUrl]);
 
   useEffect(() => {
     if (isOpen) return;
 
     const video = videoRef.current;
-
     if (!video) return;
 
+    video.pause();
     video.currentTime = 0;
     setCurrentTime(0);
   }, [isOpen]);
@@ -101,21 +119,40 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [onReady, togglePlayback]);
 
   const animationClass = hasPlayed ? (playing ? "reveal" : "hide") : "";
+  const safeVideoUrl = videoUrl?.trim();
 
   return (
     <div
-      className={`w-full h-full object-cover faded-video transition-all duration-2000
+      className={`relative w-full h-full object-cover faded-video transition-all duration-2000
         ${playing ? "translate-x-0" : "translate-x-1/4 opacity-0"} ${animationClass}`}
     >
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        preload="metadata"
-        playsInline
-        className={`w-full h-full object-cover faded-video transition-transform duration-2000 ${animationClass}`}
-      >
-        Your browser does not support the video tag.
-      </video>
+      {safeVideoUrl && (
+        <video
+          controls={false}
+          ref={videoRef}
+          src={safeVideoUrl}
+          muted
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover"
+        />
+      )}
+
+      {/* Pause-state fallback: covers the <video> with a poster image
+          (or solid black if none is supplied) any time playback isn't
+          active — initial state, user-paused, or mid-buffer. This also
+          incidentally hides the "black frame with audio" flash some
+          browsers show for a beat right after play() resolves. */}
+      {!playing &&
+        (thumbnailSrc ? (
+          <img
+            src={thumbnailSrc}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[#191919] pointer-events-none" />
+        ))}
 
       {children}
 
