@@ -11,6 +11,7 @@ interface CandidateProps extends VideoPlayerProps {
   name: string;
   position: string;
   hasHeadband?: boolean;
+  hasThumbnail?: boolean;
 }
 
 export default function Candidate({
@@ -21,6 +22,7 @@ export default function Candidate({
   name,
   position,
   hasHeadband = false,
+  hasThumbnail = false,
 }: CandidateProps) {
   const [showHeadband, setShowHeadband] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -64,6 +66,7 @@ export default function Candidate({
     <VideoPlayer
       videoUrl={videoUrl}
       isOpen={isOpen}
+      hasThumbnail={hasThumbnail}
       onPlayingChange={(playing) => {
         setIsPlaying(playing);
         onPlayingChange?.(playing);

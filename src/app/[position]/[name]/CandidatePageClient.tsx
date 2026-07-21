@@ -139,7 +139,7 @@ export default function CandidatePageClient({
             position={position.name}
             isOpen={isVideoOpen}
             videoUrl={candidate.videoUrl}
-            thumbnailSrc={candidate.thumbnailSrc}
+            hasThumbnail={candidate.hasThumbnail}
             onPlayingChange={setIsVideoPlaying}
             onReady={setVideoControls}
             hasHeadband={candidate.hasHeadband}

@@ -1,4 +1,34 @@
+import "./loading.css";
 import Image from "next/image";
+
+const Loader = () => {
+  return (
+    <svg
+      className="loader"
+      viewBox="0 0 384 384"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        className="active"
+        pathLength="360"
+        fill="transparent"
+        strokeWidth="32"
+        cx="192"
+        cy="192"
+        r="176"
+      ></circle>
+      <circle
+        className="track"
+        pathLength="360"
+        fill="transparent"
+        strokeWidth="32"
+        cx="192"
+        cy="192"
+        r="176"
+      ></circle>
+    </svg>
+  );
+};
 
 const Loading = () => {
   return (
@@ -20,4 +50,4 @@ const LoadingPage = () => {
   );
 };
 
-export { Loading, LoadingPage };
+export { Loader, Loading, LoadingPage };

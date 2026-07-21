@@ -8,13 +8,16 @@ type ButtonProps = (
   ({ children: React.ReactNode } | { label: string });
 
 export default function Button(props: ButtonProps) {
-  const { disabled, dark } = props;
+  const { disabled, dark, ...buttonProps } = props;
+
   return (
     <button
-      {...props}
+      {...buttonProps}
       type={props.type ?? "submit"}
       disabled={disabled}
-      className={`${dark ? "bg-black text-[#C2272D]" : "bg-[#C2272D]"} px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200 cursor-pointer disabled:opacity-50`}
+      className={`${
+        dark ? "bg-black text-[#C2272D]" : "bg-[#C2272D]"
+      } px-8 py-2 rounded object-contain not-disabled:hover:scale-95 not-disabled:active:bg-white not-disabled:active:text-black transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {"children" in props ? props.children : props.label}
     </button>

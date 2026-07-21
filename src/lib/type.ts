@@ -16,4 +16,6 @@ export type Candidate = {
   createdAt?: any;
   lastUpdatedAt?: any;
   position: Position | null;
+  hasHeadband?: boolean;
+  hasThumbnail?: boolean;
 };

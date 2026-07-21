@@ -2,10 +2,11 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Controls from "./controls";
+import VideoThumbnail from "./video-thumbnail";
 
 export interface VideoPlayerProps {
   videoUrl: string;
-  thumbnailSrc?: string | null;
+  hasThumbnail?: boolean;
   width?: string;
   height?: string;
   isOpen: boolean;
@@ -16,7 +17,7 @@ export interface VideoPlayerProps {
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   videoUrl,
-  thumbnailSrc,
+  hasThumbnail,
   isOpen,
   onPlayingChange,
   onReady,
@@ -123,36 +124,39 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   return (
     <div
-      className={`relative w-full h-full object-cover faded-video transition-all duration-2000
-        ${playing ? "translate-x-0" : "translate-x-1/4 opacity-0"} ${animationClass}`}
+      className={`relative w-full h-full object-cover faded-video transition-all duration-1000
+      ${playing ? "translate-x-0" : "translate-x-1/4"} ${animationClass}`}
     >
+      {/* Thumbnail / Background */}
+      <div
+        className={`absolute inset-0 transition-opacity duration-700 ${
+          playing ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        {hasThumbnail ? (
+          <VideoThumbnail
+            src={videoUrl}
+            className="w-full h-full object-cover bg-[#191919] pointer-events-none"
+          />
+        ) : (
+          <div className="w-full h-full bg-[#191919]" />
+        )}
+      </div>
+
+      {/* Video */}
       {safeVideoUrl && (
         <video
-          controls={false}
           ref={videoRef}
           src={safeVideoUrl}
+          controls={false}
           muted
           playsInline
           preload="metadata"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-700 ${
+            playing ? "opacity-100" : "opacity-0"
+          }`}
         />
       )}
-
-      {/* Pause-state fallback: covers the <video> with a poster image
-          (or solid black if none is supplied) any time playback isn't
-          active — initial state, user-paused, or mid-buffer. This also
-          incidentally hides the "black frame with audio" flash some
-          browsers show for a beat right after play() resolves. */}
-      {!playing &&
-        (thumbnailSrc ? (
-          <img
-            src={thumbnailSrc}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-[#191919] pointer-events-none" />
-        ))}
 
       {children}
 

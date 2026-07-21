@@ -14,15 +14,15 @@ type DashboardDisplayProps<T> = {
 
   extraFilters?: ReactNode;
 
-  renderGrid: (data: T[], onEdit: (item: T) => void) => ReactNode;
+  renderGrid: (data: T[]) => ReactNode;
 
-  renderTable: (data: T[], onEdit: (item: T) => void) => ReactNode;
+  renderTable: (data: T[]) => ReactNode;
 
   onSearch: (query: string) => void;
 
   onCreate: () => void;
 
-  onEdit: (item: T) => void;
+  onEdit?: (item: T) => void;
 };
 
 export default function DashboardDisplay<T>({
@@ -95,10 +95,10 @@ export default function DashboardDisplay<T>({
               : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
           } gap-4`}
         >
-          {renderGrid(data, onEdit)}
+          {renderGrid(data)}
         </div>
       ) : (
-        renderTable(data, onEdit)
+        renderTable(data)
       )}
     </section>
   );

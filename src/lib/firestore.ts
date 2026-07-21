@@ -51,6 +51,7 @@ export async function createCandidate(
   positionId: string,
   resumeUrl = "",
   videoUrl = "",
+  hasThumbnail?: boolean,
   hasHeadband?: boolean,
 ) {
   const positionRef = doc(db, "positions", positionId);
@@ -63,6 +64,7 @@ export async function createCandidate(
     position: positionRef,
     resumeUrl,
     videoUrl,
+    hasThumbnail,
     createdAt: serverTimestamp(),
     lastUpdatedAt: serverTimestamp(),
     hasHeadband,
@@ -226,6 +228,8 @@ export async function updateCandidate(
     positionId?: string;
     resumeUrl?: string;
     videoUrl?: string;
+    hasHeadband?: boolean;
+    hasThumbnail?: boolean;
   },
 ) {
   const ref = doc(db, "candidates", id);
@@ -238,6 +242,9 @@ export async function updateCandidate(
   if (data.lastName !== undefined) updateData.lastName = data.lastName;
   if (data.resumeUrl !== undefined) updateData.resumeUrl = data.resumeUrl;
   if (data.videoUrl !== undefined) updateData.videoUrl = data.videoUrl;
+  if (data.hasHeadband !== undefined) updateData.hasHeadband = data.hasHeadband;
+  if (data.hasThumbnail !== undefined)
+    updateData.hasThumbnail = data.hasThumbnail;
 
   if (data.positionId) {
     updateData.position = doc(db, "positions", data.positionId);

@@ -304,13 +304,19 @@ function AdminSettings() {
         </span>
       </div>
       {candidate && (
-        <EditCandidate
-          candidate={candidate}
-          isOpen={isEditing}
-          toggleClose={() => {
-            setIsEditing(false);
-          }}
-        />
+        <div
+          className={`${isEditing ? "opacity-100" : "opacity-0 translate-x-full"} 
+          fixed w-full sm:w-9/12 top-0 right-0 h-full bg-[#191919] z-100 transition-all duration-500 md:w-1/2 border border-[#292929]
+          px-4`}
+        >
+          <EditCandidate
+            candidate={candidate}
+            isOpen={isEditing}
+            toggleClose={() => {
+              setIsEditing(false);
+            }}
+          />
+        </div>
       )}
     </>
   );
