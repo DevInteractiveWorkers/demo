@@ -1,5 +1,8 @@
 // lib/getVideoThumbnail.ts
-export function getVideoThumbnail(src: string): Promise<string | null> {
+export function getVideoThumbnail(
+  src: string,
+  time?: number,
+): Promise<string | null> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
 
@@ -16,7 +19,12 @@ export function getVideoThumbnail(src: string): Promise<string | null> {
     };
 
     const onLoaded = () => {
-      video.currentTime = 0;
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        video.currentTime = Math.min(
+          time ?? 0,
+          Math.max(video.duration - 0.05, 0),
+        );
+      }
     };
 
     const onSeeked = () => {
@@ -50,7 +58,7 @@ export function getVideoThumbnail(src: string): Promise<string | null> {
       resolve(null);
     };
 
-    video.addEventListener("loadeddata", onLoaded);
+    video.addEventListener("loadedmetadata", onLoaded);
     video.addEventListener("seeked", onSeeked);
     video.addEventListener("error", onError);
   });

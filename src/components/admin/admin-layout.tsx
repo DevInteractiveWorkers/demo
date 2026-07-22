@@ -315,6 +315,7 @@ function AdminSettings() {
             toggleClose={() => {
               setIsEditing(false);
             }}
+            onUpdated={() => window.location.reload()}
           />
         </div>
       )}

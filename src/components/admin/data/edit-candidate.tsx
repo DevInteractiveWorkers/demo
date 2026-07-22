@@ -1,56 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Form, { FormProps } from "@/components/form";
+import { useState } from "react";
+import { FormProps } from "@/components/form";
 import Input from "../input/input";
 import Button from "../button";
-import { getPositions, updateCandidate } from "@/lib/firestore";
-import { uploadFile } from "@/lib/useBuckets";
+import { updateCandidate } from "@/lib/firestore";
 import { IconButton } from "@/components/icons/icon-button";
 import { useRouter } from "next/navigation";
 import CandidatePreview from "../candidate-preview";
 import { Loader } from "@/components/loading";
+import { Candidate } from "@/lib/type";
+import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
+import { uploadMediaFiles } from "@/lib/uploadMedia";
+import { MediaField } from "@/components/media-field";
+import ThumbnailPicker from "@/components/video/thumbnail-picker";
 
 export default function EditCandidate(
   props: {
-    candidate: any;
+    candidate: Candidate;
     onUpdated?: () => void;
   } & FormProps,
 ) {
   const router = useRouter();
-
   const { candidate, onUpdated } = props;
 
-  const [positions, setPositions] = useState<any[]>([]);
+  const positions = usePositions();
   const [saving, setSaving] = useState(false);
 
-  const [name, setName] = useState(candidate?.name ?? "");
-  const [lastName, setLastName] = useState(candidate?.lastName ?? "");
-  const [resumeUrl, setResumeUrl] = useState(candidate?.resumeUrl ?? "");
-  const [videoUrl, setVideoUrl] = useState(candidate?.videoUrl ?? "");
-  const [position, setPosition] = useState(candidate?.position?.name ?? "");
-  const [positionId, setPositionId] = useState(candidate?.position?.id ?? "");
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-
-  const [hasHeadband, setHasHeadband] = useState<boolean>(
-    candidate?.hasHeadband ?? false,
-  );
-
-  const [hasThumbnail, setHasThumbnail] = useState<boolean>(
-    candidate?.hasThumbnail ?? false,
-  );
-
-  useEffect(() => {
-    getPositions().then((data) => {
-      setPositions(
-        data.map((position) => ({
-          name: position.name,
-          value: position.id,
-        })),
-      );
-    });
-  }, []);
+  const {
+    name,
+    setName,
+    lastName,
+    setLastName,
+    position,
+    setPosition,
+    positionId,
+    setPositionId,
+    resumeUrl,
+    setResumeUrl,
+    videoUrl,
+    setVideoUrl,
+    resumeFile,
+    setResumeFile,
+    videoFile,
+    setVideoFile,
+    thumbnail,
+    setThumbnail,
+    hasHeadband,
+    setHasHeadband,
+  } = useCandidateForm(candidate);
 
   async function handleUpdate(e?: React.FormEvent) {
     e?.preventDefault();
@@ -58,27 +56,18 @@ export default function EditCandidate(
     try {
       setSaving(true);
 
-      let finalResumeUrl = resumeUrl;
-      let finalVideoUrl = videoUrl;
-
-      if (resumeFile) {
-        const uploaded = await uploadFile(resumeFile);
-        finalResumeUrl = uploaded.url;
-      }
-
-      if (videoFile) {
-        const uploaded = await uploadFile(videoFile);
-        finalVideoUrl = uploaded.url;
-      }
+      const urls = await uploadMediaFiles(
+        { resume: resumeFile, video: videoFile },
+        { resumeUrl, videoUrl },
+      );
 
       await updateCandidate(candidate.id, {
         name,
         lastName,
         positionId,
-        resumeUrl: finalResumeUrl,
-        videoUrl: finalVideoUrl,
-        hasHeadband,
-        hasThumbnail,
+        resumeUrl: urls.resumeUrl,
+        videoUrl: urls.videoUrl,
+        thumbnail,
       });
 
       onUpdated?.();
@@ -129,6 +118,11 @@ export default function EditCandidate(
           />
         </div>
         <div className="grid gap-4">
+          <ThumbnailPicker
+            src={videoUrl ?? videoFile}
+            value={thumbnail}
+            onChange={setThumbnail}
+          />
           <div className="grid md:grid-cols-2 gap-4">
             <Input
               value={name}
@@ -157,66 +151,34 @@ export default function EditCandidate(
             }}
             required
           />
-          <div
-            className={`grid gap-4 ${
-              resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
-            } w-full`}
-          >
-            {!resumeFile && (
-              <Input
-                value={resumeUrl}
-                onChange={(e) => setResumeUrl(e.target.value)}
-                placeholder="Resume URL"
-                example="https://s3.interactiveworkers.com/demo/... .pdf"
-              />
-            )}
 
-            {!resumeUrl && (
-              <Input
-                type="file"
-                placeholder="Upload Resume"
-                accept=".pdf,.doc,.docx"
-                onFileSelect={(file) => setResumeFile(file)}
-              />
-            )}
-          </div>
-          <div
-            className={`grid gap-4 ${
-              videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
-            } w-full`}
-          >
-            {!videoFile && (
-              <Input
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="Video URL"
-                example="https://s3.interactiveworkers.com/demo/... .mp4"
-              />
-            )}
+          <MediaField
+            url={resumeUrl}
+            onUrlChange={setResumeUrl}
+            file={resumeFile}
+            onFileSelect={setResumeFile}
+            placeholder="Resume URL"
+            example="https://s3.interactiveworkers.com/demo/... .pdf"
+            accept=".pdf,.doc,.docx"
+          />
 
-            {!videoUrl && (
-              <Input
-                type="file"
-                placeholder="Upload Video"
-                accept="video/*"
-                onFileSelect={(file) => setVideoFile(file)}
-              />
-            )}
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Input
-              type="switch"
-              label="This video has a headband?"
-              checked={hasHeadband}
-              onChange={(e) => setHasHeadband(e.target.checked)}
-            />
-            <Input
-              type="switch"
-              label="Show thumbnail"
-              checked={hasThumbnail}
-              onChange={(e) => setHasThumbnail(e.target.checked)}
-            />
-          </div>
+          <MediaField
+            url={videoUrl}
+            onUrlChange={setVideoUrl}
+            file={videoFile}
+            onFileSelect={setVideoFile}
+            placeholder="Video URL"
+            example="https://s3.interactiveworkers.com/demo/... .mp4"
+            accept="video/*"
+          />
+
+          <Input
+            type="switch"
+            label="This video has a headband?"
+            checked={hasHeadband}
+            onChange={(e) => setHasHeadband(e.target.checked)}
+          />
+
           <div className="grid gap-4 md:grid-cols-2">
             <Button disabled dark>
               Delete

@@ -51,28 +51,33 @@ export async function createCandidate(
   positionId: string,
   resumeUrl = "",
   videoUrl = "",
-  hasThumbnail?: boolean,
+  thumbnailUrl = "",
   hasHeadband?: boolean,
 ) {
   const positionRef = doc(db, "positions", positionId);
-
   const id = purifyId(`${firstName} ${lastName}`);
 
-  await setDoc(doc(db, "candidates", id), {
+  const candidateData: Record<string, any> = {
     name: firstName,
     lastName,
     position: positionRef,
     resumeUrl,
     videoUrl,
-    hasThumbnail,
     createdAt: serverTimestamp(),
     lastUpdatedAt: serverTimestamp(),
     hasHeadband,
-  });
+  };
+
+  // Only write the field when it exists — Firestore omits it entirely
+  // otherwise, so `candidate.thumbnail` reads back as `undefined`.
+  if (thumbnailUrl) {
+    candidateData.thumbnail = thumbnailUrl;
+  }
+
+  await setDoc(doc(db, "candidates", id), candidateData);
 
   return id;
 }
-
 export async function getPosition(id: string): Promise<Position | null> {
   const snap = await getDoc(doc(db, "positions", id));
 
@@ -229,7 +234,7 @@ export async function updateCandidate(
     resumeUrl?: string;
     videoUrl?: string;
     hasHeadband?: boolean;
-    hasThumbnail?: boolean;
+    thumbnail?: { shown: boolean; time: number };
   },
 ) {
   const ref = doc(db, "candidates", id);
@@ -243,8 +248,7 @@ export async function updateCandidate(
   if (data.resumeUrl !== undefined) updateData.resumeUrl = data.resumeUrl;
   if (data.videoUrl !== undefined) updateData.videoUrl = data.videoUrl;
   if (data.hasHeadband !== undefined) updateData.hasHeadband = data.hasHeadband;
-  if (data.hasThumbnail !== undefined)
-    updateData.hasThumbnail = data.hasThumbnail;
+  if (data.thumbnail !== undefined) updateData.thumbnail = data.thumbnail;
 
   if (data.positionId) {
     updateData.position = doc(db, "positions", data.positionId);

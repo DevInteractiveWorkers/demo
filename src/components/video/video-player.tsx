@@ -6,7 +6,7 @@ import VideoThumbnail from "./video-thumbnail";
 
 export interface VideoPlayerProps {
   videoUrl: string;
-  hasThumbnail?: boolean;
+  thumbnail?: { shown: boolean; time: number };
   width?: string;
   height?: string;
   isOpen: boolean;
@@ -17,7 +17,7 @@ export interface VideoPlayerProps {
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   videoUrl,
-  hasThumbnail,
+  thumbnail,
   isOpen,
   onPlayingChange,
   onReady,
@@ -133,9 +133,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           playing ? "opacity-0" : "opacity-100"
         }`}
       >
-        {hasThumbnail ? (
+        {thumbnail && thumbnail.shown ? (
           <VideoThumbnail
             src={videoUrl}
+            time={thumbnail.time}
             className="w-full h-full object-cover bg-[#191919] pointer-events-none"
           />
         ) : (
@@ -149,7 +150,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           ref={videoRef}
           src={safeVideoUrl}
           controls={false}
-          muted
+          muted={!playing}
           playsInline
           preload="metadata"
           className={`w-full h-full object-cover transition-opacity duration-700 ${

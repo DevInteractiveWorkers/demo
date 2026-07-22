@@ -1,105 +1,64 @@
 "use client";
 
-import { createCandidate, getPositions } from "@/lib/firestore";
+import { createCandidate } from "@/lib/firestore";
 import Input from "@/components/admin/input/input";
 import Button from "@/components/admin/button";
-import { useState, useEffect, useRef } from "react";
-import { uploadFile } from "@/lib/useBuckets";
+import { useState, useRef } from "react";
 import CandidatePreview from "@/components/admin/candidate-preview";
 import { IconButton } from "@/components/icons/icon-button";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/loading";
+import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
+import { uploadMediaFiles } from "@/lib/uploadMedia";
+import { MediaField } from "@/components/media-field";
+import ThumbnailPicker from "@/components/video/thumbnail-picker";
 
 export default function CreateCandidatePage() {
   const router = useRouter();
+  const positions = usePositions();
 
-  const [positions, setPositions] = useState<any[]>([]);
+  const {
+    name,
+    setName,
+    lastName,
+    setLastName,
+    positionId,
+    setPositionId,
+    resumeUrl,
+    setResumeUrl,
+    videoUrl,
+    setVideoUrl,
+    resumeFile,
+    setResumeFile,
+    videoFile,
+    setVideoFile,
+    thumbnail,
+    setThumbnail,
+    hasHeadband,
+    setHasHeadband,
+  } = useCandidateForm();
 
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [positionId, setPositionId] = useState("");
-
-  const [resumeUrl, setResumeUrl] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-
-  const [hasHeadband, setHasHeadband] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
   const lastNameRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    getPositions().then((data) => {
-      setPositions(
-        data.map((position) => ({
-          name: position.name,
-          value: position.id,
-        })),
-      );
-    });
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // if (!videoUrl && !videoFile) {
-    //   alert("Please provide a video URL or upload a video.");
-    //   return;
-    // }
-
     try {
       setSubmitting(true);
 
-      let finalResumeUrl = resumeUrl;
-      let finalVideoUrl = videoUrl;
-
-      // 🚀 Upload BOTH in parallel if they exist
-      const results = await Promise.allSettled([
-        resumeFile ? uploadFile(resumeFile) : null,
-        videoFile ? uploadFile(videoFile) : null,
-      ]);
-
-      const resumeUpload =
-        results[0].status === "fulfilled" ? results[0].value : null;
-
-      const videoUpload =
-        results[1].status === "fulfilled" ? results[1].value : null;
-
-      if (resumeFile && !resumeUpload) {
-        throw new Error("Resume upload failed");
-      }
-
-      if (videoFile && !videoUpload) {
-        throw new Error("Video upload failed");
-      }
-
-      if (resumeUpload) {
-        finalResumeUrl =
-          resumeUpload.url ||
-          resumeUpload.fileUrl ||
-          resumeUpload.mediaUrl ||
-          "";
-      }
-
-      if (videoUpload) {
-        finalVideoUrl =
-          videoUpload.url || videoUpload.fileUrl || videoUpload.mediaUrl || "";
-      }
-
-      // ❗ hard stop if video still missing
-      // if (!finalVideoUrl) {
-      //   throw new Error("Video upload failed or missing URL");
-      // }
+      const urls = await uploadMediaFiles(
+        { resume: resumeFile, video: videoFile },
+        { resumeUrl, videoUrl },
+      );
 
       await createCandidate(
         name,
         lastName,
         positionId,
-        finalResumeUrl,
-        finalVideoUrl,
-        hasHeadband,
+        urls.resumeUrl,
+        urls.videoUrl,
+        urls.thumbnailUrl,
         hasHeadband,
       );
 
@@ -145,7 +104,12 @@ export default function CreateCandidatePage() {
           />
         </div>
         <div className="grid gap-4">
-          <div className={`grid gap-4 grid-cols-1 md:grid-cols-2 w-full`}>
+          <ThumbnailPicker
+            src={videoUrl}
+            value={thumbnail}
+            onChange={setThumbnail}
+          />
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 w-full">
             <Input
               value={name}
               required
@@ -180,53 +144,25 @@ export default function CreateCandidatePage() {
             onSelect={(option) => setPositionId(option.value)}
           />
 
-          <div
-            className={`grid gap-4 ${
-              resumeFile || resumeUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
-            } w-full`}
-          >
-            {!resumeFile && (
-              <Input
-                value={resumeUrl}
-                onChange={(e) => setResumeUrl(e.target.value)}
-                placeholder="Resume URL"
-                example="https://s3.interactiveworkers.com/demo/... .pdf"
-              />
-            )}
+          <MediaField
+            url={resumeUrl}
+            onUrlChange={setResumeUrl}
+            file={resumeFile}
+            onFileSelect={setResumeFile}
+            placeholder="Resume URL"
+            example="https://s3.interactiveworkers.com/demo/... .pdf"
+            accept=".pdf,.doc,.docx"
+          />
 
-            {!resumeUrl && (
-              <Input
-                type="file"
-                placeholder="Upload Resume"
-                accept=".pdf,.doc,.docx"
-                onFileSelect={(file) => setResumeFile(file)}
-              />
-            )}
-          </div>
-
-          <div
-            className={`grid gap-4 ${
-              videoFile || videoUrl ? "grid-cols-1" : "grid-cols-[70%_auto]"
-            } w-full`}
-          >
-            {!videoFile && (
-              <Input
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="Video URL"
-                example="https://s3.interactiveworkers.com/demo/... .mp4"
-              />
-            )}
-
-            {!videoUrl && (
-              <Input
-                type="file"
-                placeholder="Upload Video"
-                accept="video/*"
-                onFileSelect={(file) => setVideoFile(file)}
-              />
-            )}
-          </div>
+          <MediaField
+            url={videoUrl}
+            onUrlChange={setVideoUrl}
+            file={videoFile}
+            onFileSelect={setVideoFile}
+            placeholder="Video URL"
+            example="https://s3.interactiveworkers.com/demo/... .mp4"
+            accept="video/*"
+          />
 
           <Input
             type="switch"

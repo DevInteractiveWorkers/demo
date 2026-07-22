@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { IconButton } from "@/components/icons/icon-button";
 import { Navbar } from "@/components/video/navbar";
 import { useIsMobile } from "@/lib/useMobile";
+import { PDFReader } from "@/components/pdf-reader";
 
 const ParticlesBubble = dynamic(
   () => import("@/components/particles/particles-bubble"),
@@ -15,9 +16,6 @@ const ParticlesBubble = dynamic(
 // mismatch (or an outright crash) the moment any browser-only API runs
 // during the render pass instead of inside an effect.
 const Candidate = dynamic(() => import("@/components/video/candidate"), {
-  ssr: false,
-});
-const PDFReader = dynamic(() => import("@/components/pdf-reader"), {
   ssr: false,
 });
 
@@ -109,6 +107,8 @@ export default function CandidatePageClient({
               stroke={0}
               className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
               onClick={() => {
+                setIsPDFOpen((o) => !o);
+                return;
                 const link = document.createElement("a");
                 link.href = candidate.resumeUrl;
                 link.download = `${fullName}-Resume.pdf`;
@@ -135,24 +135,44 @@ export default function CandidatePageClient({
       {candidate.videoUrl && (
         <div className="absolute inset-0">
           <Candidate
+            id={""}
             name={fullName}
-            position={position.name}
+            lastName={""}
+            resumeUrl={""}
+            position={position}
             isOpen={isVideoOpen}
             videoUrl={candidate.videoUrl}
-            hasThumbnail={candidate.hasThumbnail}
+            thumbnail={candidate.thumbnail}
             onPlayingChange={setIsVideoPlaying}
             onReady={setVideoControls}
             hasHeadband={candidate.hasHeadband}
           />
         </div>
       )}
-
-      {candidate.resumeUrl && isPDFOpen && (
-        <PDFReader
-          pdf={candidate.resumeUrl}
-          isOpen
-          toggle={() => setIsPDFOpen(false)}
-        />
+      {candidate.resumeUrl && (
+        <div
+          className={` flex items-center justify-center backdrop-blur absolute top-0 left-0 
+            ${isPDFOpen ? "opacity-100 z-10 w-full h-full" : "opacity-0 w-0 h-0"} transition-opacity duration-500`}
+        >
+          {isPDFOpen && (
+            <>
+              <PDFReader
+                file={candidate.resumeUrl}
+                startAt={2}
+                className="md:max-w-1/2 lg:max-w-1/3 max-h-auto z-0"
+              />
+              <IconButton
+                className="cursor-pointer"
+                icon="close"
+                width={100}
+                height={100}
+                onClick={() => {
+                  setIsPDFOpen((o) => !o);
+                }}
+              />
+            </>
+          )}
+        </div>
       )}
 
       <ParticlesBubble hidden={isVideoPlaying} />

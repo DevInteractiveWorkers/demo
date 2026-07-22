@@ -5,9 +5,11 @@ import { getVideoThumbnail } from "@/lib/getVideoThumbnail";
 
 export default function VideoThumbnail({
   src,
+  time = 0,
   className = "",
 }: {
   src: string;
+  time?: number;
   className?: string;
 }) {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
@@ -15,7 +17,7 @@ export default function VideoThumbnail({
   useEffect(() => {
     let mounted = true;
 
-    getVideoThumbnail(src).then((thumb) => {
+    getVideoThumbnail(src, time).then((thumb) => {
       if (mounted) {
         setThumbnail(thumb);
       }
