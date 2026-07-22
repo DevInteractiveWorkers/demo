@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FormProps } from "@/components/form";
 import Input from "../input/input";
 import Button from "../button";
-import { updateCandidate } from "@/lib/firestore";
+import { deleteCandidate, updateCandidate } from "@/lib/firestore";
 import { IconButton } from "@/components/icons/icon-button";
 import { useRouter } from "next/navigation";
 import CandidatePreview from "../candidate-preview";
@@ -14,6 +14,7 @@ import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
 import { uploadMediaFiles } from "@/lib/uploadMedia";
 import { MediaField } from "@/components/media-field";
 import ThumbnailPicker from "@/components/video/thumbnail-picker";
+import { showAlert } from "@/lib/show-alert";
 
 export default function EditCandidate(
   props: {
@@ -28,6 +29,8 @@ export default function EditCandidate(
   const [saving, setSaving] = useState(false);
 
   const {
+    data,
+    initialData,
     name,
     setName,
     lastName,
@@ -50,8 +53,17 @@ export default function EditCandidate(
     setHasHeadband,
   } = useCandidateForm(candidate);
 
-  async function handleUpdate(e?: React.FormEvent) {
-    e?.preventDefault();
+  async function handleUpdate() {
+    if (saving) return;
+
+    const confirmed = await showAlert({
+      title: "Update Candidate?",
+      icon: "info",
+      message:
+        "There's no backup, but you can change it back again whenever you need.",
+    });
+
+    if (!confirmed) return;
 
     try {
       setSaving(true);
@@ -68,45 +80,78 @@ export default function EditCandidate(
         resumeUrl: urls.resumeUrl,
         videoUrl: urls.videoUrl,
         thumbnail,
+        hasHeadband,
       });
 
       onUpdated?.();
       props.toggleClose?.();
     } catch (error) {
-      console.error("Failed to update candidate:", error);
+      await showAlert({
+        title: "Something Went Wrong",
+        icon: "warning",
+        message: `Failed to update "${name} ${lastName}". Please check your input and try again.`,
+      });
     } finally {
       setSaving(false);
     }
   }
 
+  async function handleCancel(e: any) {
+    e.preventDefault();
+    const confirmed = await showAlert({
+      title: "Cancel Update?",
+      icon: "warning",
+      message: `Leave without saving? Any changes you made to "${name} ${lastName}" will be lost`,
+    });
+    if (!confirmed) return;
+
+    if (props.toggleClose) {
+      props.toggleClose();
+    } else {
+      router.back();
+    }
+  }
+
+  async function handleDelete(e: any) {
+    e.preventDefault();
+    const confirmed = await showAlert({
+      title: `Delete "${name} ${lastName}"`,
+      icon: "warning",
+      message: `Are you sure you want to delete "${name} ${lastName}"? This action cannot be undone.`,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteCandidate(candidate.id);
+    } catch (error) {
+      await showAlert({
+        title: "Delete Failed",
+        icon: "warning",
+        message: `Unable to delete "${name} ${lastName}". Please try again.`,
+      });
+    } finally {
+      router.back();
+    }
+  }
+
   return (
-    <form
-      onSubmit={handleUpdate}
-      className="w-full h-full min-h-svh flex flex-col relative py-4"
-    >
+    <form className="w-full h-full min-h-svh flex flex-col relative py-4">
       <div className="flex items-center border-b border-[#292929] pb-4 mb-4">
-        {props.toggleClose ? (
+        {
           <IconButton
-            icon={"close"}
+            icon={props.toggleClose ? "close" : "angle-left"}
             height={30}
             width={30}
             stroke={1.5}
-            onClick={() => props.toggleClose?.()}
+            onClick={(e) => handleCancel(e)}
           />
-        ) : (
-          <IconButton
-            icon={"angle-left"}
-            height={30}
-            width={30}
-            stroke={1.5}
-            onClick={() => router.back()}
-          />
-        )}
+        }
         <h2 className="text-xl font-semibold">Edit Candidate</h2>
       </div>
       <div className="flex flex-col w-full gap-4 h-full justify-around">
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex justify-center">
           <CandidatePreview
+            id={candidate.id}
+            href={`/${positionId}/${candidate.id}`}
             name={name}
             lastName={lastName}
             position={position}
@@ -114,7 +159,7 @@ export default function EditCandidate(
             resumeFile={resumeFile}
             videoUrl={videoUrl}
             videoFile={videoFile}
-            hasHeadband={false}
+            hasHeadband={hasHeadband}
           />
         </div>
         <div className="grid gap-4">
@@ -180,10 +225,16 @@ export default function EditCandidate(
           />
 
           <div className="grid gap-4 md:grid-cols-2">
-            <Button disabled dark>
+            <Button dark onClick={handleDelete}>
               Delete
             </Button>
-            <Button disabled={saving}>
+            <Button
+              type="button"
+              onClick={handleUpdate}
+              disabled={
+                saving || JSON.stringify(data) === JSON.stringify(initialData)
+              }
+            >
               {saving ? (
                 <div className="flex justify-center">
                   <Loader />

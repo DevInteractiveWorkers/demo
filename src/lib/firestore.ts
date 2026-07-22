@@ -10,6 +10,8 @@ import {
   DocumentReference,
   updateDoc,
   setDoc,
+  deleteDoc,
+  where,
   limit as firestoreLimit,
   startAfter,
   QueryDocumentSnapshot,
@@ -19,6 +21,7 @@ import {
 
 import { db } from "./firebase";
 import { Candidate, Position } from "./type";
+import { deleteFileFromBucket, extractKeyFromUrl } from "./useBuckets";
 
 function purifyId(id: string) {
   const newId = id
@@ -255,4 +258,43 @@ export async function updateCandidate(
   }
 
   await updateDoc(ref, updateData);
+}
+
+export async function deleteCandidate(id: string) {
+  const ref = doc(db, "candidates", id);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    const urls = [data.resumeUrl, data.videoUrl, data.thumbnail].filter(
+      (url): url is string => typeof url === "string" && url.length > 0,
+    );
+
+    // Best-effort: clean up the candidate's files in the bucket before
+    // removing the Firestore doc that references them.
+    await Promise.all(
+      urls.map((url) => deleteFileFromBucket(extractKeyFromUrl(url))),
+    );
+  }
+
+  await deleteDoc(ref);
+}
+
+export async function deletePosition(id: string) {
+  const positionRef = doc(db, "positions", id);
+
+  // Cascade: remove every candidate that references this position (and
+  // their associated bucket files) before removing the position itself.
+  const candidatesSnapshot = await getDocs(
+    query(collection(db, "candidates"), where("position", "==", positionRef)),
+  );
+
+  await Promise.all(
+    candidatesSnapshot.docs.map((candidateDoc) =>
+      deleteCandidate(candidateDoc.id),
+    ),
+  );
+
+  await deleteDoc(positionRef);
 }

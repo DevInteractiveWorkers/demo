@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import Headband from "../video/headband";
 import { PDFReader } from "../pdf-reader";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface CandidatePreviewProps {
+  id?: string;
+  href?: string;
   name: string;
   lastName: string;
   position?: string;
@@ -16,6 +20,8 @@ interface CandidatePreviewProps {
 }
 
 export default function CandidatePreview({
+  id,
+  href,
   name,
   lastName,
   position,
@@ -26,6 +32,7 @@ export default function CandidatePreview({
   hasHeadband,
 }: CandidatePreviewProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const path = usePathname();
 
   useEffect(() => {
     if (videoFile) {
@@ -39,8 +46,8 @@ export default function CandidatePreview({
   }, [videoFile, videoUrl]);
 
   return (
-    <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4 relative h-min">
-      <div className="overflow-hidden md:aspect-square aspect-video">
+    <div className="grid md:grid-cols-[20%_auto_20%] sm:grid-cols-[auto_70%] gap-4 relative max-h-min justify-items-center overflow-hidden w-full">
+      <div className="overflow-hidden md:aspect-auto aspect-video">
         <PDFReader
           file={resumeFile ?? resumeUrl}
           controls={false}
@@ -114,12 +121,28 @@ export default function CandidatePreview({
             </span>
           </div>
 
-          {hasHeadband && (
-            <div className="inline-flex rounded-full bg-blue-600/20 px-3 py-1 text-sm font-medium text-blue-400">
-              Headband Video
-            </div>
-          )}
+          <div
+            className={`inline-flex rounded-full px-3 py-1 text-sm font-medium 
+              ${hasHeadband ? "text-blue-400 bg-blue-600/20" : "text-yellow-400 bg-yellow-600/20"}`}
+          >
+            {hasHeadband ? "Headband Video" : "Auto-Generated Headband"}
+          </div>
         </div>
+      </div>
+      <div className="w-full h-full flex items-end">
+        {(href || (id && href)) && (
+          <Link
+            href={
+              path !== href ? href : `/admin/dashboard/candidates/edit?c=${id}`
+            }
+            className="relative group/redirect flex w-max overflow-hidden transition-transform duration-150
+            after:absolute after:w-0 after:border-b after:left-1/2 after:bottom-0 hover:after:w-full after:border-dashed after:transition-all after:duration-500 hover:after:left-0
+            before:absolute before:w-full before:border-b before:left-0 before:bottom-0 hover:before:w-0 before:transition-all before:duration-500
+            hover:before:left-1/2"
+          >
+            {path !== href ? "View Page" : "Open Editor"}
+          </Link>
+        )}
       </div>
     </div>
   );

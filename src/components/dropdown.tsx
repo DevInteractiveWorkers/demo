@@ -33,7 +33,8 @@ export default function DropDown({
     <div className={className}>
       {placeholder}
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((o) => !o)}
+        onFocus={() => setIsOpen((o) => !o)}
         className="relative border border-[#292929] rounded min-h-10.5 px-3 py-2 flex items-center justify-between gap-2 focus-within:outline-1"
         onMouseLeave={() => setIsOpen(false)}
       >

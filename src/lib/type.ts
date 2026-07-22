@@ -1,3 +1,5 @@
+import { ThumbnailValue } from "@/components/video/thumbnail-picker";
+
 export type Position = {
   id: string;
   name: string;
@@ -17,7 +19,5 @@ export type Candidate = {
   lastUpdatedAt?: any;
   position: Position | null;
   hasHeadband?: boolean;
-  // Presence/absence of this field (defined vs. undefined) drives whether
-  // a thumbnail renders — the old `hasThumbnail` flag is gone.
-  thumbnail?: string;
+  thumbnail?: ThumbnailValue;
 };

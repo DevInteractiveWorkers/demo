@@ -1,7 +1,7 @@
 // hooks/useCandidateForm.ts
-import { useEffect, useState } from "react";
-import { getPositions } from "@/lib/firestore";
+import { useEffect, useState, useMemo } from "react";
 import { Candidate } from "@/lib/type";
+import { getPositions } from "@/lib/firestore";
 
 export type PositionOption = { name: string; value: string };
 
@@ -34,16 +34,47 @@ export function useCandidateForm(candidate?: Candidate | null) {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
-  const [thumbnail, setThumbnail] = useState({
-    shown: true,
-    time: 0,
-  });
+  const [thumbnail, setThumbnail] = useState(
+    candidate?.thumbnail ?? {
+      shown: true,
+      time: 0,
+    },
+  );
 
-  const [hasHeadband, setHasHeadband] = useState<boolean>(
+  const [hasHeadband, setHasHeadband] = useState(
     candidate?.hasHeadband ?? false,
   );
 
+  // Current form values
+  const data = {
+    name,
+    lastName,
+    position,
+    positionId,
+    resumeUrl,
+    videoUrl,
+    thumbnail,
+    hasHeadband,
+  };
+
+  const initialData = {
+    name: candidate?.name ?? "",
+    lastName: candidate?.lastName ?? "",
+    position: candidate?.position?.name ?? "",
+    positionId: candidate?.position?.id ?? "",
+    resumeUrl: candidate?.resumeUrl ?? "",
+    videoUrl: candidate?.videoUrl ?? "",
+    thumbnail: candidate?.thumbnail ?? {
+      shown: true,
+      time: 0,
+    },
+    hasHeadband: candidate?.hasHeadband ?? false,
+  };
+
   return {
+    data,
+    initialData,
+
     name,
     setName,
     lastName,

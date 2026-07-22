@@ -12,6 +12,8 @@ import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
 import { uploadMediaFiles } from "@/lib/uploadMedia";
 import { MediaField } from "@/components/media-field";
 import ThumbnailPicker from "@/components/video/thumbnail-picker";
+import { showAlert } from "@/lib/show-alert";
+import Link from "next/link";
 
 export default function CreateCandidatePage() {
   const router = useRouter();
@@ -52,7 +54,7 @@ export default function CreateCandidatePage() {
         { resumeUrl, videoUrl },
       );
 
-      await createCandidate(
+      const candidateId = await createCandidate(
         name,
         lastName,
         positionId,
@@ -62,10 +64,30 @@ export default function CreateCandidatePage() {
         hasHeadband,
       );
 
+      const confirmed = await showAlert({
+        title: "Candidate Created!",
+        icon: "success",
+        message: (
+          <>
+            A demo for "{name} {lastName}" has been created successfully!
+            <br />
+            <Link href={`/${positionId}/${candidateId}`} className="underline">
+              Click here
+            </Link>{" "}
+            to check out the result.
+          </>
+        ),
+      });
+
+      if (!confirmed) return;
+
       alert("Candidate created");
     } catch (error) {
-      console.error(error);
-      alert(error);
+      await showAlert({
+        title: "Something Went Wrong",
+        icon: "warning",
+        message: `Failed to create "${name} ${lastName}". Please check your input and try again.`,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -76,10 +98,7 @@ export default function CreateCandidatePage() {
   )?.name;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full h-full min-h-svh flex flex-col relative py-4"
-    >
+    <form className="w-full h-full min-h-svh flex flex-col relative py-4">
       <div className="flex items-center border-b border-[#292929] pb-4 mb-4">
         <IconButton
           icon={"angle-left"}
@@ -171,7 +190,7 @@ export default function CreateCandidatePage() {
             onChange={(e) => setHasHeadband(e.target.checked)}
           />
 
-          <Button disabled={submitting}>
+          <Button type="button" disabled={submitting} onClick={handleSubmit}>
             {submitting ? (
               <div className="flex justify-center">
                 <Loader />
