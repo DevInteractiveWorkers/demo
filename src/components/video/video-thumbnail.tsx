@@ -1,50 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getVideoThumbnail } from "@/lib/getVideoThumbnail";
 
 export default function VideoThumbnail({
   src,
+  time = 0,
   className = "",
 }: {
   src: string;
+  time?: number;
   className?: string;
 }) {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   useEffect(() => {
-    const video = document.createElement("video");
+    let mounted = true;
 
-    video.crossOrigin = "anonymous";
-    video.src = src;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "metadata";
-
-    const handleLoaded = () => {
-      video.currentTime = 0;
-    };
-
-    const handleSeeked = () => {
-      const canvas = document.createElement("canvas");
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) return;
-
-      ctx.drawImage(video, 0, 0);
-
-      setThumbnail(canvas.toDataURL("image/jpeg", 0.8));
-    };
-
-    video.addEventListener("loadeddata", handleLoaded);
-    video.addEventListener("seeked", handleSeeked);
+    getVideoThumbnail(src, time).then((thumb) => {
+      if (mounted) {
+        setThumbnail(thumb);
+      }
+    });
 
     return () => {
-      video.removeEventListener("loadeddata", handleLoaded);
-      video.removeEventListener("seeked", handleSeeked);
+      mounted = false;
     };
   }, [src]);
 
@@ -52,5 +32,7 @@ export default function VideoThumbnail({
     return <div className={`animate-pulse bg-[#202020] ${className}`} />;
   }
 
-  return <img src={thumbnail} alt="" className={className} loading="lazy" />;
+  return (
+    <img src={thumbnail} alt="thumbnail" className={className} loading="lazy" />
+  );
 }

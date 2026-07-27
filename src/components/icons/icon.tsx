@@ -1,7 +1,7 @@
 import iconsJSON from "./icons.json";
 
 type IconValue = string | string[];
-const icons = iconsJSON as Record<string, IconValue>;
+export const icons = iconsJSON as Record<string, IconValue>;
 
 export interface IconProps {
   icon: string;

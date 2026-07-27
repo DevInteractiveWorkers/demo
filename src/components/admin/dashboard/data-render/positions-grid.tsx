@@ -1,13 +1,11 @@
 import Tag from "@/components/tag";
 import { Card } from "../card";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function PositionsGridRender({
-  data,
-  onEdit,
-}: {
-  data: any[];
-  onEdit: (any: any) => void;
-}) {
+export default function PositionsGridRender({ data }: { data: any[] }) {
+  const router = useRouter();
+  const path = usePathname();
+
   return data.map((position) => (
     <Card
       key={position.id}
@@ -24,7 +22,7 @@ export default function PositionsGridRender({
           />
         ),
       }}
-      onEdit={() => onEdit(position)}
+      onEdit={() => router.push(`${path}/edit?p=${position.id}`)}
     />
   ));
 }

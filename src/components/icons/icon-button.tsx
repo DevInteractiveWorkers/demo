@@ -11,6 +11,7 @@ interface IconButtonProps extends IconProps {
   reversed?: boolean;
   filledOnHover?: boolean;
   type?: "button" | "submit";
+  disabled?: boolean;
 }
 
 export const IconButton = ({
@@ -27,6 +28,7 @@ export const IconButton = ({
   width = "72px",
   type = "button",
   viewBox,
+  disabled = false,
 }: IconButtonProps) => {
   const [hover, setHover] = useState(false);
   const [isPortrait, setIsPortait] = useState(false);
@@ -41,6 +43,7 @@ export const IconButton = ({
     <button
       id={id}
       type={type}
+      disabled={disabled}
       className={`flex items-center gap-2 cursor-pointer h-min select-none ${className} ${
         reversed && "flex-row-reverse"
       }`}

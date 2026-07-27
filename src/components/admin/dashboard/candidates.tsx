@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getCandidates } from "@/lib/firestore";
 import { LoadingPage } from "@/components/loading";
-import CreateCandidate from "../create-candidate";
 import EditCandidate from "../data/edit-candidate";
 import DashboardDisplay from "./dashboard-display";
 import DateFilter from "./date-filter";
@@ -11,15 +10,15 @@ import CandidateGridRender from "./data-render/candidates-grid";
 import CandidatesTableRender from "./data-render/candidates-table";
 import { FormatType } from "../input/date";
 import { useFormatDate } from "@/lib/useFormatDate";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Candidates() {
+  const router = useRouter();
+  const path = usePathname();
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [editingCandidate, setEditingCandidate] = useState<any>(null);
 
   const [date, setDate] = useState(new Date());
   const [format, setFormat] = useState<{
@@ -74,8 +73,7 @@ export default function Candidates() {
         data={filteredCandidates}
         loading={loading}
         onSearch={setSearch}
-        onCreate={() => setIsOpen(true)}
-        onEdit={setEditingCandidate}
+        onCreate={() => router.push(`${path}/create`)}
         extraFilters={
           <DateFilter
             date={date}
@@ -84,27 +82,14 @@ export default function Candidates() {
             setFormat={setFormat}
           />
         }
-        renderGrid={(data, onEdit) => (
-          <CandidateGridRender data={data} onEdit={onEdit} />
-        )}
-        renderTable={(data, onEdit) => (
-          <CandidatesTableRender data={data} onRowSelect={onEdit} />
+        renderGrid={(data) => <CandidateGridRender data={data} />}
+        renderTable={(data) => (
+          <CandidatesTableRender
+            data={data}
+            onRowSelect={(e) => router.push(`${path}/edit?c=${e.id}`)}
+          />
         )}
       />
-
-      <CreateCandidate isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
-
-      {editingCandidate && (
-        <EditCandidate
-          candidate={editingCandidate}
-          isOpen
-          toggleClose={() => {
-            setEditingCandidate(null);
-            loadCandidates();
-          }}
-          onUpdated={loadCandidates}
-        />
-      )}
     </>
   );
 }

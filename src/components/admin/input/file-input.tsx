@@ -19,7 +19,7 @@ export default function FileInput(props: FileInputProps) {
 
   return (
     <div className="w-full">
-      <label className="w-full">
+      <label className="w-full text-ellipsis overflow-hidden whitespace-nowrap">
         {placeholder} {props.required && <Required />}
       </label>
 

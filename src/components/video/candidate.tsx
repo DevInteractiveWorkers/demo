@@ -4,14 +4,9 @@ import Headband from "./headband";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { VideoPlayerProps } from "./video-player";
+import type { Candidate } from "@/lib/type";
 
 const VideoPlayer = dynamic(() => import("@/components/video/video-player"));
-
-interface CandidateProps extends VideoPlayerProps {
-  name: string;
-  position: string;
-  hasHeadband?: boolean;
-}
 
 export default function Candidate({
   videoUrl,
@@ -21,7 +16,8 @@ export default function Candidate({
   name,
   position,
   hasHeadband = false,
-}: CandidateProps) {
+  thumbnail,
+}: Candidate & VideoPlayerProps) {
   const [showHeadband, setShowHeadband] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -64,6 +60,7 @@ export default function Candidate({
     <VideoPlayer
       videoUrl={videoUrl}
       isOpen={isOpen}
+      thumbnail={thumbnail}
       onPlayingChange={(playing) => {
         setIsPlaying(playing);
         onPlayingChange?.(playing);
@@ -71,7 +68,11 @@ export default function Candidate({
       onReady={onReady}
     >
       {!hasHeadband && showHeadband && (
-        <Headband name={name} position={position} visible={isPlaying} />
+        <Headband
+          name={name}
+          position={position ? position.name : "Virtual Assistant"}
+          visible={isPlaying}
+        />
       )}
     </VideoPlayer>
   );

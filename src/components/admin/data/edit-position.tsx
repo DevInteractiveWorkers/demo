@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Form, { FormProps } from "@/components/form";
+import { Icon, icons } from "../../icons/icon";
+import { FormProps } from "@/components/form";
 import Input from "../input/input";
 import Button from "../button";
-
 import { updatePosition } from "@/lib/firestore";
+import { IconButton } from "@/components/icons/icon-button";
+import { useRouter } from "next/navigation";
+import Select from "../input/select";
 
 export default function EditPosition(
   props: {
@@ -13,6 +16,7 @@ export default function EditPosition(
     onUpdated?: () => void;
   } & FormProps,
 ) {
+  const router = useRouter();
   const { position, onUpdated } = props;
 
   const [saving, setSaving] = useState(false);
@@ -44,14 +48,47 @@ export default function EditPosition(
     }
   }
 
+  const iconOptions = Object.keys(icons).map((iconName) => ({
+    value: iconName,
+    name: iconName,
+    icon: {
+      icon: iconName,
+      stroke: 0,
+      filled: true,
+      width: "24px",
+      height: "24px",
+    },
+  }));
+
   return (
-    <Form {...props} onSubmit={handleUpdate}>
-      <h2 className="text-xl font-semibold">Edit Position</h2>
+    <form className="w-full h-full min-h-svh flex flex-col relative py-4">
+      <div className="flex items-center border-b border-[#292929] pb-4 mb-4">
+        <IconButton
+          icon={"angle-left"}
+          height={30}
+          width={30}
+          stroke={1.5}
+          onClick={() => router.back()}
+        />
+        <h2 className="text-xl font-semibold">Edit Position</h2>
+      </div>
+      <Icon icon={position.icon} />
+
+      <Select
+        placeholder="Icon"
+        example="General VA"
+        selected={position.icon}
+        options={iconOptions}
+        onSelect={(option) => {
+          console.log(option);
+        }}
+      />
 
       <Input
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Name"
+        required
       />
 
       <Input
@@ -69,6 +106,6 @@ export default function EditPosition(
       />
 
       <Button disabled={saving}>{saving ? "Updating..." : "Update"}</Button>
-    </Form>
+    </form>
   );
 }

@@ -71,7 +71,7 @@ export default function LoginForm() {
       {error && (
         <p className="text-[#C2272D] text-sm cursor-default">{error}</p>
       )}
-      <Button>{loading ? "Signing In..." : "Sign In"}</Button>
+      <Button type="submit">{loading ? "Signing In..." : "Sign In"}</Button>
       <p className="text-center cursor-default">
         Don't have an account or having trouble logging in?
         <br />

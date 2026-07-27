@@ -2,26 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { getPositions } from "@/lib/firestore";
-import SearchInput from "../search";
-import { IconButton } from "@/components/icons/icon-button";
 import CreatePosition from "../create-position";
 import EditPosition from "../data/edit-position";
-import SelectGrid, { GridViewOptions } from "./select-grid";
+import { GridViewOptions } from "./select-grid";
 import { LoadingPage } from "@/components/loading";
 import PositionsGridRender from "./data-render/positions-grid";
 import PositionsTableRender from "./data-render/positions-table";
-import DateFilter from "./date-filter";
 import DashboardDisplay from "./dashboard-display";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Positions() {
+  const router = useRouter();
+  const path = usePathname();
   const [positions, setPositions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<GridViewOptions>("grid-large");
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [editingPosition, setEditingPosition] = useState<any>(null);
 
   const loadPositions = async () => {
     setLoading(true);
@@ -64,28 +60,15 @@ export default function Positions() {
         data={filteredPositions}
         loading={loading}
         onSearch={setSearch}
-        onCreate={() => setIsOpen(true)}
-        onEdit={setEditingPosition}
-        renderGrid={(data, onEdit) => (
-          <PositionsGridRender data={data} onEdit={onEdit} />
-        )}
-        renderTable={(data, onEdit) => (
-          <PositionsTableRender data={data} onRowSelect={onEdit} />
+        onCreate={() => router.push(`${path}/create`)}
+        renderGrid={(data) => <PositionsGridRender data={data} />}
+        renderTable={(data) => (
+          <PositionsTableRender
+            data={data}
+            onRowSelect={(e) => router.push(`${path}/edit?c=${e.id}`)}
+          />
         )}
       />
-
-      <CreatePosition isOpen={isOpen} toggleClose={() => setIsOpen(false)} />
-
-      {editingPosition && (
-        <EditPosition
-          position={editingPosition}
-          isOpen
-          toggleClose={() => {
-            setEditingPosition(null);
-          }}
-          onUpdated={loadPositions}
-        />
-      )}
     </>
   );
 }

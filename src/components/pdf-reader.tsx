@@ -1,107 +1,99 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
+import { useEffect, useRef, useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 import { IconButton } from "./icons/icon-button";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export interface ReaderProps {
-  isOpen: boolean;
-  pdf: string;
-  toggle?: () => void;
+interface PDFComponentProps {
+  file: string | File;
+  className?: string;
+  startAt?: number;
+  controls?: boolean;
 }
 
-const PDFComponent = ({ file }: { file: string }) => {
-  const [currentPage, setCurrentPage] = useState<number>(2);
-  const [numPages, setNumPages] = useState<number>(1);
+export function PDFReader({
+  file,
+  className,
+  startAt = 1,
+  controls = true,
+}: PDFComponentProps) {
+  const [currentPage, setCurrentPage] = useState(startAt);
+  const [numPages, setNumPages] = useState(1);
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
-    setNumPages(numPages);
-  }
-  const changePage = (num: number) => {
-    if ((num < 0 && currentPage === 1) || currentPage + num > numPages) return;
-    else setCurrentPage(currentPage + num);
-  };
-
-  const [pageWidth, setPageWidth] = useState<number>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pageWidth, setPageWidth] = useState(0);
 
   useEffect(() => {
-    const updateSize = () => {
-      setPageWidth(
-        window.innerWidth < window.innerHeight ? window.innerWidth : undefined,
-      );
-    };
+    if (!containerRef.current) return;
 
-    updateSize();
-    window.addEventListener("resize", updateSize);
+    const observer = new ResizeObserver(([entry]) => {
+      setPageWidth(entry.contentRect.width);
+    });
 
-    return () => window.removeEventListener("resize", updateSize);
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
   }, []);
 
+  const changePage = (amount: number) => {
+    setCurrentPage((page) => Math.min(Math.max(page + amount, 1), numPages));
+  };
+
   return (
-    <div className="relative flex items-center h-dvh">
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        onLoadError={(error) => console.error("PDF Load Error:", error)}
-        onSourceError={(error) => console.error("Source Error:", error)}
+    <div
+      className={`flex flex-col h-full w-full overflow-hidden ${className ?? ""}`}
+    >
+      <div
+        ref={containerRef}
+        className="flex-1 overflow-auto flex justify-center items-center"
       >
-        <Page
-          width={pageWidth}
-          pageNumber={currentPage}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
-        />
-      </Document>
-      {/* <div className="absolute h-1/2 bottom-0 text-white w-full transition-all">
-        <div className="absolute bottom-0 w-full p-6 flex justify-between items-center bg-linear-to-b from-transparent to-[#181621]">
+        <Document
+          file={file}
+          onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+          onLoadError={console.error}
+          onSourceError={console.error}
+        >
+          {pageWidth > 0 && (
+            <Page
+              pageNumber={currentPage}
+              width={Math.min(pageWidth, 900)}
+              renderAnnotationLayer={false}
+              renderTextLayer={false}
+            />
+          )}
+        </Document>
+      </div>
+
+      {controls && (
+        <div className="flex items-center justify-between p-4 border-t  text-white">
           <IconButton
             icon="prev"
-            filledOnHover
             onClick={() => changePage(-1)}
-            className="active:scale-95 transition-all duration-200"
+            filledOnHover
+            className="disabled:opacity-0 disabled:cursor-default"
+            disabled={currentPage === 1}
           >
             Prev
           </IconButton>
+
           <span>
             {currentPage} / {numPages}
           </span>
+
           <IconButton
             icon="next"
-            filledOnHover
-            onClick={() => changePage(1)}
-            className="active:scale-95 transition-all duration-200"
             reversed
+            onClick={() => changePage(1)}
+            filledOnHover
+            className="disabled:opacity-0 disabled:cursor-default"
+            disabled={currentPage === numPages}
           >
             Next
           </IconButton>
         </div>
-      </div> */}
-    </div>
-  );
-};
-
-const PDFReader = ({ isOpen, pdf, toggle }: ReaderProps) => {
-  return (
-    <div
-      className={`absolute top-0 left-0 w-full h-dvh flex items-center justify-center bg-[#18162199] backdrop-blur-lg transition-all duration-500 overflow-y-hidden ${
-        isOpen ? "opacity-100 z-50" : "opacity-0 -z-50"
-      }`}
-    >
-      <IconButton
-        icon="close"
-        className="absolute top-0 right-0 p-5 z-50"
-        onClick={toggle}
-      />
-      {isOpen && (
-        <div className="absolute top-0 h-dvh flex">
-          <PDFComponent file={pdf} />
-        </div>
       )}
     </div>
   );
-};
-
-export default PDFReader;
+}

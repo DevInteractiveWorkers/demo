@@ -36,6 +36,7 @@ export const Navbar = ({
           <Link href="https://interactiveworkers.com/" target="_blank">
             <Image
               src="/logo/01_Primary_Logo/Primary_Logo-04.png"
+              loading="eager"
               width={1080}
               height={1080}
               className="w-50 cursor-pointer"

@@ -1,3 +1,5 @@
+import { ThumbnailValue } from "@/components/video/thumbnail-picker";
+
 export type Position = {
   id: string;
   name: string;
@@ -16,4 +18,6 @@ export type Candidate = {
   createdAt?: any;
   lastUpdatedAt?: any;
   position: Position | null;
+  hasHeadband?: boolean;
+  thumbnail?: ThumbnailValue;
 };

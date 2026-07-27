@@ -5,14 +5,22 @@ type HeadbandProps = {
   name: string;
   position: string;
   visible?: boolean;
+  animated?: boolean;
 };
 
-export default function Headband({ name, position, visible }: HeadbandProps) {
+export default function Headband({
+  name,
+  position,
+  visible,
+  animated = true,
+}: HeadbandProps) {
   return (
     <div
       className={`absolute left-0 bottom-0 m-10 flex items-center ${visible ? "opacity-100" : "opacity-0"}`}
     >
-      <div className="bg-[#AE232D] md:p-4 p-2 rounded-full z-10 headband-logo">
+      <div
+        className={`bg-[#AE232D] md:p-4 p-2 rounded-full z-10 headband-logo ${animated ? "animated" : ""}`}
+      >
         <Image
           src={"/logo/03_Logo_Mark/03_Logo_Mark-02.png"}
           alt={"logo"}
@@ -24,14 +32,14 @@ export default function Headband({ name, position, visible }: HeadbandProps) {
       <div className="absolute left-full w-max z-0 flex flex-col headbands">
         <HeadbandText
           index={1}
-          className="md:text-5xl text-2xl"
+          className={`md:text-5xl text-2xl ${animated ? "animated" : ""}`}
           background="#AE232D"
         >
           <h2 className="name">{name}</h2>
         </HeadbandText>
         <HeadbandText
           index={2}
-          className="md:text-2xl delay-2000"
+          className={`md:text-2xl delay-2000 ${animated ? "animated" : ""}`}
           background="#DD272D"
         >
           <label className="name">{position}</label>
@@ -50,12 +58,14 @@ type HeadbandTextProps = (
   index: number;
   className?: string;
   background?: string;
+  animated?: boolean;
 };
 
 const HeadbandText = ({
   index,
   className,
   background = "#DD272D",
+  animated,
   ...props
 }: HeadbandTextProps) => {
   return (

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icons/icon";
+import { logout } from "@/lib/auth";
 
 export default function Navigation() {
   const isMobile = useIsMobile();
@@ -42,33 +43,52 @@ export default function Navigation() {
         )}
       </div>
 
-      <ul
+      <div
         className={`w-full ${
           isMobile
             ? `absolute top-0 left-0 bg-[#191919] p-4 max-w-1/2 h-full transition-all duration-500 justify-items-center gap-4 border rounded-r-2xl border-[#292929] z-10 bg-linear-0 from-[#191919] to-[#292929] inset-shadow-[0_-10px_10px_5px_#191919] backdrop-blur-2xl ${isOpen ? "shadow-[0_0_50px_0_#000]" : "-translate-x-full"}`
-            : ""
+            : "flex flex-col h-full justify-between"
         }`}
       >
-        {isMobile && (
-          <div className="w-full flex justify-end">
-            <IconButton
-              icon={"close"}
-              width="50px"
-              height="50px"
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            />
-          </div>
-        )}
+        <ul>
+          {isMobile && (
+            <div className="w-full flex justify-end">
+              <IconButton
+                icon={"close"}
+                width="50px"
+                height="50px"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              />
+            </div>
+          )}
 
-        <NavigationLink href="positions" icon="briefcase">
-          Positions
-        </NavigationLink>
-        <NavigationLink href="candidates" icon="users-group">
-          Candidates
-        </NavigationLink>
-      </ul>
+          <NavigationLink href="positions" icon="briefcase">
+            Positions
+          </NavigationLink>
+          <NavigationLink href="candidates" icon="users-group">
+            Candidates
+          </NavigationLink>
+        </ul>
+        <ul>
+          <li className={`rounded-xl overflow-hidden`}>
+            <button
+              onClick={() => logout()}
+              className="w-full hover:bg-[#292929] px-4 py-2 flex gap-2 items-center cursor-pointer "
+            >
+              <Icon
+                icon={"open-door"}
+                height="25"
+                width="25"
+                stroke={0}
+                filled
+              />
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
     </aside>
   );
 }

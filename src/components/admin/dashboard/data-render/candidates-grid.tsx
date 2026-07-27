@@ -2,14 +2,12 @@ import Tag from "@/components/tag";
 import { Card } from "../card";
 import { Icon } from "@/components/icons/icon";
 import { handleShare } from "@/lib/useShare";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function CandidateGridRender({
-  data,
-  onEdit,
-}: {
-  data: any[];
-  onEdit: (any: any) => void;
-}) {
+export default function CandidateGridRender({ data }: { data: any[] }) {
+  const router = useRouter();
+  const path = usePathname();
+
   return data.map((candidate) => (
     <Card
       key={candidate.id}
@@ -33,7 +31,7 @@ export default function CandidateGridRender({
           </Tag>
         ),
       }}
-      onEdit={() => onEdit(candidate)}
+      onEdit={() => router.push(`${path}/edit?c=${candidate.id}`)}
       onShare={() =>
         handleShare({
           url: `https://demo.interactiveworkers.com/${candidate.position.id}/${candidate.id}`,
