@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IconButton } from "../icons/icon-button";
 import { getVideoThumbnail } from "@/lib/getVideoThumbnail";
+import { Icon } from "../icons/icon";
 
 type Frame = {
   time: number;
@@ -250,47 +251,6 @@ export default function ThumbnailPicker({
     [frames, selectedIndex, onChange],
   );
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (frames.length === 0) return;
-
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        const next = Math.min((selectedIndex ?? -1) + 1, frames.length - 1);
-        selectFrame(next);
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        const prev = Math.max((selectedIndex ?? 1) - 1, 0);
-        selectFrame(prev);
-      }
-    },
-    [frames.length, selectedIndex, selectFrame],
-  );
-
-  // --- Drag-to-scroll ------------------------------------------------
-  const onPointerDown = (e: React.PointerEvent) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    dragRef.current = {
-      isDragging: true,
-      startX: e.clientX,
-      startScroll: el.scrollLeft,
-    };
-    el.setPointerCapture(e.pointerId);
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragRef.current.isDragging) return;
-    const el = scrollRef.current;
-    if (!el) return;
-    const dx = e.clientX - dragRef.current.startX;
-    el.scrollLeft = dragRef.current.startScroll - dx;
-  };
-
-  const onPointerUp = () => {
-    dragRef.current.isDragging = false;
-  };
-
   const selectedLabel = useMemo(() => {
     if (selectedIndex == null)
       return value?.shown ? "Custom thumbnail" : "No thumbnail selected";
@@ -337,13 +297,27 @@ export default function ThumbnailPicker({
               role="listbox"
               aria-label="Video frames"
               tabIndex={0}
-              onKeyDown={onKeyDown}
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onPointerLeave={onPointerUp}
               className="flex gap-3 overflow-x-scroll rounded-md border border-[#333] bg-black/40 p-3 cursor-grab active:cursor-grabbing select-none focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <button
+                type="button"
+                role="option"
+                onClick={() => selectedIndex && selectFrame(selectedIndex)}
+                className={`relative shrink-0 w-28 aspect-video overflow-hidden rounded-md border-2 transition-colors flex items-center justify-center ${
+                  selectedIndex === null
+                    ? "text-blue-500 border-blue-500"
+                    : "border-transparent hover:border-gray-500 hover:text-blue-500"
+                }`}
+              >
+                <Icon
+                  icon="blocked"
+                  stroke={0}
+                  filled
+                  viewBox={"0 0 20 20"}
+                  height={30}
+                  width={30}
+                />
+              </button>
               {frames.map((frame, i) => (
                 <button
                   key={frame.time}
