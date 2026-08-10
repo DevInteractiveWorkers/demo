@@ -10,7 +10,7 @@ export type AlertProps = {
   title?: string;
   message?: string | React.ReactNode;
   icon?: "info" | "warning" | "success";
-  description?: string;
+  description?: string | React.ReactNode;
   form?: React.ReactNode;
   onCancel?: () => void;
   onConfirm?: () => void;
@@ -71,8 +71,7 @@ export default function Alert({
                 {title}
               </h1>
               {description && <h2>{description}</h2>}
-
-              <p>{message}</p>
+              {typeof message === "string" ? <p>{message}</p> : message}
 
               <div className="flex gap-4 w-full justify-center font-semibold">
                 <Button type="button" onClick={handleConfirm}>

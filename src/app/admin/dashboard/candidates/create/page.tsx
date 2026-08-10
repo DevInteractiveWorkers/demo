@@ -86,7 +86,15 @@ export default function CreateCandidatePage() {
       await showAlert({
         title: "Something Went Wrong",
         icon: "warning",
-        message: `Failed to create "${name} ${lastName}". Please check your input and try again.`,
+        description: `Failed to create "${name} ${lastName}". Please check your input and try again.`,
+        message: (
+          <pre className="rounded-xl bg-black text-white py-3 px-2">
+            <code className="text-[#FF0000]">Error: </code>
+            <code>
+              {error instanceof Error ? error.message : String(error)}
+            </code>
+          </pre>
+        ),
       });
     } finally {
       setSubmitting(false);
@@ -98,7 +106,7 @@ export default function CreateCandidatePage() {
   )?.name;
 
   return (
-    <form className="w-full h-full min-h-svh flex flex-col relative py-4">
+    <form className="w-full h-svh flex flex-col relative py-4">
       <div className="flex items-center border-b border-[#292929] pb-4 mb-4">
         <IconButton
           icon={"angle-left"}
@@ -109,7 +117,7 @@ export default function CreateCandidatePage() {
         />
         <h2 className="text-xl font-semibold">Create Candidate</h2>
       </div>
-      <div className="flex flex-col w-full gap-4 h-full justify-around">
+      <div className="flex flex-col w-full gap-4 h-full justify-around overflow-y-scroll overflow-x-hidden">
         <div className="flex flex-col items-center justify-center">
           <CandidatePreview
             name={name}

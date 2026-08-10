@@ -3,6 +3,7 @@ import DataTable from "../../data/data-table";
 import { useFormatDate } from "@/lib/useFormatDate";
 import Tag from "@/components/tag";
 import { handleShare } from "@/lib/useShare";
+import VideoThumbnail from "@/components/video/video-thumbnail";
 
 export default function CandidatesTableRender({
   data,
@@ -16,6 +17,20 @@ export default function CandidatesTableRender({
       name={"candidates"}
       data={data}
       columns={[
+        {
+          key: "img",
+          label: " ",
+          render: (c) => {
+            return (
+              <div className="h-full w-auto min-h-4 aspect-video overflow-hidden relative">
+                <VideoThumbnail
+                  src={c.videoUrl}
+                  className="object-cover absolute top-0 left-0 w-full h-full"
+                />
+              </div>
+            );
+          },
+        },
         {
           key: "name",
           label: "Name",
