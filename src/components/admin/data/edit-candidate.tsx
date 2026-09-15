@@ -147,7 +147,7 @@ export default function EditCandidate(
         }
         <h2 className="text-xl font-semibold">Edit Candidate</h2>
       </div>
-      <div className="flex flex-col w-full gap-4 h-full justify-around">
+      <div className="flex flex-col w-full gap-4 h-full justify-around overflow-y-scroll">
         <div className="flex justify-center">
           <CandidatePreview
             id={candidate.id}
