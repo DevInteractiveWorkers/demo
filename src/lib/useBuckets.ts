@@ -14,29 +14,6 @@ export const s3 = new S3Client({
   forcePathStyle: true,
 });
 
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
-export async function createUploadUrl(filename: string, contentType: string) {
-  const extension = filename.split(".").pop();
-  const key = `${crypto.randomUUID()}.${extension}`;
-
-  const command = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET!,
-    Key: key,
-    ContentType: contentType,
-  });
-
-  const uploadUrl = await getSignedUrl(s3, command, {
-    expiresIn: 60,
-  });
-
-  return {
-    uploadUrl,
-    key,
-    url: `${process.env.S3_PUBLIC_URL}/${process.env.S3_BUCKET}/${key}`,
-  };
-}
-
 export async function uploadFileToBucket(file: File) {
   const extension = file.name.split(".").pop();
   const key = `${crypto.randomUUID()}.${extension}`;
@@ -69,49 +46,35 @@ export async function deleteFileFromBucket(key: string) {
       }),
     );
   } catch (error) {
-    console.error(error);
+    // Best-effort cleanup: don't let a missing object (or a transient S3
+    // error) block deletion of the Firestore doc that referenced it.
+    console.error(`Failed to delete "${key}" from bucket:`, error);
   }
 }
 
+// Stored candidate fields are full public URLs
+// (`${S3_PUBLIC_URL}/${S3_BUCKET}/${key}`), not bare keys. Since keys are
+// flat (`${uuid}.${extension}`, no folders), the key is just the last
+// path segment.
 export function extractKeyFromUrl(url: string): string {
   const parts = url.split("/");
   return parts[parts.length - 1] ?? "";
 }
 
 export async function uploadFile(file: File) {
-  // Get upload URL
-  const response = await fetch("/api/upload-url", {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/upload-media", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      filename: file.name,
-      contentType: file.type,
-    }),
+    body: formData,
   });
+
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Failed to create upload URL");
+    throw new Error(data.error);
   }
 
-  const { uploadUrl, url, key } = await response.json();
-
-  // Upload directly to S3
-  const uploadResponse = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type,
-    },
-    body: file,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error("Failed to upload file");
-  }
-
-  return {
-    url,
-    key,
-  };
+  return data;
 }

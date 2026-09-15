@@ -1,20 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ButtonHTMLAttributes, useEffect, useState } from "react";
 
 type AvailableDirections = "up" | "right" | "down" | "left";
 
-export default function JumpToButton({
-  cta,
-  href,
-  direction = "down",
-  position = "absolute bottom-0",
-}: {
+type ButtonProps = {
   cta?: string;
   href: string;
   direction?: AvailableDirections;
   position?: string;
-}) {
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
+export default function JumpToButton(props: ButtonProps) {
+  const {
+    cta,
+    href,
+    direction = "down",
+    position = "absolute bottom-0",
+    onClick,
+  } = props;
+
   const [showCTA, setShowCTA] = useState(false);
 
   const handleClick = () => {
@@ -71,6 +76,7 @@ export default function JumpToButton({
       <button
         onClick={handleClick}
         className={`group px-1 aspect-square rounded-full cursor-pointer text-white active:text-[#191919] active:bg-white transition-all duration-300 -translate-y-1 active:translate-y-0 ${pointing}`}
+        {...props}
       >
         <svg
           width="49"

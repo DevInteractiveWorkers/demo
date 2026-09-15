@@ -25,8 +25,8 @@ export default function Candidates() {
     name: string;
     value: FormatType;
   }>({
-    name: "Month View",
-    value: "month",
+    name: "Year View",
+    value: "year",
   });
 
   const loadCandidates = async () => {
