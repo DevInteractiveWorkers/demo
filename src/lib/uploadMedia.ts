@@ -15,9 +15,9 @@ export type MediaUrls = {
 
 /**
  * Uploads any provided files in parallel and returns the resulting URLs,
- * falling back to `fallbackUrls` (e.g. manually-typed URL inputs) for any
- * field that had no file. Throws if a file was provided but its upload
- * failed.
+ * falling back to `fallbackUrls` for any field that had no file.
+ *
+ * Throws if a file was provided but its upload failed.
  */
 export async function uploadMediaFiles(
   files: MediaFiles,
@@ -45,9 +45,8 @@ export async function uploadMediaFiles(
     }
 
     const uploaded = result.value;
-    const url = uploaded.url || uploaded.fileUrl || uploaded.mediaUrl || "";
 
-    (urls as any)[`${key}Url`] = url;
+    urls[`${key}Url`] = uploaded.url;
   });
 
   return urls;
