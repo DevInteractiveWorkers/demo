@@ -1,29 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { uploadFileToBucket } from "@/lib/useBuckets";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  try {
-    const file = (await req.formData()).get("file") as File | null;
-
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
-
-    const uploaded = await uploadFileToBucket(file);
-
-    return NextResponse.json({
-      success: true,
-      ...uploaded,
-    });
-  } catch (error) {
-    console.error("UPLOAD ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
-  }
+export async function POST() {
+  return NextResponse.json(
+    { error: "This endpoint is deprecated. Use /api/upload-url instead." },
+    { status: 410 },
+  );
 }
