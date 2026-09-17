@@ -62,19 +62,62 @@ export function extractKeyFromUrl(url: string): string {
 }
 
 export async function uploadFile(file: File) {
-  const formData = new FormData();
-  formData.append("file", file);
+  // Step 1: ask our server for a presigned PUT URL (small JSON request,
+  // never hits Vercel's body-size limit).
+  let presignData: {
+    success: boolean;
+    uploadUrl: string;
+    url: string;
+    error?: string;
+  };
 
-  const response = await fetch("/api/upload-media", {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    const presignRes = await fetch("/api/upload-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type || "application/octet-stream",
+      }),
+    });
 
-  const data = await response.json();
+    presignData = await presignRes.json();
 
-  if (!response.ok) {
-    throw new Error(data.error);
+    if (!presignRes.ok || !presignData.success) {
+      throw new Error(presignData.error ?? "Failed to obtain upload URL");
+    }
+  } catch (error) {
+    throw new Error(
+      `Could not prepare upload for "${file.name}": ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   }
 
-  return data;
+  // Step 2: PUT the file directly to S3/RustFS, bypassing Vercel entirely.
+  try {
+    const putRes = await fetch(presignData.uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type || "application/octet-stream",
+      },
+      body: file,
+    });
+
+    if (!putRes.ok) {
+      throw new Error(`Storage rejected the upload (status ${putRes.status})`);
+    }
+  } catch (error) {
+    throw new Error(
+      `Failed to upload "${file.name}" to storage: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+
+  // Keep the same return shape the rest of the app expects
+  // ({ url, ... }) so uploadMediaFiles() needs no changes.
+  return {
+    url: presignData.url,
+  };
 }
