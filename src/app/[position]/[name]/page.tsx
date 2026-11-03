@@ -1,39 +1,52 @@
-import { getCandidate, getPosition } from "@/lib/firestore";
+import type { Metadata } from "next";
 
 import CandidatePageClient from "./CandidatePageClient";
 import NotFound from "@/app/not-found";
+import {
+  SITE_NAME,
+  SITE_URL,
+  candidateTitle,
+  getCandidatePage,
+} from "./lookup";
 
-export default async function Page({
-  params,
-}: {
+type Params = {
   params: Promise<{
     position: string;
     name: string;
   }>;
-}) {
+};
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { position, name } = await params;
+  const data = await getCandidatePage(position, name);
 
-  // Both reads run in parallel; the candidate lookup reuses the position
-  // instead of re-reading it, so a valid page costs two document reads.
-  const positionPromise = getPosition(position);
-  const [positionData, candidateData] = await Promise.all([
-    positionPromise,
-    getCandidate(name, positionPromise),
-  ]);
+  // Same cases the page renders NotFound for: keep the layout's defaults and
+  // keep the page out of search results.
+  if (!data) return { robots: { index: false } };
 
-  if (!positionData || !candidateData) {
-    return <NotFound />;
-  }
+  const title = candidateTitle(data.candidate);
+  const url = `${SITE_URL}/${data.position.id}/${data.candidate.id}`;
 
-  // The candidate must belong to the position in the URL.
-  if (candidateData.position?.id !== positionData.id) {
+  return {
+    title,
+    alternates: { canonical: url },
+    openGraph: { type: "website", title, url, siteName: SITE_NAME },
+    twitter: { card: "summary", title },
+  };
+}
+
+export default async function Page({ params }: Params) {
+  const { position, name } = await params;
+  const data = await getCandidatePage(position, name);
+
+  if (!data) {
     return <NotFound />;
   }
 
   return (
     <CandidatePageClient
-      candidate={JSON.parse(JSON.stringify(candidateData))}
-      position={JSON.parse(JSON.stringify(positionData))}
+      candidate={JSON.parse(JSON.stringify(data.candidate))}
+      position={JSON.parse(JSON.stringify(data.position))}
     />
   );
 }

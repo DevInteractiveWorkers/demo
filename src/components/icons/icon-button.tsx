@@ -44,24 +44,26 @@ export const IconButton = ({
       id={id}
       type={type}
       disabled={disabled}
-      className={`flex items-center gap-2 cursor-pointer h-min select-none ${className} ${
-        reversed && "flex-row-reverse"
-      }`}
+      className={`cursor-pointer h-min select-none ${className}`}
       onMouseOver={() => !isPortrait && setHover(true)}
       onMouseOut={() => !isPortrait && setHover(false)}
       onTouchStart={() => isPortrait && setHover(true)}
       onTouchEnd={() => isPortrait && setHover(false)}
       onClick={onClick}
     >
-      <Icon
-        icon={icon}
-        filled={filled || (filledOnHover && hover)}
-        stroke={stroke}
-        width={width}
-        height={height}
-        viewBox={viewBox}
-      />
-      {children}
+      <span
+        className={`flex items-center gap-2 pointer-events-none ${reversed && "flex-row-reverse"}`}
+      >
+        <Icon
+          icon={icon}
+          filled={filled || (filledOnHover && hover)}
+          stroke={stroke}
+          width={width}
+          height={height}
+          viewBox={viewBox}
+        />
+        {children}
+      </span>
     </button>
   );
 };
