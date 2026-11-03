@@ -51,7 +51,7 @@ export default function CandidatePageClient({
   };
 
   useEffect(() => {
-    document.title = `${fullName} from InteractiveWorkers - Demo`;
+    document.title = `${fullName} from InteractiveWorkers`;
   }, [fullName]);
 
   const isMobile = useIsMobile();
@@ -59,10 +59,6 @@ export default function CandidatePageClient({
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
       <Navbar fixed hide={isVideoPlaying} />
-
-      {/* Play / Resume controls — styling, classNames, and position
-          preserved exactly as before. Already absolutely positioned, so
-          it never contributed to the collapse. */}
       <div
         className={`
           absolute
