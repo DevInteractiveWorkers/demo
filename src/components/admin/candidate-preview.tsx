@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Headband from "../video/headband";
-import { PDFReader } from "../pdf-reader";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+// react-pdf + pdf.js are heavy; load them after the form shell renders.
+const PDFReader = dynamic(
+  () => import("../pdf-reader").then((m) => m.PDFReader),
+  { ssr: false },
+);
 
 interface CandidatePreviewProps {
   id?: string;

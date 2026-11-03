@@ -144,11 +144,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         )}
       </div>
 
-      {/* Video */}
+      {/* Video — the file is only requested once the player is opened */}
       {safeVideoUrl && (
         <video
           ref={videoRef}
-          src={safeVideoUrl}
+          src={isOpen ? safeVideoUrl : undefined}
           controls={false}
           muted={!playing}
           playsInline

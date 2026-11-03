@@ -1,8 +1,4 @@
-import {
-  getCandidate,
-  getCandidatesByPosition,
-  getPosition,
-} from "@/lib/firestore";
+import { getCandidate, getPosition } from "@/lib/firestore";
 
 import CandidatePageClient from "./CandidatePageClient";
 import NotFound from "@/app/not-found";
@@ -17,21 +13,20 @@ export default async function Page({
 }) {
   const { position, name } = await params;
 
-  const [positionData, candidateData, candidates] = await Promise.all([
-    getPosition(position),
-    getCandidate(name),
-    getCandidatesByPosition(position),
+  // Both reads run in parallel; the candidate lookup reuses the position
+  // instead of re-reading it, so a valid page costs two document reads.
+  const positionPromise = getPosition(position);
+  const [positionData, candidateData] = await Promise.all([
+    positionPromise,
+    getCandidate(name, positionPromise),
   ]);
 
   if (!positionData || !candidateData) {
     return <NotFound />;
   }
 
-  const belongsToPosition = candidates.some(
-    (candidate) => candidate.id === candidateData.id,
-  );
-
-  if (!belongsToPosition) {
+  // The candidate must belong to the position in the URL.
+  if (candidateData.position?.id !== positionData.id) {
     return <NotFound />;
   }
 
@@ -39,7 +34,6 @@ export default async function Page({
     <CandidatePageClient
       candidate={JSON.parse(JSON.stringify(candidateData))}
       position={JSON.parse(JSON.stringify(positionData))}
-      seeMore={candidates.length > 1}
     />
   );
 }
