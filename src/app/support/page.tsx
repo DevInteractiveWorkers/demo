@@ -1,4 +1,3 @@
-import JumpToButton from "@/components/jump-to";
 import ParticlesBG from "@/components/particles/particles-bg";
 import SupportForm from "@/components/support-form";
 

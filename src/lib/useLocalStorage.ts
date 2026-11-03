@@ -41,18 +41,6 @@ export function setLocalStorage<T>(key: string, value: T) {
   );
 }
 
-export function removeLocalStorage(key: string) {
-  if (!isBrowser()) return;
-
-  localStorage.removeItem(key);
-
-  window.dispatchEvent(
-    new CustomEvent("local-storage-update", {
-      detail: { key },
-    }),
-  );
-}
-
 export function useLocalStorage<T>(key: string, defaultValue: T) {
   const [value, setValue] = useState<T>(() =>
     getLocalStorage(key, defaultValue),
@@ -106,29 +94,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                          Grid View (unchanged API)                          */
+/*                                  Grid View                                  */
 /* -------------------------------------------------------------------------- */
-
-export function getGridView(): GridViewOptions {
-  const stored = getLocalStorage<GridViewOptions>(
-    GRID_VIEW_STORAGE_KEY,
-    DEFAULT_GRID_VIEW,
-  );
-
-  switch (stored) {
-    case "grid-small":
-    case "grid-large":
-    case "list":
-      return stored;
-
-    default:
-      return DEFAULT_GRID_VIEW;
-  }
-}
-
-export function saveGridView(view: GridViewOptions) {
-  setLocalStorage(GRID_VIEW_STORAGE_KEY, view);
-}
 
 export function useGridView() {
   const [view, setView] = useLocalStorage<GridViewOptions>(

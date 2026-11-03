@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getCandidates } from "@/lib/firestore";
 import { LoadingPage } from "@/components/loading";
-import EditCandidate from "../data/edit-candidate";
 import DashboardDisplay from "./dashboard-display";
 import DateFilter from "./date-filter";
 import CandidateGridRender from "./data-render/candidates-grid";
