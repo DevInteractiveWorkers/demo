@@ -1,7 +1,7 @@
 "use client";
 
 import { IconButton } from "@/components/icons/icon-button";
-import { useFormatDate } from "@/lib/useFormatDate";
+import { formatDate } from "@/lib/formatDate";
 
 export type FormatType =
   | "date"
@@ -65,7 +65,7 @@ export default function DateInput({
 
       <input
         readOnly
-        value={useFormatDate(currentDate, format)}
+        value={formatDate(currentDate, format)}
         className="outline-0 flex-1 text-center bg-transparent"
       />
 

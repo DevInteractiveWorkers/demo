@@ -6,15 +6,14 @@ import {
 } from "firebase/auth";
 
 import { auth } from "./firebase";
-
-const SESSION_DURATION_DAYS = 7;
+import { SESSION_DURATION_MS } from "./auth-config";
 
 export async function login(email: string, password: string) {
   await setPersistence(auth, browserLocalPersistence);
 
   const credential = await signInWithEmailAndPassword(auth, email, password);
 
-  const expiresAt = Date.now() + SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000;
+  const expiresAt = Date.now() + SESSION_DURATION_MS;
 
   localStorage.setItem("authExpiresAt", expiresAt.toString());
 

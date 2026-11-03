@@ -8,7 +8,7 @@ import DateFilter from "./date-filter";
 import CandidateGridRender from "./data-render/candidates-grid";
 import CandidatesTableRender from "./data-render/candidates-table";
 import { FormatType } from "../input/date";
-import { useFormatDate } from "@/lib/useFormatDate";
+import { formatDate } from "@/lib/formatDate";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function Candidates() {
@@ -52,9 +52,9 @@ export default function Candidates() {
         candidate.lastName?.toLowerCase().includes(query) ||
         candidate.position?.name?.toLowerCase().includes(query);
 
-      const candidateDate = useFormatDate(candidate.createdAt, format.value);
+      const candidateDate = formatDate(candidate.createdAt, format.value);
 
-      const selectedDate = useFormatDate(date, format.value);
+      const selectedDate = formatDate(date, format.value);
 
       return matchesSearch && candidateDate === selectedDate;
     });

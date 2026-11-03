@@ -10,9 +10,10 @@ import { useRouter } from "next/navigation";
 import CandidatePreview from "../candidate-preview";
 import { Loader } from "@/components/loading";
 import { Candidate } from "@/lib/type";
-import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
+import { useCandidateForm } from "@/hooks/useCandidateForm";
+import { usePositions } from "@/hooks/usePositions";
 import { uploadMediaFiles } from "@/lib/uploadMedia";
-import { MediaField } from "@/components/media-field";
+import CandidateMediaFields from "../candidate-media-fields";
 import ThumbnailPicker from "@/components/video/thumbnail-picker";
 import { showAlert } from "@/lib/show-alert";
 
@@ -28,6 +29,7 @@ export default function EditCandidate(
   const positions = usePositions();
   const [saving, setSaving] = useState(false);
 
+  const form = useCandidateForm(candidate);
   const {
     data,
     initialData,
@@ -40,18 +42,13 @@ export default function EditCandidate(
     positionId,
     setPositionId,
     resumeUrl,
-    setResumeUrl,
     videoUrl,
-    setVideoUrl,
     resumeFile,
-    setResumeFile,
     videoFile,
-    setVideoFile,
     thumbnail,
     setThumbnail,
     hasHeadband,
-    setHasHeadband,
-  } = useCandidateForm(candidate);
+  } = form;
 
   async function handleUpdate() {
     if (saving) return;
@@ -197,32 +194,7 @@ export default function EditCandidate(
             required
           />
 
-          <MediaField
-            url={resumeUrl}
-            onUrlChange={setResumeUrl}
-            file={resumeFile}
-            onFileSelect={setResumeFile}
-            placeholder="Resume URL"
-            example="https://s3.interactiveworkers.com/demo/... .pdf"
-            accept=".pdf,.doc,.docx"
-          />
-
-          <MediaField
-            url={videoUrl}
-            onUrlChange={setVideoUrl}
-            file={videoFile}
-            onFileSelect={setVideoFile}
-            placeholder="Video URL"
-            example="https://s3.interactiveworkers.com/demo/... .mp4"
-            accept="video/*"
-          />
-
-          <Input
-            type="switch"
-            label="This video has a headband?"
-            checked={hasHeadband}
-            onChange={(e) => setHasHeadband(e.target.checked)}
-          />
+          <CandidateMediaFields form={form} />
 
           <div className="grid gap-4 md:grid-cols-2">
             <Button dark onClick={handleDelete}>

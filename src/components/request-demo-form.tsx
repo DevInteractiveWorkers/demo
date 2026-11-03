@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { getPositions } from "@/lib/firestore";
+import { FormEvent, useState } from "react";
+import { usePositions } from "@/hooks/usePositions";
 import Input from "./admin/input/input";
 import Button from "./admin/button";
 
@@ -16,13 +16,8 @@ type FormData = {
   inquiry: string;
 };
 
-type PositionOption = {
-  name: string;
-  value: string;
-};
-
 export default function RequestDemoForm() {
-  const [positions, setPositions] = useState<PositionOption[]>([]);
+  const positions = usePositions();
   const [message, setMessage] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -39,17 +34,6 @@ export default function RequestDemoForm() {
   };
 
   const [form, setForm] = useState<FormData>(initialForm);
-
-  useEffect(() => {
-    getPositions().then((data) => {
-      setPositions(
-        data.map((position) => ({
-          name: position.name,
-          value: position.id,
-        })),
-      );
-    });
-  }, []);
 
   const handleForm = <K extends keyof FormData>(key: K, value: FormData[K]) => {
     setForm((prev) => ({
