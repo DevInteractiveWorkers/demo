@@ -1,5 +1,6 @@
 // lib/uploadMedia.ts
-import { uploadFile } from "./useBuckets";
+// Browser-side upload helpers. Files go straight to S3 via a presigned PUT
+// URL issued by /api/upload-url (S3 credentials never reach the client).
 
 export type MediaFiles = {
   resume?: File | null;
@@ -12,6 +13,60 @@ export type MediaUrls = {
   videoUrl: string;
   thumbnailUrl: string;
 };
+
+async function uploadFile(file: File) {
+  const contentType = file.type || "application/octet-stream";
+
+  // Step 1: ask our server for a presigned PUT URL (small JSON request,
+  // never hits Vercel's body-size limit).
+  let presignData: {
+    success: boolean;
+    uploadUrl: string;
+    url: string;
+    error?: string;
+  };
+
+  try {
+    const presignRes = await fetch("/api/upload-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileName: file.name, contentType }),
+    });
+
+    presignData = await presignRes.json();
+
+    if (!presignRes.ok || !presignData.success) {
+      throw new Error(presignData.error ?? "Failed to obtain upload URL");
+    }
+  } catch (error) {
+    throw new Error(
+      `Could not prepare upload for "${file.name}": ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+
+  // Step 2: PUT the file directly to S3/RustFS, bypassing Vercel entirely.
+  try {
+    const putRes = await fetch(presignData.uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": contentType },
+      body: file,
+    });
+
+    if (!putRes.ok) {
+      throw new Error(`Storage rejected the upload (status ${putRes.status})`);
+    }
+  } catch (error) {
+    throw new Error(
+      `Failed to upload "${file.name}" to storage: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+
+  return { url: presignData.url };
+}
 
 /**
  * Uploads any provided files in parallel and returns the resulting URLs,
@@ -44,9 +99,7 @@ export async function uploadMediaFiles(
       throw new Error(`${key} upload failed`);
     }
 
-    const uploaded = result.value;
-
-    urls[`${key}Url`] = uploaded.url;
+    urls[`${key}Url`] = result.value.url;
   });
 
   return urls;

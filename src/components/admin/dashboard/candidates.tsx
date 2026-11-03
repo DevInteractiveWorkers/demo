@@ -32,8 +32,7 @@ export default function Candidates() {
     setLoading(true);
 
     try {
-      const { candidates } = await getCandidates();
-      setCandidates(candidates);
+      setCandidates(await getCandidates());
     } finally {
       setLoading(false);
     }

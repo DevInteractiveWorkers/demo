@@ -8,32 +8,56 @@ import {
   serverTimestamp,
   getDoc,
   DocumentReference,
+  DocumentSnapshot,
   updateDoc,
   setDoc,
   deleteDoc,
   where,
-  limit as firestoreLimit,
-  startAfter,
-  QueryDocumentSnapshot,
-  DocumentData,
   orderBy,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
 import { Candidate, Position } from "./type";
-import { deleteFileFromBucket, extractKeyFromUrl } from "./useBuckets";
 
 function purifyId(id: string) {
   const newId = id
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // remove accents
+    .replace(/[̀-ͯ]/g, "") // remove accents
     .replace(/[^a-z\s]/g, "") // keep only letters and spaces
     .replace(/\s+/g, "-") // spaces -> hyphens
     .replace(/-+/g, "-"); // avoid duplicate hyphens
   return newId;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                               Snapshot mappers                              */
+/* -------------------------------------------------------------------------- */
+
+function toPosition(snap: DocumentSnapshot): Position {
+  return { id: snap.id, ...(snap.data() as Omit<Position, "id">) };
+}
+
+function toCandidate(
+  snap: DocumentSnapshot,
+  position: Position | null,
+): Candidate {
+  return {
+    id: snap.id,
+    ...(snap.data() as Omit<Candidate, "id" | "position">),
+    position,
+  };
+}
+
+// Firestore returns `lastUpdatedAt` as a Timestamp; fall back to Date/number.
+function updatedAtMillis(value: any): number {
+  return value?.toMillis?.() ?? Number(value);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Writes                                    */
+/* -------------------------------------------------------------------------- */
 
 export async function createPosition(name: string, description: string) {
   const id = purifyId(name);
@@ -80,136 +104,6 @@ export async function createCandidate(
   await setDoc(doc(db, "candidates", id), candidateData);
 
   return id;
-}
-export async function getPosition(id: string): Promise<Position | null> {
-  const snap = await getDoc(doc(db, "positions", id));
-
-  if (!snap.exists()) return null;
-
-  return {
-    id: snap.id,
-    ...(snap.data() as Omit<Position, "id">),
-  };
-}
-
-export async function getPositions() {
-  const snapshot = await getDocs(query(collection(db, "positions")));
-
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
-
-    return {
-      id: doc.id,
-      name: data.name,
-      ...data,
-    };
-  });
-}
-
-export async function getCandidates(options?: {
-  limit?: number;
-  lastDoc?: QueryDocumentSnapshot<DocumentData>;
-}): Promise<{
-  candidates: Candidate[];
-  lastDoc: QueryDocumentSnapshot<DocumentData> | null;
-  hasMore: boolean;
-}> {
-  let candidatesQuery;
-
-  if (options?.limit) {
-    candidatesQuery = options.lastDoc
-      ? query(
-          collection(db, "candidates"),
-          orderBy("lastUpdatedAt", "desc"),
-          startAfter(options.lastDoc),
-          firestoreLimit(options.limit),
-        )
-      : query(
-          collection(db, "candidates"),
-          orderBy("lastUpdatedAt", "desc"),
-          firestoreLimit(options.limit),
-        );
-  } else {
-    candidatesQuery = query(
-      collection(db, "candidates"),
-      orderBy("lastUpdatedAt", "desc"),
-    );
-  }
-
-  const snapshot = await getDocs(candidatesQuery);
-
-  // Fetch all positions once
-  const positionsSnapshot = await getDocs(collection(db, "positions"));
-
-  const positionsMap = new Map<string, Position>();
-
-  positionsSnapshot.docs.forEach((doc) => {
-    positionsMap.set(doc.id, {
-      id: doc.id,
-      ...(doc.data() as Omit<Position, "id">),
-    });
-  });
-
-  const candidates = snapshot.docs.map((candidateDoc) => {
-    const data = candidateDoc.data();
-
-    let position: Position | null = null;
-
-    if (data.position) {
-      const positionRef = data.position as DocumentReference;
-      position = positionsMap.get(positionRef.id) ?? null;
-    }
-
-    return {
-      id: candidateDoc.id,
-      ...(data as Omit<Candidate, "id" | "position">),
-      position,
-    };
-  });
-
-  return {
-    candidates,
-    lastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null,
-    hasMore:
-      options?.limit != null ? snapshot.docs.length === options.limit : false,
-  };
-}
-
-export async function getCandidatesByPosition(
-  positionId: string,
-): Promise<Candidate[]> {
-  const { candidates } = await getCandidates();
-
-  return candidates.filter(
-    (candidate) => candidate.position?.id === positionId,
-  );
-}
-
-export async function getCandidate(id: string): Promise<Candidate | null> {
-  const candidateSnap = await getDoc(doc(db, "candidates", id));
-
-  if (!candidateSnap.exists()) return null;
-
-  const data = candidateSnap.data();
-
-  let position: Position | null = null;
-
-  if (data.position) {
-    const positionSnap = await getDoc(data.position as DocumentReference);
-
-    if (positionSnap.exists()) {
-      position = {
-        id: positionSnap.id,
-        ...(positionSnap.data() as Omit<Position, "id">),
-      };
-    }
-  }
-
-  return {
-    id: candidateSnap.id,
-    ...(data as Omit<Candidate, "id" | "position">),
-    position,
-  };
 }
 
 export async function updatePosition(
@@ -272,7 +166,10 @@ export async function deleteCandidate(id: string) {
     );
 
     // Best-effort: clean up the candidate's files in the bucket before
-    // removing the Firestore doc that references them.
+    // removing the Firestore doc that references them. Imported lazily so
+    // the S3 SDK is never part of a page's initial bundle.
+    const { deleteFileFromBucket, extractKeyFromUrl } = await import("./s3");
+
     await Promise.all(
       urls.map((url) => deleteFileFromBucket(extractKeyFromUrl(url))),
     );
@@ -281,20 +178,123 @@ export async function deleteCandidate(id: string) {
   await deleteDoc(ref);
 }
 
-export async function deletePosition(id: string) {
-  const positionRef = doc(db, "positions", id);
+/* -------------------------------------------------------------------------- */
+/*                                    Reads                                    */
+/* -------------------------------------------------------------------------- */
 
-  // Cascade: remove every candidate that references this position (and
-  // their associated bucket files) before removing the position itself.
-  const candidatesSnapshot = await getDocs(
-    query(collection(db, "candidates"), where("position", "==", positionRef)),
+export async function getPosition(id: string): Promise<Position | null> {
+  const snap = await getDoc(doc(db, "positions", id));
+
+  return snap.exists() ? toPosition(snap) : null;
+}
+
+export async function getPositions(): Promise<Position[]> {
+  const snapshot = await getDocs(query(collection(db, "positions")));
+
+  return snapshot.docs.map(toPosition);
+}
+
+export async function getCandidates(): Promise<Candidate[]> {
+  const [snapshot, positionsSnapshot] = await Promise.all([
+    getDocs(
+      query(collection(db, "candidates"), orderBy("lastUpdatedAt", "desc")),
+    ),
+    getDocs(collection(db, "positions")),
+  ]);
+
+  const positionsMap = new Map<string, Position>(
+    positionsSnapshot.docs.map((positionDoc) => [
+      positionDoc.id,
+      toPosition(positionDoc),
+    ]),
   );
 
-  await Promise.all(
-    candidatesSnapshot.docs.map((candidateDoc) =>
-      deleteCandidate(candidateDoc.id),
+  return snapshot.docs.map((candidateDoc) => {
+    const positionRef = candidateDoc.data().position as
+      | DocumentReference
+      | undefined;
+
+    return toCandidate(
+      candidateDoc,
+      positionRef ? (positionsMap.get(positionRef.id) ?? null) : null,
+    );
+  });
+}
+
+// Candidates of one position, newest first. Filtering happens in Firestore
+// (not by downloading every candidate), and the sort happens here so no
+// composite (position + lastUpdatedAt) index is required. Docs without a
+// `lastUpdatedAt` are excluded, matching the `orderBy` used by getCandidates.
+async function queryCandidateDocsByPosition(positionId: string) {
+  const snapshot = await getDocs(
+    query(
+      collection(db, "candidates"),
+      where("position", "==", doc(db, "positions", positionId)),
     ),
   );
 
-  await deleteDoc(positionRef);
+  return snapshot.docs
+    .filter((candidateDoc) => candidateDoc.data().lastUpdatedAt != null)
+    .sort(
+      (a, b) =>
+        updatedAtMillis(b.data().lastUpdatedAt) -
+        updatedAtMillis(a.data().lastUpdatedAt),
+    );
+}
+
+/**
+ * Pass `position` when the caller already has it to skip an extra read.
+ */
+export async function getCandidatesByPosition(
+  positionId: string,
+  position?: Position | null,
+): Promise<Candidate[]> {
+  const [docs, resolvedPosition] = await Promise.all([
+    queryCandidateDocsByPosition(positionId),
+    position === undefined ? getPosition(positionId) : position,
+  ]);
+
+  return docs.map((candidateDoc) => toCandidate(candidateDoc, resolvedPosition));
+}
+
+/** Id of the position's most recently updated candidate, if any. */
+export async function getFirstCandidateId(
+  positionId: string,
+): Promise<string | null> {
+  const docs = await queryCandidateDocsByPosition(positionId);
+
+  return docs[0]?.id ?? null;
+}
+
+/**
+ * Pass `knownPosition` (a position the caller already has, or is fetching)
+ * to avoid re-reading the candidate's position doc when it is the same one.
+ */
+export async function getCandidate(
+  id: string,
+  knownPosition?: Position | null | Promise<Position | null>,
+): Promise<Candidate | null> {
+  const candidateSnap = await getDoc(doc(db, "candidates", id));
+
+  if (!candidateSnap.exists()) return null;
+
+  const positionRef = candidateSnap.data().position as
+    | DocumentReference
+    | undefined;
+
+  let position: Position | null = null;
+
+  if (positionRef) {
+    const known = await knownPosition;
+
+    if (known && known.id === positionRef.id) {
+      position = known;
+    } else {
+      const positionSnap = await getDoc(positionRef);
+
+      position = positionSnap.exists() ? toPosition(positionSnap) : null;
+    }
+  }
+
+  return toCandidate(candidateSnap, position);
 }
