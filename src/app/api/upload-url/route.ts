@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3 } from "@/lib/useBuckets";
+import { buildObjectKey, getPublicUrl, s3 } from "@/lib/s3";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,8 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extension = fileName.split(".").pop();
-    const key = `${crypto.randomUUID()}.${extension}`;
+    const key = buildObjectKey(fileName);
 
     const bucket = process.env.S3_BUCKET!;
 
@@ -49,15 +48,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const fileUrl = `${process.env.S3_PUBLIC_URL}/${bucket}/${key}`;
-
     return NextResponse.json({
       success: true,
       uploadUrl,
       key,
       bucket,
       fileName: key,
-      url: fileUrl,
+      url: getPublicUrl(key),
     });
   } catch (error) {
     console.error("UPLOAD-URL ERROR:", error);

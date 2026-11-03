@@ -1,4 +1,3 @@
-import { ParticlesComponent } from "iw-particles";
 import { FormEventHandler } from "react";
 import { IconButton } from "./icons/icon-button";
 import ParticlesBubble from "./particles/particles-bubble";

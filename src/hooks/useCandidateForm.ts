@@ -1,26 +1,6 @@
 // hooks/useCandidateForm.ts
-import { useEffect, useState, useMemo } from "react";
+import { useState } from "react";
 import { Candidate } from "@/lib/type";
-import { getPositions } from "@/lib/firestore";
-
-export type PositionOption = { name: string; value: string };
-
-export function usePositions() {
-  const [positions, setPositions] = useState<PositionOption[]>([]);
-
-  useEffect(() => {
-    getPositions().then((data) => {
-      setPositions(
-        data.map((position) => ({
-          name: position.name,
-          value: position.id,
-        })),
-      );
-    });
-  }, []);
-
-  return positions;
-}
 
 export function useCandidateForm(candidate?: Candidate | null) {
   const [name, setName] = useState(candidate?.name ?? "");

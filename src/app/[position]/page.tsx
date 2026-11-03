@@ -13,18 +13,13 @@ export default async function PositionPage({
 }) {
   const { position } = await params;
 
-  const positionData = (await getPosition(position)) as {
-    id: string;
-    name: string;
-    description: string;
-    active: boolean;
-  };
+  const positionData = await getPosition(position);
 
   if (!positionData || !positionData.active) {
     return <NotFound />;
   }
 
-  const candidates = await getCandidatesByPosition(position);
+  const candidates = await getCandidatesByPosition(position, positionData);
 
   return (
     <main className="md:p-12 p-4 overflow-hidden min-h-svh">

@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/icons/icon-button";
 import DataTable from "../../data/data-table";
-import { useFormatDate } from "@/lib/useFormatDate";
+import { formatDate } from "@/lib/formatDate";
 import Tag from "@/components/tag";
 import { handleShare } from "@/lib/useShare";
 import VideoThumbnail from "@/components/video/video-thumbnail";
@@ -67,14 +67,14 @@ export default function CandidatesTableRender({
         {
           key: "createdAt",
           label: "Created",
-          render: (c) => useFormatDate(c.createdAt, "long"),
-          sortValue: (c) => useFormatDate(c.createdAt, "long"),
+          render: (c) => formatDate(c.createdAt, "long"),
+          sortValue: (c) => formatDate(c.createdAt, "long"),
         },
         {
           key: "updatedAt",
           label: "Updated",
-          render: (c) => useFormatDate(c.lastUpdatedAt, "long"),
-          sortValue: (c) => useFormatDate(c.lastUpdatedAt, "long"),
+          render: (c) => formatDate(c.lastUpdatedAt, "long"),
+          sortValue: (c) => formatDate(c.lastUpdatedAt, "long"),
         },
         {
           key: "",

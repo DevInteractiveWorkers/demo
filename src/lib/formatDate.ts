@@ -1,6 +1,6 @@
-// lib/useFormatDate.ts
+// lib/formatDate.ts
 
-export const useFormatDate = (
+export const formatDate = (
   value: any,
   format:
     | "date"

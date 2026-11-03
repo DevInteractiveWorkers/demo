@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getPositions } from "@/lib/firestore";
-import CreatePosition from "../create-position";
-import EditPosition from "../data/edit-position";
-import { GridViewOptions } from "./select-grid";
 import { LoadingPage } from "@/components/loading";
 import PositionsGridRender from "./data-render/positions-grid";
 import PositionsTableRender from "./data-render/positions-table";
@@ -32,12 +29,6 @@ export default function Positions() {
 
   useEffect(() => {
     loadPositions();
-  }, []);
-
-  useEffect(() => {
-    getPositions()
-      .then(setPositions)
-      .finally(() => setLoading(false));
   }, []);
 
   const filteredPositions = positions.filter((position) => {

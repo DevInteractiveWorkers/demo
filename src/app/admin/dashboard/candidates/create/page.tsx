@@ -8,9 +8,10 @@ import CandidatePreview from "@/components/admin/candidate-preview";
 import { IconButton } from "@/components/icons/icon-button";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/loading";
-import { usePositions, useCandidateForm } from "@/hooks/useCandidateForm";
+import { useCandidateForm } from "@/hooks/useCandidateForm";
+import { usePositions } from "@/hooks/usePositions";
 import { uploadMediaFiles } from "@/lib/uploadMedia";
-import { MediaField } from "@/components/media-field";
+import CandidateMediaFields from "@/components/admin/candidate-media-fields";
 import ThumbnailPicker from "@/components/video/thumbnail-picker";
 import { showAlert } from "@/lib/show-alert";
 import Link from "next/link";
@@ -19,6 +20,7 @@ export default function CreateCandidatePage() {
   const router = useRouter();
   const positions = usePositions();
 
+  const form = useCandidateForm();
   const {
     name,
     setName,
@@ -27,18 +29,13 @@ export default function CreateCandidatePage() {
     positionId,
     setPositionId,
     resumeUrl,
-    setResumeUrl,
     videoUrl,
-    setVideoUrl,
     resumeFile,
-    setResumeFile,
     videoFile,
-    setVideoFile,
     thumbnail,
     setThumbnail,
     hasHeadband,
-    setHasHeadband,
-  } = useCandidateForm();
+  } = form;
 
   const [submitting, setSubmitting] = useState(false);
   const lastNameRef = useRef<HTMLInputElement>(null);
@@ -171,32 +168,7 @@ export default function CreateCandidatePage() {
             onSelect={(option) => setPositionId(option.value)}
           />
 
-          <MediaField
-            url={resumeUrl}
-            onUrlChange={setResumeUrl}
-            file={resumeFile}
-            onFileSelect={setResumeFile}
-            placeholder="Resume URL"
-            example="https://s3.interactiveworkers.com/demo/... .pdf"
-            accept=".pdf,.doc,.docx"
-          />
-
-          <MediaField
-            url={videoUrl}
-            onUrlChange={setVideoUrl}
-            file={videoFile}
-            onFileSelect={setVideoFile}
-            placeholder="Video URL"
-            example="https://s3.interactiveworkers.com/demo/... .mp4"
-            accept="video/*"
-          />
-
-          <Input
-            type="switch"
-            label="This video has a headband?"
-            checked={hasHeadband}
-            onChange={(e) => setHasHeadband(e.target.checked)}
-          />
+          <CandidateMediaFields form={form} />
 
           <Button type="button" disabled={submitting} onClick={handleSubmit}>
             {submitting ? (

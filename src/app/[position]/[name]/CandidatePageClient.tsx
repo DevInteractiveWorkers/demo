@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { IconButton } from "@/components/icons/icon-button";
 import { Navbar } from "@/components/video/navbar";
 import { useIsMobile } from "@/lib/useMobile";
-import { PDFReader } from "@/components/pdf-reader";
 
 const ParticlesBubble = dynamic(
   () => import("@/components/particles/particles-bubble"),
@@ -18,15 +17,18 @@ const ParticlesBubble = dynamic(
 const Candidate = dynamic(() => import("@/components/video/candidate"), {
   ssr: false,
 });
+// react-pdf + pdf.js are heavy and only needed once the resume is opened.
+const PDFReader = dynamic(
+  () => import("@/components/pdf-reader").then((m) => m.PDFReader),
+  { ssr: false },
+);
 
 export default function CandidatePageClient({
   candidate,
   position,
-  seeMore,
 }: {
   candidate: any;
   position: any;
-  seeMore?: boolean;
 }) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isPDFOpen, setIsPDFOpen] = useState(false);
@@ -56,12 +58,7 @@ export default function CandidatePageClient({
 
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
-      <Navbar
-        fixed
-        hide={isVideoPlaying}
-        position={position}
-        seeMore={seeMore}
-      />
+      <Navbar fixed hide={isVideoPlaying} />
 
       {/* Play / Resume controls — styling, classNames, and position
           preserved exactly as before. Already absolutely positioned, so
@@ -106,18 +103,7 @@ export default function CandidatePageClient({
               icon="info"
               stroke={0}
               className="bg-[#363636] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-              onClick={() => {
-                setIsPDFOpen((o) => !o);
-                return;
-                const link = document.createElement("a");
-                link.href = candidate.resumeUrl;
-                link.download = `${fullName}-Resume.pdf`;
-                link.target = "_blank";
-                link.rel = "noopener noreferrer";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={() => setIsPDFOpen((o) => !o)}
               width="25px"
               height="25px"
             >

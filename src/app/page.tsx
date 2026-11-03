@@ -1,13 +1,11 @@
 "use client";
 
-import { ParticlesComponent } from "iw-particles";
 import { Navbar } from "@/components/video/navbar";
 import RequestDemoForm from "@/components/request-demo-form";
 import JumpToButtom from "@/components/jump-to";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ParticlesBG from "@/components/particles/particles-bg";
-import ParticlesBubble from "@/components/particles/particles-bubble";
 
 export default function Home() {
   const [suggest, setSuggest] = useState<boolean>(false);

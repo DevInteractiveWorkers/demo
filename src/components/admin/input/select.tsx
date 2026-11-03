@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { BasicInputProps, Required } from "./input";
 import { Icon, IconProps } from "@/components/icons/icon";
 import { IconButton } from "@/components/icons/icon-button";
@@ -99,8 +99,6 @@ export default function Select(
 
       return true;
     });
-
-  const ulRef = useRef<HTMLUListElement>(null);
 
   return (
     <DropDown

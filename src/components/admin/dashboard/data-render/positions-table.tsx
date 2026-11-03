@@ -1,4 +1,4 @@
-import { useFormatDate } from "@/lib/useFormatDate";
+import { formatDate } from "@/lib/formatDate";
 import DataTable from "../../data/data-table";
 import Tag from "@/components/tag";
 
@@ -35,7 +35,7 @@ export default function PositionsTableRender({
         {
           key: "createdAt",
           label: "Created",
-          render: (p) => useFormatDate(p.createdAt, "long"),
+          render: (p) => formatDate(p.createdAt, "long"),
         },
       ]}
       footer={

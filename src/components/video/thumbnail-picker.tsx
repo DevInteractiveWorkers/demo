@@ -129,7 +129,6 @@ export default function ThumbnailPicker({
   // Guards against stale async work if `src` changes mid-flight.
   const loadTokenRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({ isDragging: false, startX: 0, startScroll: 0 });
 
   // Single source of truth for the resolved video URL — handles File→object
   // URL conversion and cleanup internally.
