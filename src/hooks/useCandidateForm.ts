@@ -51,9 +51,17 @@ export function useCandidateForm(candidate?: Candidate | null) {
     hasHeadband: candidate?.hasHeadband ?? false,
   };
 
+  // Files are not part of the serialized `data`, so a pending file is checked
+  // separately and always counts as an unsaved change.
+  const hasPendingFiles = Boolean(resumeFile || videoFile);
+  const isDirty =
+    hasPendingFiles || JSON.stringify(data) !== JSON.stringify(initialData);
+
   return {
     data,
     initialData,
+    hasPendingFiles,
+    isDirty,
 
     name,
     setName,
