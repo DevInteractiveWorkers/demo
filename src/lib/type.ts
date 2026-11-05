@@ -5,6 +5,7 @@ export type Position = {
   name: string;
   description: string;
   active: boolean;
+  icon?: string;
   createdAt?: any;
   lastUpdatedAt?: any;
 };
