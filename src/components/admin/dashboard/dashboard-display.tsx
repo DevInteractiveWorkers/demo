@@ -51,55 +51,61 @@ export default function DashboardDisplay<T>({
   return (
     <section
       id={title.toLowerCase()}
-      className="flex flex-col h-screen space-y-6 py-4"
+      className={`flex flex-col space-y-6 ${view === "list" ? "h-full max-h-dvh" : "min-h-dvh"}`}
     >
-      <div
-        id="search"
-        className="flex max-md:flex-col justify-between md:items-center items-end gap-2"
-      >
-        <SearchInput value={search} onChange={handleSearch} />
-      </div>
-
-      <div id="filters" className="flex justify-between items-center gap-2">
-        {extraFilters}
-
-        <IconButton
-          id={`add-${title.toLowerCase()}`}
-          filled
-          icon="plus"
-          stroke={0}
-          reversed
-          width="20px"
-          height="20px"
-          viewBox="0 0 17 17"
-          className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
-          onClick={onCreate}
-        />
-      </div>
-
-      <div id="view-filter" className="flex justify-between items-center gap-2">
-        <p className="opacity-60 text-xs">
-          {data.length} {title.toLowerCase()}
-        </p>
-        <SelectGrid
-          selected={view}
-          onSelect={(option) => setView(option.value as GridViewOptions)}
-        />
-      </div>
-      {view !== "list" ? (
+      <div className="flex flex-col gap-2 z-10 sticky top-0 py-4 bg-[#191919] border-b border-[#282828]">
         <div
-          id={`${title}-grid`}
-          className={`flex-1 overflow-y-auto grid ${
-            view === "grid-small"
-              ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-              : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
-          } gap-4`}
+          id="search"
+          className="flex max-md:flex-col justify-between md:items-center items-end gap-2"
         >
-          {renderGrid(data)}
+          <SearchInput value={search} onChange={handleSearch} />
         </div>
-      ) : (
-        renderTable(data)
-      )}
+        <div id="filters" className="flex justify-between items-center gap-2">
+          {extraFilters}
+
+          <IconButton
+            id={`add-${title.toLowerCase()}`}
+            filled
+            icon="plus"
+            stroke={0}
+            reversed
+            width="20px"
+            height="20px"
+            viewBox="0 0 17 17"
+            className="bg-[#C2272D] px-8 py-2 rounded object-contain hover:scale-95 active:bg-white active:text-black transition-all duration-200"
+            onClick={onCreate}
+          />
+        </div>
+
+        <div
+          id="view-filter"
+          className="flex justify-between items-center gap-2"
+        >
+          <p className="opacity-60 text-xs">
+            {data.length} {title.toLowerCase()}
+          </p>
+          <SelectGrid
+            selected={view}
+            onSelect={(option) => setView(option.value as GridViewOptions)}
+          />
+        </div>
+      </div>
+      <div className="py-4 overflow-y-auto z-0">
+        {view !== "list" ? (
+          <div
+            id={`${title}-grid`}
+            className={`flex-1 overflow-y-auto grid ${
+              view === "grid-small"
+                ? "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
+            } gap-4`}
+          >
+            {renderGrid(data)}
+          </div>
+        ) : (
+          renderTable(data)
+        )}
+      </div>
     </section>
   );
 }

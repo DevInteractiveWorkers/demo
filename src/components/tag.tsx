@@ -11,7 +11,7 @@ const Tag = (props: TagProps) => {
   return (
     <span
       title={title}
-      className={`text-xs px-2 py-1 rounded-full text-center border `}
+      className={`text-xs px-2 py-1 rounded-full text-center border flex items-center justify-center whitespace-nowrap`}
       style={{
         color,
         backgroundColor: `${color}10`,
