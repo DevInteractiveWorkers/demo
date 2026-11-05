@@ -31,8 +31,7 @@ export default function EditCandidate(
 
   const form = useCandidateForm(candidate);
   const {
-    data,
-    initialData,
+    isDirty,
     name,
     setName,
     lastName,
@@ -95,12 +94,14 @@ export default function EditCandidate(
 
   async function handleCancel(e: any) {
     e.preventDefault();
-    const confirmed = await showAlert({
-      title: "Cancel Update?",
-      icon: "warning",
-      message: `Leave without saving? Any changes you made to "${name} ${lastName}" will be lost`,
-    });
-    if (!confirmed) return;
+    if (isDirty) {
+      const confirmed = await showAlert({
+        title: "Cancel Update?",
+        icon: "warning",
+        message: `Leave without saving? Any changes you made to "${name} ${lastName}" will be lost`,
+      });
+      if (!confirmed) return;
+    }
 
     if (props.toggleClose) {
       props.toggleClose();
@@ -203,9 +204,7 @@ export default function EditCandidate(
             <Button
               type="button"
               onClick={handleUpdate}
-              disabled={
-                saving || JSON.stringify(data) === JSON.stringify(initialData)
-              }
+              disabled={saving || !isDirty}
             >
               {saving ? (
                 <div className="flex justify-center">

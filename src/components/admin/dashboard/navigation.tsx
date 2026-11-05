@@ -15,7 +15,7 @@ export default function Navigation() {
   return (
     <aside
       id="navigation"
-      className="md:border-r max-md:border-b max-md:h-min border-[#292929] p-4 flex flex-col items-center gap-4"
+      className="md:border-r max-md:border-b max-md:h-min md:max-h-dvh md:sticky md:top-0 border-[#292929] bg-[#191919] p-4 flex flex-col items-center gap-4"
     >
       <div
         className={isMobile ? "flex w-11/12 items-center justify-between" : ""}
