@@ -58,7 +58,7 @@ export default function CandidatePageClient({
 
   return (
     <main className="flex flex-col h-dvh overflow-hidden relative justify-center select-none">
-      <Navbar fixed hide={isVideoPlaying} />
+      <Navbar fixed hide={isVideoPlaying || isPDFOpen} />
       <div
         className={`
           absolute
@@ -133,27 +133,17 @@ export default function CandidatePageClient({
       )}
       {candidate.resumeUrl && (
         <div
-          className={` flex items-center justify-center backdrop-blur absolute top-0 left-0 
-            ${isPDFOpen ? "opacity-100 z-10 w-full h-full" : "opacity-0 w-0 h-0"} transition-opacity duration-500`}
+          className={`flex items-center justify-center backdrop-blur absolute top-0 left-0  w-full h-full z-10
+            ${isPDFOpen ? "opacity-100" : "opacity-0 pointer-events-none"} transition-opacity duration-500`}
         >
-          {isPDFOpen && (
-            <>
-              <PDFReader
-                file={candidate.resumeUrl}
-                startAt={2}
-                className="md:max-w-1/2 lg:max-w-1/3 max-h-auto z-0"
-              />
-              <IconButton
-                className="cursor-pointer"
-                icon="close"
-                width={100}
-                height={100}
-                onClick={() => {
-                  setIsPDFOpen((o) => !o);
-                }}
-              />
-            </>
-          )}
+          <PDFReader
+            file={candidate.resumeUrl}
+            startAt={2}
+            className={"w-auto h-dvh z-0"}
+            onClose={() => {
+              setIsPDFOpen((o) => !o);
+            }}
+          />
         </div>
       )}
 
