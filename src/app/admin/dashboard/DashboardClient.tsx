@@ -44,40 +44,36 @@ export default function DashboardClient() {
   };
 
   return (
-    <section className="p-4">
-      <div className="h-full">
-        {selected === "" && (
-          <div className="flex flex-col h-svh justify-center items-center">
-            <div className="flex flex-col items-center relative text-center">
-              <Image
-                src={"/logo/03_Logo_Mark/03_Logo_Mark-01.png"}
-                alt={"InteractiveWorkers"}
-                width={1080}
-                height={1080}
-                className="max-w-40 animate-loading-flip absolute p-4 top-0 -translate-y-full"
-              />
-              <p className="cursor-default md:text-4xl text-2xl">
-                Welcome back,{" "}
-                <strong className="font-semibold">
-                  {user.email!.split("@")[0]}
-                </strong>
-              </p>
-              <p className="text-white/50">
-                Add <DashboardLink href="/candidates">candidates</DashboardLink>
-                . <br className="md:hidden" />
-                Update your{" "}
-                <DashboardLink href="/positions">positions</DashboardLink>.
-              </p>
-            </div>
-            <button
-              className="absolute bottom-0 p-4 hover:opacity-50 transition-all duration-150 cursor-pointer"
-              onClick={() => logout()}
-            >
-              Log Out
-            </button>
-          </div>
-        )}
-      </div>
+    <section className="h-dvh">
+      {selected === "" && (
+        <div className="h-full flex flex-col items-center justify-center">
+          <Image
+            src={"/logo/03_Logo_Mark/03_Logo_Mark-01.png"}
+            alt={"InteractiveWorkers"}
+            width={1080}
+            height={1080}
+            className="max-w-40 h-auto aspect-square object-contain animate-loading-flip relative p-4 top-0"
+          />
+          <p className="cursor-default md:text-4xl text-2xl">
+            Welcome back,{" "}
+            <strong className="font-semibold">
+              {user.email!.split("@")[0]}
+            </strong>
+          </p>
+          <p className="text-white/50">
+            Add <DashboardLink href="/candidates">candidates</DashboardLink>
+            . <br className="md:hidden" />
+            Update your{" "}
+            <DashboardLink href="/positions">positions</DashboardLink>.
+          </p>
+          <button
+            className="p-4 hover:opacity-50 transition-all duration-150 cursor-pointer"
+            onClick={() => logout()}
+          >
+            Log Out
+          </button>
+        </div>
+      )}
     </section>
   );
 }

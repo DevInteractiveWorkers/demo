@@ -16,7 +16,7 @@ export default function RootLayout({
       <TutorialSteps />
       <main className="grid xl:grid-cols-[20%_60%_20%] md:grid-cols-[15%_85%] min-h-svh relative">
         <Navigation />
-        <div className="h-full px-4 lg:border-r border-[#292929] max-md:overflow-x-hidden">
+        <div className="h-full px-4 lg:border-r border-[#292929]">
           {children}
         </div>
       </main>

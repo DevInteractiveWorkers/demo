@@ -56,7 +56,7 @@ export default function Positions() {
         renderTable={(data) => (
           <PositionsTableRender
             data={data}
-            onRowSelect={(e) => router.push(`${path}/edit?c=${e.id}`)}
+            onRowSelect={(e) => router.push(`${path}/edit?p=${e.id}`)}
           />
         )}
       />
